@@ -199,7 +199,7 @@
   --accent-warning: var(--dark-accent-warning);
   --accent-danger: var(--dark-accent-danger);
   --accent-info: var(--dark-accent-info);
-  --focus-ring: var(--dark-accent-warning);
+  --focus-ring: #ffffff;
   --shadow-sm: var(--dark-shadow-sm);
   --shadow-md: var(--dark-shadow-md);
   --shadow-lg: var(--dark-shadow-lg);
