@@ -170,7 +170,7 @@ onUnmounted(() => {
   border: 0;
   outline: none;
   resize: none;
-  background: #121722;
+  background: #101012;
   color: var(--color-text-primary);
   font-family: var(--font-mono);
   font-size: 14px;

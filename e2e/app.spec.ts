@@ -96,7 +96,9 @@ test.describe('CodeCraft MVP UX', () => {
     await expect(runButton).toBeVisible()
 
     await runButton.click()
-    await expect(page.getByText(/All tests passed|\d+\/\d+ passed/i)).toBeVisible({ timeout: 10000 })
+    await expect(
+      page.locator('.results-header__status').getByText(/All tests passed|\d+\/\d+ passed/i)
+    ).toBeVisible({ timeout: 10000 })
   })
 
   test('profile and leaderboard fail gracefully when unauthenticated', async ({ page }) => {
