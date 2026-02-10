@@ -20,14 +20,14 @@ Dark mode is a black-first palette with neutral charcoal surfaces and warm contr
 - `--color-surface`: `#171719`
 - `--color-surface-raised`: `#202124`
 - `--color-surface-hover`: `#2a2b30`
-- `--color-border-strong`: `#a39d92`
-- `--color-shadow-strong`: `#746f66`
+- `--color-border-strong`: `#fffef9`
+- `--color-shadow-strong`: `#fffef9`
 - `--color-coral`: `#c84a56`
 - `--color-turquoise`: `#2fc2b5`
 - `--color-yellow`: `#e8b93f`
 - `--color-info`: `#5d6ec4`
 
-Dark-mode button accents are mapped through dedicated button tokens (`--button-*`) so primary/secondary/ghost/danger buttons are tuned for black surfaces without reusing light-theme values.
+Dark-mode button accents are mapped through dedicated button tokens (`--button-*`) so primary/secondary/ghost/danger buttons are tuned for black surfaces without reusing light-theme values. Button borders and button shadows are also white in dark mode.
 Key dark button tones: primary `#a6414d`, secondary `#2f8f89`, danger `#8f313d`.
 
 ## Core Components

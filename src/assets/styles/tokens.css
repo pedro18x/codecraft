@@ -121,10 +121,10 @@
   --color-surface: #171719;
   --color-surface-raised: #202124;
   --color-surface-hover: #2a2b30;
-  --color-border: #575950;
-  --color-border-subtle: #3c3d43;
-  --color-border-strong: #a39d92;
-  --color-shadow-strong: #746f66;
+  --color-border: #fffef9;
+  --color-border-subtle: #fffef9;
+  --color-border-strong: #fffef9;
+  --color-shadow-strong: #fffef9;
 
   --color-text-primary: #fffef9;
   --color-text-secondary: #c8c1b5;
@@ -140,8 +140,8 @@
   --color-error-bg: #372024;
   --color-info-bg: #232738;
 
-  --button-border: #b1ab9f;
-  --button-shadow: #6e6960;
+  --button-border: #fffef9;
+  --button-shadow: #fffef9;
   --button-primary-bg: #a6414d;
   --button-primary-hover: #963742;
   --button-primary-text: #fffef9;
