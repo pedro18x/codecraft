@@ -29,7 +29,11 @@ const monacoLanguage = (language: Language) => {
 }
 
 const createEditor = async () => {
-  if (!rootRef.value) return
+  if (!rootRef.value) {
+    failed.value = true
+    loading.value = false
+    return
+  }
 
   try {
     const [{ editor, languages }] = await Promise.all([
@@ -108,13 +112,10 @@ onUnmounted(() => {
 
 <template>
   <div class="monaco-lazy">
-    <div v-if="loading" class="monaco-loading" aria-live="polite">
-      <span class="monaco-loading__bar" />
-      <p>Booting editor engine...</p>
-    </div>
+    <div ref="rootRef" v-show="!failed" class="monaco-root" />
 
     <textarea
-      v-else-if="failed"
+      v-if="failed"
       class="monaco-fallback"
       :value="modelValue"
       spellcheck="false"
@@ -122,7 +123,10 @@ onUnmounted(() => {
       @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
     />
 
-    <div v-else ref="rootRef" class="monaco-root" />
+    <div v-if="loading" class="monaco-loading" aria-live="polite">
+      <span class="monaco-loading__bar" />
+      <p>Booting editor engine...</p>
+    </div>
   </div>
 </template>
 
@@ -141,20 +145,23 @@ onUnmounted(() => {
 }
 
 .monaco-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   display: grid;
   place-items: center;
   align-content: center;
   gap: 0.7rem;
-  background: #1a1a1a;
-  color: #fffef9;
+  background: var(--color-accent-ink);
+  color: var(--color-text-primary);
   font-family: var(--font-mono);
 }
 
 .monaco-loading__bar {
   width: min(18rem, 78%);
   height: 0.8rem;
-  border: 3px solid #ffe66d;
-  background: linear-gradient(90deg, #4ecdc4 0%, #ffe66d 50%, #ff6b6b 100%);
+  border: 3px solid var(--color-yellow);
+  background: linear-gradient(90deg, var(--color-turquoise) 0%, var(--color-yellow) 50%, var(--color-coral) 100%);
   background-size: 200% 100%;
   animation: monaco-load 1.2s linear infinite;
 }
@@ -163,8 +170,8 @@ onUnmounted(() => {
   border: 0;
   outline: none;
   resize: none;
-  background: #161616;
-  color: #fffef9;
+  background: #121722;
+  color: var(--color-text-primary);
   font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.5;

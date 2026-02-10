@@ -170,7 +170,7 @@ textarea.brutal-input__field {
 }
 
 .brutal-input__helper--success {
-  color: #15846d;
+  color: var(--color-success);
 }
 
 .brutal-input__counter {

@@ -158,7 +158,7 @@ const onRippleEnd = (id: number) => {
 }
 
 .brutal-button--danger {
-  background: #ff4e4e;
+  background: var(--color-error);
   color: var(--color-white);
 }
 

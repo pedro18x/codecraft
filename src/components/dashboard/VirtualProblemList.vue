@@ -263,7 +263,7 @@ watch(activeIndex, (index) => {
 }
 
 [data-theme='dark'] .problem-row:nth-child(odd) {
-  background: color-mix(in srgb, var(--color-surface) 86%, var(--color-text-primary) 5%);
+  background: color-mix(in srgb, var(--color-surface) 82%, var(--color-border-strong) 18%);
 }
 
 @media (max-width: 940px) {

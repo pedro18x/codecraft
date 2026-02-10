@@ -202,14 +202,15 @@ const showHints = ref(false)
 }
 
 .example-block {
-  border: var(--border-thin) solid var(--color-ink);
+  border: var(--border-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .example-block__label {
   padding: var(--space-2) var(--space-4);
-  background-color: var(--color-ink);
-  color: var(--color-surface);
+  background-color: var(--color-accent-ink);
+  color: var(--color-white);
   letter-spacing: 0.06em;
 }
 

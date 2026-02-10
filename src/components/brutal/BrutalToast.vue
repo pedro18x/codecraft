@@ -73,7 +73,7 @@ const stripeClass = computed(() => `brutal-toast--${props.toast.type}`)
 }
 
 .brutal-toast--info {
-  border-left-color: #6c8eff;
+  border-left-color: var(--color-info);
 }
 
 .brutal-toast__title {

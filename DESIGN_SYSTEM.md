@@ -13,6 +13,20 @@ CodeCraft uses a neo-brutalist systems UI language: heavy borders, directional h
 - Body: `Plus Jakarta Sans` (`400`, `500`, `600`)
 - Code: `JetBrains Mono` with ligatures
 
+## Dark Theme Palette
+Dark mode is intentionally cooler and higher-contrast than light mode.
+
+- `--color-background`: `#0f131a`
+- `--color-surface`: `#171d28`
+- `--color-surface-raised`: `#1f2735`
+- `--color-surface-hover`: `#2a3345`
+- `--color-border-strong`: `#a8b7cf`
+- `--color-shadow-strong`: `#6d7d9c`
+- `--color-coral`: `#c94752`
+- `--color-turquoise`: `#35cfc1`
+- `--color-yellow`: `#f5c84c`
+- `--color-info`: `#4f66cc`
+
 ## Core Components
 - Buttons, cards, inputs/textarea, badges
 - Modal, toast stack, progress variants, tabs, dropdown

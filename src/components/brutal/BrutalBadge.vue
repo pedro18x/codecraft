@@ -90,7 +90,7 @@ const toneClass = computed(() => {
 }
 
 .brutal-badge--info {
-  background: #6c8eff;
+  background: var(--color-info);
   color: var(--color-white);
 }
 

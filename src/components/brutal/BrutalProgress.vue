@@ -97,8 +97,8 @@ const dashOffset = computed(() => circumference - (percentage.value / 100) * cir
     -45deg,
     var(--color-turquoise),
     var(--color-turquoise) 9px,
-    #3bb5ad 9px,
-    #3bb5ad 18px
+    var(--color-success-bg) 9px,
+    var(--color-success-bg) 18px
   );
   transition: width 260ms var(--ease);
 }
