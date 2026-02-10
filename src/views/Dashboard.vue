@@ -224,7 +224,7 @@ const updateSort = (value: string) => {
               <p class="progress-copy">{{ completedCount }}/{{ totalProblems }} solved</p>
             </div>
 
-            <BrutalButton variant="ghost" size="sm" @click="toggleTheme">
+            <BrutalButton variant="secondary" size="sm" @click="toggleTheme">
               Theme: {{ theme }}
             </BrutalButton>
           </div>
@@ -302,9 +302,10 @@ const updateSort = (value: string) => {
 }
 
 .category-chip {
-  border: 2px solid var(--color-ink);
-  background: var(--color-surface);
-  box-shadow: 2px 2px 0 0 var(--color-ink);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  box-shadow: 1px 1px 0 0 var(--color-shadow-strong);
   font-size: var(--text-xs);
   font-family: var(--font-mono);
   padding: 0.24rem 0.4rem;
@@ -313,6 +314,7 @@ const updateSort = (value: string) => {
 
 .category-chip--active {
   background: var(--color-yellow);
+  color: var(--color-accent-ink);
 }
 
 .progress-row {

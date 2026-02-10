@@ -43,7 +43,8 @@ const toneClass = computed(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--color-ink);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
@@ -63,7 +64,7 @@ const toneClass = computed(() => {
 }
 
 .brutal-badge--rotate {
-  transform: rotate(-2deg);
+  transform: rotate(-1deg);
 }
 
 .brutal-badge--rotate:hover {
@@ -73,13 +74,13 @@ const toneClass = computed(() => {
 .brutal-badge--difficulty-easy,
 .brutal-badge--success {
   background: var(--color-turquoise);
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
 }
 
 .brutal-badge--difficulty-medium,
 .brutal-badge--warning {
   background: var(--color-yellow);
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
 }
 
 .brutal-badge--difficulty-hard,
@@ -94,7 +95,7 @@ const toneClass = computed(() => {
 }
 
 .brutal-badge--neutral {
-  background: var(--color-surface);
-  color: var(--color-ink);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
 }
 </style>

@@ -122,8 +122,8 @@ const scoreLabel = computed(() => {
         </div>
 
         <div class="leaderboard__header-actions">
-          <BrutalButton variant="ghost" size="sm" @click="fetchLeaderboard">Refresh</BrutalButton>
-          <BrutalButton variant="ghost" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
+          <BrutalButton variant="secondary" size="sm" @click="fetchLeaderboard">Refresh</BrutalButton>
+          <BrutalButton variant="secondary" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
         </div>
       </header>
 

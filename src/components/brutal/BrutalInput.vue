@@ -53,11 +53,12 @@ const onInput = (ev: Event) => {
         :value="modelValue"
         :type="isTextarea ? undefined : type"
         :rows="isTextarea ? rows : undefined"
-        :placeholder="placeholder || ' '"
+        :placeholder="label ? (placeholder || ' ') : placeholder"
         :required="required"
         :disabled="disabled"
         :maxlength="maxLength"
         class="brutal-input__field"
+        :class="{ 'brutal-input__field--with-label': !!label }"
         @input="onInput"
         @blur="emit('blur', $event)"
       />
@@ -88,12 +89,13 @@ const onInput = (ev: Event) => {
 
 .brutal-input__field {
   width: 100%;
-  border: 3px solid var(--color-ink);
-  background: var(--color-surface);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
   font-family: var(--font-body);
   font-size: var(--text-base);
   color: var(--color-text-primary);
-  padding: 1rem 0.9rem 0.55rem;
+  padding: 0.92rem 0.9rem 0.62rem;
   transition: box-shadow var(--duration-fast) var(--ease), border-color var(--duration-fast) var(--ease), transform var(--duration-fast) var(--ease);
 }
 
@@ -108,6 +110,10 @@ textarea.brutal-input__field {
 }
 
 .brutal-input__field::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.brutal-input__field--with-label::placeholder {
   color: transparent;
 }
 

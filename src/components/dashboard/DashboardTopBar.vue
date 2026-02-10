@@ -37,8 +37,8 @@ const sortOptions = [
     </div>
 
     <div class="dashboard-topbar__actions">
-      <BrutalButton variant="ghost" size="sm" @click="emit('open-profile')">Profile</BrutalButton>
-      <BrutalButton variant="ghost" size="sm" @click="emit('open-leaderboard')">Leaderboard</BrutalButton>
+      <BrutalButton variant="secondary" size="sm" @click="emit('open-profile')">Profile</BrutalButton>
+      <BrutalButton variant="secondary" size="sm" @click="emit('open-leaderboard')">Leaderboard</BrutalButton>
     </div>
 
     <div class="dashboard-topbar__filters">
@@ -91,8 +91,9 @@ const sortOptions = [
   display: grid;
   gap: 0.8rem;
   padding: 0.8rem;
-  border: 4px solid var(--color-ink);
-  box-shadow: 6px 6px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 4px 4px 0 0 var(--color-shadow-strong);
   background: var(--color-surface);
 }
 
@@ -135,9 +136,10 @@ const sortOptions = [
 }
 
 .difficulty-pill {
-  border: 3px solid var(--color-ink);
-  background: var(--color-surface);
-  box-shadow: 3px 3px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  box-shadow: 2px 2px 0 0 var(--color-shadow-strong);
   min-height: 2.55rem;
   padding: 0.4rem 0.65rem;
   font-weight: var(--font-weight-semibold);
@@ -146,6 +148,7 @@ const sortOptions = [
 
 .difficulty-pill--active {
   background: var(--color-yellow);
+  color: var(--color-accent-ink);
 }
 
 .difficulty-pill:focus-visible {

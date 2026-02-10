@@ -136,8 +136,9 @@ onUnmounted(() => {
   max-height: min(80vh, 52rem);
   overflow: auto;
   background: var(--color-surface);
-  border: 4px solid var(--color-ink);
-  box-shadow: 10px 10px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 6px 6px 0 0 var(--color-shadow-strong);
 }
 
 .brutal-modal__header {
@@ -146,7 +147,7 @@ onUnmounted(() => {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.8rem 1rem;
-  border-bottom: 3px solid var(--color-ink);
+  border-bottom: 2px solid var(--color-border-strong);
   background: var(--color-background);
 }
 
@@ -160,14 +161,14 @@ onUnmounted(() => {
 .brutal-modal__close {
   width: 2rem;
   height: 2rem;
-  border: 3px solid var(--color-ink);
+  border: 2px solid var(--color-border-strong);
   background: var(--color-coral);
   color: var(--color-white);
   font-size: 1.25rem;
   line-height: 1;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 2px 2px 0 0 var(--color-ink);
+  box-shadow: 2px 2px 0 0 var(--color-shadow-strong);
 }
 
 .brutal-modal__close:focus-visible {
@@ -180,7 +181,7 @@ onUnmounted(() => {
 }
 
 .brutal-modal__footer {
-  border-top: 3px solid var(--color-ink);
+  border-top: 2px solid var(--color-border-strong);
   padding: 0.75rem 1rem;
   display: flex;
   justify-content: flex-end;

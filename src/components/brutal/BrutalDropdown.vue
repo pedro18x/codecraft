@@ -134,9 +134,10 @@ onUnmounted(() => {
 
 .brutal-dropdown__trigger {
   width: 100%;
-  border: 3px solid var(--color-ink);
-  background: var(--color-surface);
-  box-shadow: 3px 3px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  box-shadow: 2px 2px 0 0 var(--color-shadow-strong);
   min-height: 2.6rem;
   padding: 0.45rem 0.75rem;
   display: flex;
@@ -173,9 +174,10 @@ onUnmounted(() => {
   list-style: none;
   margin: 0;
   padding: 0.35rem;
-  border: 3px solid var(--color-ink);
-  background: var(--color-surface);
-  box-shadow: 4px 4px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
   z-index: 20;
 }
 
@@ -195,6 +197,7 @@ onUnmounted(() => {
 
 .brutal-dropdown__option--active {
   background: var(--color-yellow);
+  color: var(--color-accent-ink);
   font-weight: var(--font-weight-bold);
 }
 

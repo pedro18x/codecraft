@@ -100,13 +100,15 @@ const onRippleEnd = (id: number) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 4px solid var(--color-ink);
-  box-shadow: 4px 4px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
   background: var(--color-coral);
   color: var(--color-white);
-  font-family: var(--font-display);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.01em;
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.005em;
+  line-height: 1.2;
   cursor: pointer;
   user-select: none;
   overflow: hidden;
@@ -115,12 +117,12 @@ const onRippleEnd = (id: number) => {
 }
 
 .brutal-button:hover:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 0 var(--color-ink);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 0 var(--color-shadow-strong);
 }
 
 .brutal-button:active:not(:disabled) {
-  transform: translate(4px, 4px);
+  transform: translate(2px, 2px);
   box-shadow: 0 0 0 0 transparent;
 }
 
@@ -132,7 +134,7 @@ const onRippleEnd = (id: number) => {
 .brutal-button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
-  box-shadow: 2px 2px 0 0 var(--color-border-subtle);
+  box-shadow: 1px 1px 0 0 var(--color-border-subtle);
   border-color: var(--color-border-subtle);
 }
 
@@ -143,12 +145,16 @@ const onRippleEnd = (id: number) => {
 
 .brutal-button--secondary {
   background: var(--color-turquoise);
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
 }
 
 .brutal-button--ghost {
-  background: var(--color-surface);
-  color: var(--color-ink);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.brutal-button--ghost:hover:not(:disabled) {
+  background: var(--color-surface-hover);
 }
 
 .brutal-button--danger {
@@ -189,6 +195,7 @@ const onRippleEnd = (id: number) => {
 .brutal-button__label {
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 .brutal-button__ripples {

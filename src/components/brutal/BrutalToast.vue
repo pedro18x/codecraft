@@ -52,9 +52,10 @@ const stripeClass = computed(() => `brutal-toast--${props.toast.type}`)
   gap: 0.75rem;
   width: min(22rem, calc(100vw - 2rem));
   background: var(--color-surface);
-  border: 3px solid var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
   border-left-width: 10px;
-  box-shadow: 4px 4px 0 0 var(--color-ink);
+  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
   padding: 0.7rem 0.8rem 0.95rem;
   overflow: hidden;
 }
@@ -91,7 +92,7 @@ const stripeClass = computed(() => `brutal-toast--${props.toast.type}`)
 .brutal-toast__close {
   width: 1.8rem;
   height: 1.8rem;
-  border: 2px solid var(--color-ink);
+  border: 2px solid var(--color-border-strong);
   background: var(--color-background);
   color: var(--color-text-primary);
   font-size: 1.1rem;
@@ -110,7 +111,7 @@ const stripeClass = computed(() => `brutal-toast--${props.toast.type}`)
   right: 0;
   bottom: 0;
   height: 4px;
-  background: var(--color-ink);
+  background: var(--color-border-strong);
   transform-origin: left;
   animation-name: brutal-progress;
   animation-timing-function: linear;

@@ -87,12 +87,13 @@ onUnmounted(() => {
   position: relative;
   display: flex;
   gap: 0.25rem;
-  border-bottom: 4px solid var(--color-ink);
+  border-bottom: 3px solid var(--color-border-strong);
   padding-bottom: 0.25rem;
 }
 
 .brutal-tabs__tab {
-  border: 3px solid transparent;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   border-bottom: 0;
   background: transparent;
   padding: 0.45rem 0.7rem 0.35rem;
@@ -105,6 +106,7 @@ onUnmounted(() => {
 }
 
 .brutal-tabs__tab--active {
+  background: var(--color-surface-raised);
   color: var(--color-text-primary);
   font-weight: var(--font-weight-bold);
   font-size: var(--text-base);
@@ -118,7 +120,7 @@ onUnmounted(() => {
 .brutal-tabs__indicator {
   position: absolute;
   left: 0;
-  bottom: -4px;
+  bottom: -3px;
   height: 4px;
   background: var(--color-coral);
   transition: transform 220ms var(--ease), width 220ms var(--ease);

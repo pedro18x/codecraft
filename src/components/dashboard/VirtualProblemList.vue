@@ -62,7 +62,7 @@ const onEnter = () => {
 const statusTone = (status: VirtualProblemItem['status']) => {
   if (status === 'solved') return 'success'
   if (status === 'attempted') return 'warning'
-  return 'neutral'
+  return 'info'
 }
 
 watch(activeIndex, (index) => {
@@ -148,8 +148,9 @@ watch(activeIndex, (index) => {
 
 <style scoped>
 .virtual-list-wrap {
-  border: 4px solid var(--color-ink);
-  box-shadow: 8px 8px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 5px 5px 0 0 var(--color-shadow-strong);
   background: var(--color-surface);
   overflow: hidden;
 }
@@ -158,7 +159,7 @@ watch(activeIndex, (index) => {
   display: grid;
   grid-template-columns: minmax(0, 1.8fr) 0.8fr 0.95fr 0.8fr;
   gap: 0.5rem;
-  border-bottom: 4px solid var(--color-ink);
+  border-bottom: 3px solid var(--color-border-strong);
   background: var(--color-background);
   padding: 0.6rem 0.7rem;
   font-size: var(--text-xs);
@@ -191,14 +192,15 @@ watch(activeIndex, (index) => {
   min-height: 94px;
   padding: 0.6rem 0.7rem;
   border: 0;
-  border-bottom: 3px solid var(--color-border-subtle);
+  border-bottom: 2px solid var(--color-border-subtle);
   background: var(--color-surface);
+  color: var(--color-text-primary);
   text-align: left;
   cursor: pointer;
 }
 
 .problem-row:nth-child(odd) {
-  background: rgba(255, 255, 255, 0.55);
+  background: color-mix(in srgb, var(--color-surface) 86%, var(--color-text-primary) 14%);
 }
 
 .problem-row:hover {
@@ -217,7 +219,7 @@ watch(activeIndex, (index) => {
 }
 
 .problem-row__id {
-  border: 2px solid var(--color-ink);
+  border: 2px solid var(--color-border-strong);
   background: var(--color-background);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -244,7 +246,7 @@ watch(activeIndex, (index) => {
 
 .progress-track {
   height: 10px;
-  border: 2px solid var(--color-ink);
+  border: 2px solid var(--color-border-strong);
   background: var(--color-background);
 }
 
@@ -258,6 +260,10 @@ watch(activeIndex, (index) => {
   font-size: var(--text-xs);
   font-family: var(--font-mono);
   color: var(--color-text-secondary);
+}
+
+[data-theme='dark'] .problem-row:nth-child(odd) {
+  background: color-mix(in srgb, var(--color-surface) 86%, var(--color-text-primary) 5%);
 }
 
 @media (max-width: 940px) {

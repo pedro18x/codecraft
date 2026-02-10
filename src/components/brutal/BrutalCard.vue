@@ -50,31 +50,32 @@ const hasFooter = computed(() => !!slots.footer)
 .brutal-card {
   position: relative;
   background: var(--color-surface);
-  border: 4px solid var(--color-ink);
-  box-shadow: 4px 4px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
   transition: transform var(--duration-fast) var(--ease), box-shadow var(--duration-fast) var(--ease);
 }
 
 .brutal-card--flat {
-  box-shadow: 4px 4px 0 0 var(--color-ink);
+  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
 }
 
 .brutal-card--elevated {
-  box-shadow: 8px 8px 0 0 var(--color-ink);
+  box-shadow: 6px 6px 0 0 var(--color-shadow-strong);
 }
 
 .brutal-card--interactive {
   cursor: pointer;
-  box-shadow: 8px 8px 0 0 var(--color-ink);
+  box-shadow: 6px 6px 0 0 var(--color-shadow-strong);
 }
 
 .brutal-card--interactive:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 6px 6px 0 0 var(--color-ink);
+  transform: translate(1px, 1px);
+  box-shadow: 4px 4px 0 0 var(--color-shadow-strong);
 }
 
 .brutal-card--interactive:active {
-  transform: translate(4px, 4px);
+  transform: translate(2px, 2px);
   box-shadow: 0 0 0 0 transparent;
 }
 
@@ -112,12 +113,12 @@ const hasFooter = computed(() => !!slots.footer)
 .brutal-card__header,
 .brutal-card__footer {
   padding: 0.95rem 1rem;
-  border-bottom: 3px solid var(--color-ink);
+  border-bottom: 2px solid var(--color-border-strong);
   background: var(--color-background);
 }
 
 .brutal-card__footer {
-  border-top: 3px solid var(--color-ink);
+  border-top: 2px solid var(--color-border-strong);
   border-bottom: 0;
 }
 </style>

@@ -42,8 +42,9 @@ defineEmits<{ (event: 'start', problemId: number): void }>()
 .daily-card {
   position: sticky;
   top: 8.8rem;
-  border: 4px solid var(--color-ink);
-  box-shadow: 8px 8px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 5px 5px 0 0 var(--color-shadow-strong);
   background: var(--color-surface);
   padding: 0.9rem;
   display: grid;
@@ -60,7 +61,8 @@ defineEmits<{ (event: 'start', problemId: number): void }>()
 .daily-card__tag {
   display: inline-flex;
   align-items: center;
-  border: 3px solid var(--color-ink);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
   background: var(--color-coral);
   color: var(--color-white);
   font-family: var(--font-display);

@@ -75,8 +75,9 @@ const onChange = () => {
 .brutal-check__control {
   width: 1.3rem;
   height: 1.3rem;
-  border: 3px solid var(--color-ink);
-  background: var(--color-surface);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -91,7 +92,7 @@ const onChange = () => {
 .brutal-check__icon {
   width: 0.95rem;
   height: 0.95rem;
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
   opacity: 0;
   transform: scale(0.7);
   transition: opacity var(--duration-fast) var(--ease), transform var(--duration-fast) var(--ease);
@@ -101,7 +102,7 @@ const onChange = () => {
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 999px;
-  background: var(--color-ink);
+  background: var(--color-accent-ink);
   opacity: 0;
   transform: scale(0.6);
   transition: opacity var(--duration-fast) var(--ease), transform var(--duration-fast) var(--ease);

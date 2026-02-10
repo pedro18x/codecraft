@@ -251,7 +251,7 @@ const formatDate = (date: Date) =>
           </div>
         </div>
 
-        <BrutalButton variant="ghost" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
+        <BrutalButton variant="secondary" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
       </header>
 
       <BrutalCard v-if="!isAuthenticated" variant="flat" padding="lg">
@@ -398,7 +398,7 @@ const formatDate = (date: Date) =>
       </template>
 
       <template #footer>
-        <BrutalButton variant="ghost" size="sm" @click="badgeModal.close">Close</BrutalButton>
+        <BrutalButton variant="secondary" size="sm" @click="badgeModal.close">Close</BrutalButton>
       </template>
     </BrutalModal>
   </div>

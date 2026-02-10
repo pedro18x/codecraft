@@ -85,7 +85,7 @@ const dashOffset = computed(() => circumference - (percentage.value / 100) * cir
 
 .brutal-progress__bar {
   height: 0.8rem;
-  border: 3px solid var(--color-ink);
+  border: 3px solid var(--color-border-strong);
   background: var(--color-surface);
   overflow: hidden;
 }
@@ -163,7 +163,8 @@ const dashOffset = computed(() => circumference - (percentage.value / 100) * cir
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border: 3px solid var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
   background: var(--color-surface);
   padding: 0.35rem 0.45rem;
   font-size: var(--text-xs);
@@ -175,7 +176,7 @@ const dashOffset = computed(() => circumference - (percentage.value / 100) * cir
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--color-ink);
+  border: 2px solid var(--color-border-strong);
   background: var(--color-background);
   font-weight: var(--font-weight-bold);
   font-family: var(--font-display);
@@ -183,10 +184,12 @@ const dashOffset = computed(() => circumference - (percentage.value / 100) * cir
 
 .brutal-progress__step--done {
   background: var(--color-turquoise);
+  color: var(--color-accent-ink);
 }
 
 .brutal-progress__step--active {
   background: var(--color-yellow);
+  color: var(--color-accent-ink);
 }
 
 .brutal-progress__step-label {
