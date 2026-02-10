@@ -38,10 +38,8 @@ withDefaults(defineProps<Props>(), {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
-  line-height: 1.15;
-  letter-spacing: 0.01em;
   border: var(--border-width) solid var(--button-border);
   cursor: pointer;
   user-select: none;

@@ -108,7 +108,7 @@ const onRippleEnd = (id: number) => {
   font-family: var(--font-body);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.005em;
-  line-height: 1.15;
+  line-height: 1.2;
   cursor: pointer;
   user-select: none;
   overflow: hidden;
