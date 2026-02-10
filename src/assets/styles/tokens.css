@@ -179,9 +179,9 @@
   --dark-accent-danger: #ff5c5c;
   --dark-accent-info: #d4d4d4;
 
-  --dark-shadow-sm: 2px 2px 0 0 #3a3a3a;
-  --dark-shadow-md: 4px 4px 0 0 #424242;
-  --dark-shadow-lg: 8px 8px 0 0 #4a4a4a;
+  --dark-shadow-sm: 2px 2px 0 0 #ffffff;
+  --dark-shadow-md: 4px 4px 0 0 #ffffff;
+  --dark-shadow-lg: 8px 8px 0 0 #ffffff;
 
   --bg: var(--dark-bg);
   --surface-1: var(--dark-surface-1);
@@ -225,7 +225,7 @@
   --color-border: var(--border);
   --color-border-subtle: var(--border);
   --color-border-strong: var(--border-strong);
-  --color-shadow-strong: #424242;
+  --color-shadow-strong: #ffffff;
 
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -252,7 +252,7 @@
   --accent-secondary: var(--accent-success);
 
   --button-border: var(--border-strong);
-  --button-shadow: #424242;
+  --button-shadow: #ffffff;
   --button-primary-bg: var(--accent-primary);
   --button-primary-hover: var(--color-primary-hover);
   --button-primary-text: var(--dark-bg);
