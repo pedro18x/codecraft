@@ -1,106 +1,115 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { api } from '../api/client'
 import { useAuth } from '../composables/useAuth'
-import { useProblemProgress } from '../composables/useProblemProgress'
 import BrutalCard from '../components/brutal/BrutalCard.vue'
 import BrutalTabs from '../components/brutal/BrutalTabs.vue'
-import BrutalDropdown from '../components/brutal/BrutalDropdown.vue'
-import BrutalCheckbox from '../components/brutal/BrutalCheckbox.vue'
 import BrutalBadge from '../components/brutal/BrutalBadge.vue'
 import BrutalButton from '../components/brutal/BrutalButton.vue'
+import BrutalCheckbox from '../components/brutal/BrutalCheckbox.vue'
+import BrutalInput from '../components/brutal/BrutalInput.vue'
+import BrutalEmptyState from '../components/brutal/BrutalEmptyState.vue'
+import BrutalSkeleton from '../components/brutal/BrutalSkeleton.vue'
 
-interface LeaderboardItem {
+interface LeaderboardApiItem {
   rank: number
-  name: string
+  userId: number
+  username: string
+  problemsSolved: number
+  easy: number
+  medium: number
+  hard: number
+}
+
+interface LeaderboardRow extends LeaderboardApiItem {
   score: number
-  streak: number
-  friendsOnly: boolean
+  computedRank: number
 }
 
 const router = useRouter()
 const { user } = useAuth()
-const { completedCount } = useProblemProgress()
 
-const activeTab = ref('global')
+const activeTab = ref<'global' | 'weighted' | 'hard'>('global')
 const tabs = [
   { id: 'global', label: 'Global' },
-  { id: 'weekly', label: 'Weekly' },
-  { id: 'streak', label: 'Streak' },
+  { id: 'weighted', label: 'Weighted' },
+  { id: 'hard', label: 'Hard Focus' },
 ]
 
-const timeframe = ref('7d')
-const friendsOnly = ref(false)
+const showOnlyMe = ref(false)
+const searchQuery = ref('')
+const loading = ref(true)
+const error = ref('')
+const rows = ref<LeaderboardApiItem[]>([])
 
-const timeframeOptions = [
-  { label: 'Last 7 days', value: '7d' },
-  { label: 'Last 30 days', value: '30d' },
-  { label: 'All time', value: 'all' },
-]
+const fetchLeaderboard = async () => {
+  loading.value = true
+  error.value = ''
 
-const baseEntries = computed<LeaderboardItem[]>(() => {
-  const seed = [
-    { name: 'AlgoAva', score: 980, streak: 41, friendsOnly: false },
-    { name: 'BinaryBen', score: 920, streak: 32, friendsOnly: false },
-    { name: 'CacheCora', score: 890, streak: 29, friendsOnly: true },
-    { name: 'DeltaDev', score: 850, streak: 23, friendsOnly: false },
-    { name: 'EdgeEli', score: 810, streak: 18, friendsOnly: true },
-    { name: 'FluxFaye', score: 760, streak: 17, friendsOnly: false },
-    { name: 'GraphGia', score: 730, streak: 14, friendsOnly: false },
-  ]
+  try {
+    const response = await api.get<{ leaderboard: LeaderboardApiItem[] }>('/leaderboard')
+    rows.value = response.leaderboard
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load leaderboard.'
+    rows.value = []
+  } finally {
+    loading.value = false
+  }
+}
 
-  const currentName = user.value?.username ?? 'Guest Coder'
-  const currentScore = 520 + completedCount.value * 22
-  const currentStreak = Math.max(1, Math.floor(completedCount.value / 2))
+onMounted(fetchLeaderboard)
 
-  const entries = [...seed, {
-    name: currentName,
-    score: currentScore,
-    streak: currentStreak,
-    friendsOnly: false,
-  }]
+const scoreFor = (item: LeaderboardApiItem) => {
+  if (activeTab.value === 'global') return item.problemsSolved
+  if (activeTab.value === 'hard') return item.hard
+  return item.hard * 5 + item.medium * 3 + item.easy
+}
 
-  return entries.map((item, index) => ({
-    rank: index + 1,
-    ...item,
-  }))
-})
+const rankedEntries = computed<LeaderboardRow[]>(() => {
+  let list = rows.value
+    .map(item => ({
+      ...item,
+      score: scoreFor(item),
+    }))
+    .filter(item => item.score > 0)
 
-const rankedEntries = computed(() => {
-  let multiplier = 1
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.trim().toLowerCase()
+    list = list.filter(item => item.username.toLowerCase().includes(query))
+  }
 
-  if (activeTab.value === 'weekly') multiplier = 0.6
-  if (activeTab.value === 'streak') multiplier = 0.4
+  if (showOnlyMe.value && user.value) {
+    list = list.filter(item => item.userId === user.value?.id)
+  }
 
-  const entries = baseEntries.value
-    .filter(item => !friendsOnly.value || item.friendsOnly || item.name === (user.value?.username ?? 'Guest Coder'))
-    .map(item => {
-      const adjustedScore = activeTab.value === 'streak'
-        ? item.streak * 100
-        : Math.round(item.score * multiplier)
-
-      return {
-        ...item,
-        score: adjustedScore,
-      }
+  return list
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score
+      if (b.hard !== a.hard) return b.hard - a.hard
+      if (b.medium !== a.medium) return b.medium - a.medium
+      return b.easy - a.easy
     })
-    .sort((a, b) => b.score - a.score)
     .map((item, index) => ({
       ...item,
-      rank: index + 1,
+      computedRank: index + 1,
     }))
-
-  return entries
 })
 
 const topThree = computed(() => rankedEntries.value.slice(0, 3))
-const restEntries = computed(() => rankedEntries.value.slice(3))
+const tableEntries = computed(() => rankedEntries.value.slice(3))
 
-const currentUserName = computed(() => user.value?.username ?? 'Guest Coder')
+const currentUserId = computed(() => user.value?.id ?? null)
 
 const goToDashboard = () => {
   router.push('/dashboard')
 }
+
+const scoreLabel = computed(() => {
+  if (activeTab.value === 'global') return 'Solved'
+  if (activeTab.value === 'hard') return 'Hard Solves'
+  return 'Weighted Score'
+})
 </script>
 
 <template>
@@ -109,10 +118,13 @@ const goToDashboard = () => {
       <header class="leaderboard__header">
         <div>
           <h1 class="leaderboard__title">Leaderboard</h1>
-          <p class="leaderboard__subtitle">Compete with coders and climb the brutal podium.</p>
+          <p class="leaderboard__subtitle">Live rankings from real solved progress. No seed data.</p>
         </div>
 
-        <BrutalButton variant="ghost" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
+        <div class="leaderboard__header-actions">
+          <BrutalButton variant="ghost" size="sm" @click="fetchLeaderboard">Refresh</BrutalButton>
+          <BrutalButton variant="ghost" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
+        </div>
       </header>
 
       <BrutalCard variant="flat" padding="lg">
@@ -120,64 +132,103 @@ const goToDashboard = () => {
           <BrutalTabs v-model="activeTab" :items="tabs" />
 
           <div class="leaderboard__filters">
-            <BrutalDropdown v-model="timeframe" :options="timeframeOptions" />
-            <BrutalCheckbox v-model="friendsOnly" type="checkbox" label="Friends only" />
+            <BrutalInput
+              v-model="searchQuery"
+              label="Find user"
+              placeholder="username"
+            />
+
+            <BrutalCheckbox
+              v-model="showOnlyMe"
+              label="Show only me"
+              :disabled="!user"
+            />
           </div>
         </div>
       </BrutalCard>
 
-      <section class="podium">
-        <BrutalCard
-          v-for="entry in topThree"
-          :key="entry.name"
-          variant="elevated"
-          padding="lg"
-          :accent="entry.rank === 1 ? 'yellow' : entry.rank === 2 ? 'turquoise' : 'coral'"
-        >
-          <div class="podium-card" :class="`podium-card--${entry.rank}`">
-            <p class="podium-rank">#{{ entry.rank }}</p>
-            <p class="podium-name">
-              {{ entry.rank === 1 ? '👑 ' : '' }}{{ entry.name }}
-            </p>
-            <p class="podium-score">{{ entry.score }} pts</p>
-            <p class="podium-streak">{{ entry.streak }} day streak</p>
-          </div>
-        </BrutalCard>
-      </section>
+      <template v-if="loading">
+        <section class="podium">
+          <BrutalCard v-for="idx in 3" :key="idx" variant="elevated" padding="lg">
+            <div class="podium-skeleton">
+              <BrutalSkeleton width="40%" height="1.8rem" />
+              <BrutalSkeleton width="70%" height="1rem" />
+              <BrutalSkeleton width="50%" height="1rem" />
+            </div>
+          </BrutalCard>
+        </section>
+      </template>
 
-      <BrutalCard variant="flat" padding="none">
-        <table class="leaderboard-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Coder</th>
-              <th>Score</th>
-              <th>Streak</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="entry in restEntries"
-              :key="entry.name"
-              :class="{ 'leaderboard-row--me': entry.name === currentUserName }"
-            >
-              <td>#{{ entry.rank }}</td>
-              <td>{{ entry.name }}</td>
-              <td>{{ entry.score }}</td>
-              <td>{{ entry.streak }}d</td>
-              <td>
-                <BrutalBadge
-                  variant="status"
-                  :tone="entry.rank <= 10 ? 'success' : 'neutral'"
-                >
-                  {{ entry.rank <= 10 ? 'Top 10' : 'Climbing' }}
-                </BrutalBadge>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <BrutalCard v-else-if="error" variant="flat" padding="lg">
+        <BrutalEmptyState
+          title="Could not load leaderboard"
+          :description="error"
+          action-label="Retry"
+          @action="fetchLeaderboard"
+        />
       </BrutalCard>
+
+      <BrutalCard v-else-if="rankedEntries.length === 0" variant="flat" padding="lg">
+        <BrutalEmptyState
+          title="No leaderboard entries"
+          description="No one has completed problems yet for this filter."
+          action-label="Reset filters"
+          @action="() => { searchQuery = ''; showOnlyMe = false }"
+        />
+      </BrutalCard>
+
+      <template v-else>
+        <section class="podium">
+          <BrutalCard
+            v-for="entry in topThree"
+            :key="entry.userId"
+            variant="elevated"
+            padding="lg"
+            :accent="entry.computedRank === 1 ? 'yellow' : entry.computedRank === 2 ? 'turquoise' : 'coral'"
+          >
+            <div class="podium-card" :class="`podium-card--${entry.computedRank}`">
+              <p class="podium-rank">#{{ entry.computedRank }}</p>
+              <p class="podium-name">{{ entry.computedRank === 1 ? '👑 ' : '' }}{{ entry.username }}</p>
+              <p class="podium-score">{{ entry.score }} {{ scoreLabel.toLowerCase() }}</p>
+              <p class="podium-meta">Hard {{ entry.hard }} · Medium {{ entry.medium }} · Easy {{ entry.easy }}</p>
+            </div>
+          </BrutalCard>
+        </section>
+
+        <BrutalCard variant="flat" padding="none">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Coder</th>
+                <th>{{ scoreLabel }}</th>
+                <th>Breakdown</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="entry in tableEntries"
+                :key="entry.userId"
+                :class="{ 'leaderboard-row--me': entry.userId === currentUserId }"
+              >
+                <td>#{{ entry.computedRank }}</td>
+                <td>{{ entry.username }}</td>
+                <td>{{ entry.score }}</td>
+                <td>H{{ entry.hard }} · M{{ entry.medium }} · E{{ entry.easy }}</td>
+                <td>
+                  <BrutalBadge
+                    variant="status"
+                    :tone="entry.computedRank <= 10 ? 'success' : 'neutral'"
+                  >
+                    {{ entry.computedRank <= 10 ? 'Top 10' : 'Climbing' }}
+                  </BrutalBadge>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </BrutalCard>
+      </template>
     </div>
   </div>
 </template>
@@ -198,8 +249,14 @@ const goToDashboard = () => {
 .leaderboard__header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.leaderboard__header-actions {
+  display: flex;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
@@ -207,6 +264,7 @@ const goToDashboard = () => {
   font-family: var(--font-display);
   font-size: var(--text-4xl);
   line-height: 1;
+  margin: 0;
 }
 
 .leaderboard__subtitle {
@@ -220,17 +278,21 @@ const goToDashboard = () => {
 }
 
 .leaderboard__filters {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.75rem;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+  align-items: end;
 }
 
 .podium {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
+}
+
+.podium-skeleton {
+  display: grid;
+  gap: 0.55rem;
 }
 
 .podium-card {
@@ -242,6 +304,7 @@ const goToDashboard = () => {
   font-size: var(--text-3xl);
   font-weight: var(--font-weight-extrabold);
   line-height: 1;
+  margin: 0;
 }
 
 .podium-name {
@@ -255,7 +318,7 @@ const goToDashboard = () => {
   font-family: var(--font-display);
 }
 
-.podium-streak {
+.podium-meta {
   margin-top: 0.2rem;
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
@@ -299,6 +362,10 @@ const goToDashboard = () => {
 
 @media (max-width: 940px) {
   .podium {
+    grid-template-columns: 1fr;
+  }
+
+  .leaderboard__filters {
     grid-template-columns: 1fr;
   }
 }

@@ -6,6 +6,13 @@
 
 ## Architecture & Design Philosophy
 
+## Production Data Policy (Critical)
+
+- Never ship hardcoded domain data, fake leaderboard users, or mock product records in frontend views/components.
+- For production behavior, always consume real backend APIs or persisted storage.
+- If backend support is missing for a feature, surface an explicit loading/error/empty state instead of inventing placeholder business data.
+- Static fixtures are allowed only for test files and explicit local test tooling, never for runtime user-facing screens.
+
 ### Tech Stack
 - **Framework**: Vue 3 with Composition API and `<script setup>` syntax
 - **Language**: TypeScript with strict type checking
@@ -112,8 +119,8 @@ src/
 │   ├── ProblemDescription.vue # Problem details
 │   ├── CodeEditor.vue  # Code input area
 │   └── TestRunner.vue  # Test execution and results
-├── data/               # Static data and mocks
-│   └── problems.ts     # Problem set
+├── data/               # Seed/fixture data for development utilities only (not runtime production UI)
+│   └── problems.ts
 ├── types/              # TypeScript types and Zod schemas
 │   └── index.ts        # Centralized type definitions
 ├── App.vue             # Root component

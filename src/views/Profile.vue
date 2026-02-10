@@ -1,16 +1,62 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { problems } from '../data/problems'
+import { api } from '../api/client'
 import { useAuth } from '../composables/useAuth'
-import { useProblemProgress } from '../composables/useProblemProgress'
-import { useModal } from '../composables/useModal'
 import BrutalButton from '../components/brutal/BrutalButton.vue'
 import BrutalCard from '../components/brutal/BrutalCard.vue'
 import BrutalTabs from '../components/brutal/BrutalTabs.vue'
 import BrutalProgress from '../components/brutal/BrutalProgress.vue'
 import BrutalBadge from '../components/brutal/BrutalBadge.vue'
 import BrutalModal from '../components/brutal/BrutalModal.vue'
+import BrutalEmptyState from '../components/brutal/BrutalEmptyState.vue'
+import BrutalSkeleton from '../components/brutal/BrutalSkeleton.vue'
+import { useModal } from '../composables/useModal'
+
+interface ProgressEntry {
+  id: number
+  problemId: number
+  status: 'attempted' | 'completed'
+  attempts: number
+  lastAttempt: string
+  completedAt: string | null
+  problem: {
+    id: number
+    title: string
+    slug: string
+    difficulty: 'Easy' | 'Medium' | 'Hard'
+  }
+}
+
+interface ProgressStats {
+  totalProblems: number
+  completedCount: number
+  attemptedCount: number
+  byDifficulty: {
+    Easy: number
+    Medium: number
+    Hard: number
+  }
+}
+
+interface SubmissionEntry {
+  id: number
+  problemId: number
+  language: string
+  success: boolean
+  executionTimeMs: number | null
+  createdAt: string
+}
+
+interface LeaderboardEntry {
+  rank: number
+  userId: number
+  username: string
+  problemsSolved: number
+  easy: number
+  medium: number
+  hard: number
+}
 
 interface BadgeItem {
   id: string
@@ -21,8 +67,7 @@ interface BadgeItem {
 }
 
 const router = useRouter()
-const { user } = useAuth()
-const { attempts, completedCount, isCompleted } = useProblemProgress()
+const { user, isAuthenticated } = useAuth()
 
 const activeTab = ref('overview')
 const tabItems = [
@@ -32,19 +77,58 @@ const tabItems = [
   { id: 'badges', label: 'Badges' },
 ]
 
-const solvedProblems = computed(() => problems.filter(problem => isCompleted(problem.id)))
+const loading = ref(false)
+const loadError = ref('')
+const progressEntries = ref<ProgressEntry[]>([])
+const submissions = ref<SubmissionEntry[]>([])
+const stats = ref<ProgressStats | null>(null)
+const leaderboardRank = ref<number | null>(null)
+
+const fetchProfileData = async () => {
+  if (!isAuthenticated.value) return
+
+  loading.value = true
+  loadError.value = ''
+
+  try {
+    const [progressData, statsData, submissionsData, leaderboardData] = await Promise.all([
+      api.get<ProgressEntry[]>('/progress'),
+      api.get<ProgressStats>('/progress/stats'),
+      api.get<{ submissions: SubmissionEntry[] }>('/submissions'),
+      api.get<{ leaderboard: LeaderboardEntry[] }>('/leaderboard'),
+    ])
+
+    progressEntries.value = progressData
+    stats.value = statsData
+    submissions.value = submissionsData.submissions
+
+    leaderboardRank.value = leaderboardData.leaderboard.find(
+      entry => entry.userId === user.value?.id
+    )?.rank ?? null
+  } catch (err) {
+    loadError.value = err instanceof Error ? err.message : 'Failed to load profile data.'
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchProfileData)
+
+const solvedProblems = computed(() =>
+  progressEntries.value.filter(entry => entry.status === 'completed')
+)
 
 const completionRate = computed(() => {
-  if (!problems.length) return 0
-  return Math.round((completedCount.value / problems.length) * 100)
+  if (!stats.value?.totalProblems) return 0
+  return Math.round((stats.value.completedCount / stats.value.totalProblems) * 100)
 })
-
-const attemptEntries = computed(() => Object.values(attempts.value))
 
 const streakDays = computed(() => {
   const uniqueDays = new Set(
-    attemptEntries.value.map(entry => new Date(entry.lastAttempted).toISOString().slice(0, 10))
+    submissions.value.map(entry => new Date(entry.createdAt).toISOString().slice(0, 10))
   )
+
+  if (uniqueDays.size === 0) return 0
 
   let streak = 0
   const cursor = new Date()
@@ -62,32 +146,15 @@ const streakDays = computed(() => {
   return streak
 })
 
-const rankScore = computed(() => Math.max(1, 750 - completedCount.value * 12))
-
-const recentActivity = computed(() => {
-  return [...attemptEntries.value]
-    .sort((a, b) => b.lastAttempted - a.lastAttempted)
-    .slice(0, 8)
-    .map(entry => {
-      const problem = problems.find(item => item.id === entry.problemId)
-      return {
-        id: entry.problemId,
-        title: problem?.title ?? `Problem #${entry.problemId}`,
-        date: new Date(entry.lastAttempted),
-        completed: entry.completed,
-        attempts: entry.attempts,
-      }
-    })
-})
-
 const heatmapDays = computed(() => {
-  const days = [] as Array<{ date: string; count: number }>
   const counts = new Map<string, number>()
 
-  for (const entry of attemptEntries.value) {
-    const key = new Date(entry.lastAttempted).toISOString().slice(0, 10)
-    counts.set(key, (counts.get(key) ?? 0) + entry.attempts)
+  for (const entry of submissions.value) {
+    const key = new Date(entry.createdAt).toISOString().slice(0, 10)
+    counts.set(key, (counts.get(key) ?? 0) + 1)
   }
+
+  const days = [] as Array<{ date: string; count: number }>
 
   for (let i = 69; i >= 0; i -= 1) {
     const date = new Date()
@@ -106,12 +173,32 @@ const heatLevelClass = (count: number) => {
   return 'heat--3'
 }
 
+const recentActivity = computed(() => {
+  const titleByProblemId = new Map(
+    progressEntries.value.map(entry => [entry.problemId, entry.problem.title] as const)
+  )
+
+  return submissions.value
+    .slice()
+    .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
+    .slice(0, 10)
+    .map(entry => ({
+      id: entry.id,
+      problemId: entry.problemId,
+      title: titleByProblemId.get(entry.problemId) ?? `Problem #${entry.problemId}`,
+      date: new Date(entry.createdAt),
+      success: entry.success,
+      language: entry.language,
+      executionTimeMs: entry.executionTimeMs,
+    }))
+})
+
 const badges = computed<BadgeItem[]>(() => [
   {
     id: 'first-solve',
     name: 'First Solve',
     description: 'Solve your first coding problem.',
-    earned: completedCount.value >= 1,
+    earned: (stats.value?.completedCount ?? 0) >= 1,
     tone: 'success',
   },
   {
@@ -125,14 +212,14 @@ const badges = computed<BadgeItem[]>(() => [
     id: 'medium-master',
     name: 'Medium Master',
     description: 'Solve 5 medium problems.',
-    earned: solvedProblems.value.filter(problem => problem.difficulty === 'Medium').length >= 5,
+    earned: (stats.value?.byDifficulty.Medium ?? 0) >= 5,
     tone: 'warning',
   },
   {
     id: 'hardcore',
     name: 'Hardcore',
     description: 'Solve at least one hard problem.',
-    earned: solvedProblems.value.some(problem => problem.difficulty === 'Hard'),
+    earned: (stats.value?.byDifficulty.Hard ?? 0) >= 1,
     tone: 'error',
   },
 ])
@@ -145,9 +232,8 @@ const openBadge = (badge: BadgeItem) => {
   badgeModal.open()
 }
 
-const goToDashboard = () => {
-  router.push('/dashboard')
-}
+const goToDashboard = () => router.push('/dashboard')
+const goToLogin = () => router.push('/login')
 
 const formatDate = (date: Date) =>
   date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
@@ -161,110 +247,144 @@ const formatDate = (date: Date) =>
           <div class="profile__avatar" aria-hidden="true">{{ (user?.username ?? 'G').slice(0, 1).toUpperCase() }}</div>
           <div>
             <h1 class="profile__name">{{ user?.username ?? 'Guest Coder' }}</h1>
-            <p class="profile__bio">Building interview muscle one problem at a time.</p>
+            <p class="profile__bio">Progress and activity from your real submissions.</p>
           </div>
         </div>
 
         <BrutalButton variant="ghost" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
       </header>
 
-      <section class="profile__stats">
-        <BrutalCard variant="interactive" accent="turquoise" padding="lg">
-          <p class="stat__value">{{ completedCount }}</p>
-          <p class="stat__label">Solved</p>
-        </BrutalCard>
+      <BrutalCard v-if="!isAuthenticated" variant="flat" padding="lg">
+        <BrutalEmptyState
+          title="Sign in to view profile analytics"
+          description="Profile and leaderboard metrics require your account data."
+          action-label="Go to login"
+          @action="goToLogin"
+        />
+      </BrutalCard>
 
-        <BrutalCard variant="interactive" accent="yellow" padding="lg">
-          <p class="stat__value">{{ streakDays }}</p>
-          <p class="stat__label">Day Streak</p>
-        </BrutalCard>
-
-        <BrutalCard variant="interactive" accent="coral" padding="lg">
-          <p class="stat__value">#{{ rankScore }}</p>
-          <p class="stat__label">Rank</p>
-        </BrutalCard>
-      </section>
-
-      <section class="profile__tabs">
-        <BrutalTabs v-model="activeTab" :items="tabItems" />
-      </section>
-
-      <section v-if="activeTab === 'overview'" class="profile__panel profile__panel--overview">
-        <BrutalCard variant="elevated" padding="lg">
-          <h2 class="section-title">Progress Snapshot</h2>
-          <BrutalProgress variant="bar" :value="completedCount" :max="problems.length" />
-          <p class="section-muted">{{ completionRate }}% complete across {{ problems.length }} problems</p>
-        </BrutalCard>
-
-        <BrutalCard variant="flat" padding="lg">
-          <h2 class="section-title">Consistency Heatmap</h2>
-          <div class="heatmap-grid">
-            <span
-              v-for="day in heatmapDays"
-              :key="day.date"
-              class="heat-cell"
-              :class="heatLevelClass(day.count)"
-              :title="`${day.date}: ${day.count} attempt${day.count === 1 ? '' : 's'}`"
-            />
+      <template v-else>
+        <BrutalCard v-if="loading" variant="flat" padding="lg">
+          <div class="loading-grid">
+            <BrutalSkeleton width="30%" height="2rem" />
+            <BrutalSkeleton width="100%" height="0.9rem" />
+            <BrutalSkeleton width="100%" height="0.9rem" />
           </div>
         </BrutalCard>
-      </section>
 
-      <section v-else-if="activeTab === 'solutions'" class="profile__panel">
-        <BrutalCard v-if="solvedProblems.length" variant="flat" padding="none">
-          <ul class="solutions-list">
-            <li v-for="problem in solvedProblems" :key="problem.id" class="solutions-item">
-              <div>
-                <p class="solutions-title">#{{ problem.id }} {{ problem.title }}</p>
-                <p class="solutions-meta">{{ problem.categories.join(' · ') }}</p>
+        <BrutalCard v-else-if="loadError" variant="flat" padding="lg">
+          <BrutalEmptyState
+            title="Could not load profile"
+            :description="loadError"
+            action-label="Retry"
+            @action="fetchProfileData"
+          />
+        </BrutalCard>
+
+        <template v-else>
+          <section class="profile__stats">
+            <BrutalCard variant="interactive" accent="turquoise" padding="lg">
+              <p class="stat__value">{{ stats?.completedCount ?? 0 }}</p>
+              <p class="stat__label">Solved</p>
+            </BrutalCard>
+
+            <BrutalCard variant="interactive" accent="yellow" padding="lg">
+              <p class="stat__value">{{ streakDays }}</p>
+              <p class="stat__label">Day Streak</p>
+            </BrutalCard>
+
+            <BrutalCard variant="interactive" accent="coral" padding="lg">
+              <p class="stat__value">{{ leaderboardRank ? `#${leaderboardRank}` : '—' }}</p>
+              <p class="stat__label">Global Rank</p>
+            </BrutalCard>
+          </section>
+
+          <section class="profile__tabs">
+            <BrutalTabs v-model="activeTab" :items="tabItems" />
+          </section>
+
+          <section v-if="activeTab === 'overview'" class="profile__panel profile__panel--overview">
+            <BrutalCard variant="elevated" padding="lg">
+              <h2 class="section-title">Progress Snapshot</h2>
+              <BrutalProgress variant="bar" :value="stats?.completedCount ?? 0" :max="stats?.totalProblems ?? 1" />
+              <p class="section-muted">{{ completionRate }}% complete across {{ stats?.totalProblems ?? 0 }} problems</p>
+            </BrutalCard>
+
+            <BrutalCard variant="flat" padding="lg">
+              <h2 class="section-title">Consistency Heatmap</h2>
+              <div class="heatmap-grid">
+                <span
+                  v-for="day in heatmapDays"
+                  :key="day.date"
+                  class="heat-cell"
+                  :class="heatLevelClass(day.count)"
+                  :title="`${day.date}: ${day.count} submission${day.count === 1 ? '' : 's'}`"
+                />
               </div>
-              <BrutalBadge
-                variant="difficulty"
-                :tone="problem.difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'"
+            </BrutalCard>
+          </section>
+
+          <section v-else-if="activeTab === 'solutions'" class="profile__panel">
+            <BrutalCard v-if="solvedProblems.length" variant="flat" padding="none">
+              <ul class="solutions-list">
+                <li v-for="entry in solvedProblems" :key="entry.id" class="solutions-item">
+                  <div>
+                    <p class="solutions-title">#{{ entry.problem.id }} {{ entry.problem.title }}</p>
+                    <p class="solutions-meta">Solved · Attempts: {{ entry.attempts }}</p>
+                  </div>
+                  <BrutalBadge
+                    variant="difficulty"
+                    :tone="entry.problem.difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'"
+                  >
+                    {{ entry.problem.difficulty }}
+                  </BrutalBadge>
+                </li>
+              </ul>
+            </BrutalCard>
+
+            <BrutalCard v-else variant="flat" padding="lg">
+              <p class="section-muted">No solved problems yet. Start from the dashboard and submit a working solution.</p>
+            </BrutalCard>
+          </section>
+
+          <section v-else-if="activeTab === 'activity'" class="profile__panel">
+            <BrutalCard variant="flat" padding="none">
+              <ul class="activity-list">
+                <li v-for="activity in recentActivity" :key="activity.id" class="activity-item">
+                  <span class="activity-dot" :class="{ 'activity-dot--done': activity.success }" />
+                  <div>
+                    <p class="activity-title">{{ activity.title }}</p>
+                    <p class="activity-meta">
+                      {{ formatDate(activity.date) }} · {{ activity.language }} ·
+                      {{ activity.executionTimeMs ? `${activity.executionTimeMs}ms` : 'n/a' }} ·
+                      {{ activity.success ? 'passed' : 'failed' }}
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </BrutalCard>
+          </section>
+
+          <section v-else class="profile__panel">
+            <div class="badges-grid">
+              <BrutalCard
+                v-for="badge in badges"
+                :key="badge.id"
+                variant="interactive"
+                padding="md"
+                :accent="badge.earned ? 'turquoise' : null"
+                @click="openBadge(badge)"
               >
-                {{ problem.difficulty }}
-              </BrutalBadge>
-            </li>
-          </ul>
-        </BrutalCard>
-
-        <BrutalCard v-else variant="flat" padding="lg">
-          <p class="section-muted">No solved problems yet. Start from the dashboard and ship one.</p>
-        </BrutalCard>
-      </section>
-
-      <section v-else-if="activeTab === 'activity'" class="profile__panel">
-        <BrutalCard variant="flat" padding="none">
-          <ul class="activity-list">
-            <li v-for="activity in recentActivity" :key="`${activity.id}-${activity.date.toISOString()}`" class="activity-item">
-              <span class="activity-dot" :class="{ 'activity-dot--done': activity.completed }" />
-              <div>
-                <p class="activity-title">{{ activity.title }}</p>
-                <p class="activity-meta">{{ formatDate(activity.date) }} · {{ activity.attempts }} attempt{{ activity.attempts === 1 ? '' : 's' }}</p>
-              </div>
-            </li>
-          </ul>
-        </BrutalCard>
-      </section>
-
-      <section v-else class="profile__panel">
-        <div class="badges-grid">
-          <BrutalCard
-            v-for="badge in badges"
-            :key="badge.id"
-            variant="interactive"
-            padding="md"
-            :accent="badge.earned ? 'turquoise' : null"
-            @click="openBadge(badge)"
-          >
-            <div class="badge-card" :class="{ 'badge-card--locked': !badge.earned }">
-              <BrutalBadge variant="status" :tone="badge.tone">{{ badge.earned ? 'Earned' : 'Locked' }}</BrutalBadge>
-              <p class="badge-card__title">{{ badge.name }}</p>
-              <p class="badge-card__desc">{{ badge.description }}</p>
+                <div class="badge-card" :class="{ 'badge-card--locked': !badge.earned }">
+                  <BrutalBadge variant="status" :tone="badge.tone">{{ badge.earned ? 'Earned' : 'Locked' }}</BrutalBadge>
+                  <p class="badge-card__title">{{ badge.name }}</p>
+                  <p class="badge-card__desc">{{ badge.description }}</p>
+                </div>
+              </BrutalCard>
             </div>
-          </BrutalCard>
-        </div>
-      </section>
+          </section>
+        </template>
+      </template>
     </div>
 
     <BrutalModal
@@ -328,11 +448,17 @@ const formatDate = (date: Date) =>
   font-family: var(--font-display);
   font-size: var(--text-3xl);
   line-height: 1;
+  margin: 0;
 }
 
 .profile__bio {
   margin-top: 0.25rem;
   color: var(--color-text-secondary);
+}
+
+.loading-grid {
+  display: grid;
+  gap: 0.6rem;
 }
 
 .profile__stats {
@@ -346,6 +472,7 @@ const formatDate = (date: Date) =>
   font-size: var(--text-3xl);
   font-weight: var(--font-weight-extrabold);
   line-height: 1;
+  margin: 0;
 }
 
 .stat__label {
@@ -440,7 +567,7 @@ const formatDate = (date: Date) =>
   width: 0.8rem;
   height: 0.8rem;
   border-radius: 999px;
-  background: var(--color-yellow);
+  background: var(--color-coral);
   border: 2px solid var(--color-ink);
 }
 
