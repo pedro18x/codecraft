@@ -451,7 +451,7 @@ const goBack = () => {
 /* ── Header ── */
 .practice__header {
   height: 3rem;
-  border-bottom: var(--border-width) solid var(--color-ink);
+  border-bottom: var(--border-width) solid var(--button-border);
   flex-shrink: 0;
   background-color: var(--color-surface);
 }
@@ -481,8 +481,8 @@ const goBack = () => {
 
 .practice__back:hover {
   color: var(--color-text-primary);
-  border-color: var(--color-ink);
-  background-color: var(--color-surface-hover);
+  border-color: var(--button-border);
+  background-color: var(--button-ghost-hover);
 }
 
 .practice__back:focus-visible {
@@ -509,7 +509,7 @@ const goBack = () => {
 /* ── Nav buttons ── */
 .practice__nav {
   display: flex;
-  border: var(--border-thin) solid var(--color-ink);
+  border: var(--border-thin) solid var(--button-border);
 }
 
 .practice__nav-btn {
@@ -519,19 +519,19 @@ const goBack = () => {
   width: 2rem;
   height: 2rem;
   color: var(--color-text-secondary);
-  background: var(--color-surface);
+  background: var(--button-ghost-bg);
   border: none;
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease);
 }
 
 .practice__nav-btn + .practice__nav-btn {
-  border-left: var(--border-thin) solid var(--color-ink);
+  border-left: var(--border-thin) solid var(--button-border);
 }
 
 .practice__nav-btn:hover:not(:disabled) {
   color: var(--color-text-primary);
-  background-color: var(--color-surface-hover);
+  background-color: var(--button-ghost-hover);
 }
 
 .practice__nav-btn:disabled {
@@ -551,15 +551,15 @@ const goBack = () => {
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   color: var(--color-text-secondary);
-  background: var(--color-surface);
-  border: var(--border-thin) solid var(--color-ink);
+  background: var(--button-ghost-bg);
+  border: var(--border-thin) solid var(--button-border);
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease);
 }
 
 .practice__action-btn:hover {
   color: var(--color-text-primary);
-  background-color: var(--color-surface-hover);
+  background-color: var(--button-ghost-hover);
 }
 
 .practice__action-btn:focus-visible {
@@ -572,14 +572,14 @@ const goBack = () => {
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
-  background: var(--color-surface);
-  border: var(--border-thin) solid var(--color-ink);
+  background: var(--button-ghost-bg);
+  border: var(--border-thin) solid var(--button-border);
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease);
 }
 
 .practice__focus-toggle:hover {
-  background-color: var(--color-surface-hover);
+  background-color: var(--button-ghost-hover);
 }
 
 .practice__focus-toggle:focus-visible {

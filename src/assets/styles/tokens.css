@@ -42,6 +42,21 @@
   --color-error-bg: #ffd8dd;
   --color-info-bg: #dde3f7;
 
+  --button-border: var(--color-border-strong);
+  --button-shadow: var(--color-shadow-strong);
+  --button-primary-bg: var(--color-coral);
+  --button-primary-hover: #f05f6b;
+  --button-primary-text: var(--color-white);
+  --button-secondary-bg: var(--color-turquoise);
+  --button-secondary-hover: #36bbb2;
+  --button-secondary-text: var(--color-accent-ink);
+  --button-ghost-bg: var(--color-surface-raised);
+  --button-ghost-hover: var(--color-surface-hover);
+  --button-ghost-text: var(--color-text-primary);
+  --button-danger-bg: var(--color-error);
+  --button-danger-hover: #bf3f4d;
+  --button-danger-text: var(--color-white);
+
   --font-display: 'Syne', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -124,6 +139,21 @@
   --color-warning-bg: #312713;
   --color-error-bg: #372024;
   --color-info-bg: #232738;
+
+  --button-border: #b1ab9f;
+  --button-shadow: #6e6960;
+  --button-primary-bg: #a6414d;
+  --button-primary-hover: #963742;
+  --button-primary-text: #fffef9;
+  --button-secondary-bg: #2f8f89;
+  --button-secondary-hover: #267d78;
+  --button-secondary-text: #0f0f10;
+  --button-ghost-bg: #1f2023;
+  --button-ghost-hover: #2a2b30;
+  --button-ghost-text: #fffef9;
+  --button-danger-bg: #8f313d;
+  --button-danger-hover: #812b37;
+  --button-danger-text: #fffef9;
 
   --shadow-brutal-sm: 2px 2px 0 0 var(--color-shadow-strong);
   --shadow-brutal: 4px 4px 0 0 var(--color-shadow-strong);

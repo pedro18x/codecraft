@@ -27,6 +27,9 @@ Dark mode is a black-first palette with neutral charcoal surfaces and warm contr
 - `--color-yellow`: `#e8b93f`
 - `--color-info`: `#5d6ec4`
 
+Dark-mode button accents are mapped through dedicated button tokens (`--button-*`) so primary/secondary/ghost/danger buttons are tuned for black surfaces without reusing light-theme values.
+Key dark button tones: primary `#a6414d`, secondary `#2f8f89`, danger `#8f313d`.
+
 ## Core Components
 - Buttons, cards, inputs/textarea, badges
 - Modal, toast stack, progress variants, tabs, dropdown

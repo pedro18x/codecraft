@@ -40,19 +40,22 @@ withDefaults(defineProps<Props>(), {
   gap: var(--space-2);
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
-  border: var(--border-width) solid var(--color-ink);
+  border: var(--border-width) solid var(--button-border);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
   position: relative;
-  box-shadow: var(--shadow-brutal);
+  box-shadow: 4px 4px 0 0 var(--button-shadow);
   transition: transform var(--duration-fast) var(--ease),
-              box-shadow var(--duration-fast) var(--ease);
+              box-shadow var(--duration-fast) var(--ease),
+              background-color var(--duration-fast) var(--ease),
+              color var(--duration-fast) var(--ease),
+              border-color var(--duration-fast) var(--ease);
 }
 
 .brutal-btn:hover:not(:disabled) {
   transform: translate(2px, 2px);
-  box-shadow: var(--shadow-brutal-sm);
+  box-shadow: 2px 2px 0 0 var(--button-shadow);
 }
 
 .brutal-btn:active:not(:disabled) {
@@ -86,35 +89,39 @@ withDefaults(defineProps<Props>(), {
 
 /* ── Variants ── */
 .brutal-btn--primary {
-  background-color: var(--color-coral);
-  color: var(--color-white);
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
 .brutal-btn--primary:hover:not(:disabled) {
-  background-color: var(--color-coral-dark);
+  background-color: var(--button-primary-hover);
 }
 
 .brutal-btn--secondary {
-  background-color: var(--color-turquoise);
-  color: var(--color-ink);
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
 }
 
 .brutal-btn--secondary:hover:not(:disabled) {
-  background-color: var(--color-turquoise-dark);
+  background-color: var(--button-secondary-hover);
 }
 
 .brutal-btn--ghost {
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
+  background-color: var(--button-ghost-bg);
+  color: var(--button-ghost-text);
 }
 
 .brutal-btn--ghost:hover:not(:disabled) {
-  background-color: var(--color-surface-hover);
+  background-color: var(--button-ghost-hover);
 }
 
 .brutal-btn--danger {
-  background-color: var(--color-coral);
-  color: var(--color-white);
+  background-color: var(--button-danger-bg);
+  color: var(--button-danger-text);
+}
+
+.brutal-btn--danger:hover:not(:disabled) {
+  background-color: var(--button-danger-hover);
 }
 
 /* ── States ── */

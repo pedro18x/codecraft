@@ -100,11 +100,11 @@ const onRippleEnd = (id: number) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid var(--color-border-strong);
+  border: 3px solid var(--button-border);
   border-radius: var(--radius-md);
-  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
-  background: var(--color-coral);
-  color: var(--color-white);
+  box-shadow: 3px 3px 0 0 var(--button-shadow);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
   font-family: var(--font-body);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.005em;
@@ -113,12 +113,12 @@ const onRippleEnd = (id: number) => {
   user-select: none;
   overflow: hidden;
   transform: translate(0, 0);
-  transition: transform var(--duration-fast) var(--ease), box-shadow var(--duration-fast) var(--ease), background-color var(--duration-fast) var(--ease);
+  transition: transform var(--duration-fast) var(--ease), box-shadow var(--duration-fast) var(--ease), background-color var(--duration-fast) var(--ease), color var(--duration-fast) var(--ease), border-color var(--duration-fast) var(--ease);
 }
 
 .brutal-button:hover:not(:disabled) {
   transform: translate(1px, 1px);
-  box-shadow: 2px 2px 0 0 var(--color-shadow-strong);
+  box-shadow: 2px 2px 0 0 var(--button-shadow);
 }
 
 .brutal-button:active:not(:disabled) {
@@ -139,27 +139,39 @@ const onRippleEnd = (id: number) => {
 }
 
 .brutal-button--primary {
-  background: var(--color-coral);
-  color: var(--color-white);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.brutal-button--primary:hover:not(:disabled) {
+  background: var(--button-primary-hover);
 }
 
 .brutal-button--secondary {
-  background: var(--color-turquoise);
-  color: var(--color-accent-ink);
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+}
+
+.brutal-button--secondary:hover:not(:disabled) {
+  background: var(--button-secondary-hover);
 }
 
 .brutal-button--ghost {
-  background: var(--color-surface-raised);
-  color: var(--color-text-primary);
+  background: var(--button-ghost-bg);
+  color: var(--button-ghost-text);
 }
 
 .brutal-button--ghost:hover:not(:disabled) {
-  background: var(--color-surface-hover);
+  background: var(--button-ghost-hover);
 }
 
 .brutal-button--danger {
-  background: var(--color-error);
-  color: var(--color-white);
+  background: var(--button-danger-bg);
+  color: var(--button-danger-text);
+}
+
+.brutal-button--danger:hover:not(:disabled) {
+  background: var(--button-danger-hover);
 }
 
 .brutal-button--sm {

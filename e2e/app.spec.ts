@@ -23,6 +23,9 @@ const contrastRatio = (a: number[], b: number[]) => {
   return (light + 0.05) / (dark + 0.05)
 }
 
+const colorDistance = (a: number[], b: number[]) =>
+  Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2])
+
 const getButtonContrast = async (locator: Locator) => {
   return locator.evaluate((el) => {
     const style = window.getComputedStyle(el)
@@ -57,9 +60,11 @@ test.describe('CodeCraft MVP UX', () => {
     await themeButton.click()
 
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    await page.waitForTimeout(700)
 
     const profileButton = page.getByRole('button', { name: 'Profile' })
     const leaderboardButton = page.getByRole('button', { name: 'Leaderboard' })
+    const lightModeSecondary = [78, 205, 196]
 
     for (const button of [profileButton, leaderboardButton, themeButton]) {
       const data = await getButtonContrast(button)
@@ -68,6 +73,9 @@ test.describe('CodeCraft MVP UX', () => {
 
       const ratio = contrastRatio(parseRgb(data.color), parseRgb(data.background))
       expect(ratio, `${data.text} contrast is too low`).toBeGreaterThan(3)
+
+      const bgDistance = colorDistance(parseRgb(data.background), lightModeSecondary)
+      expect(bgDistance, `${data.text} still uses light-mode accent color`).toBeGreaterThan(20)
     }
   })
 

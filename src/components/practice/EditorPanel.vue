@@ -190,18 +190,20 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
   font-size: var(--text-sm);
-  background-color: var(--color-turquoise);
-  color: var(--color-ink);
-  border: var(--border-thin) solid var(--color-ink);
-  box-shadow: 2px 2px 0 0 var(--color-ink);
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  border: var(--border-thin) solid var(--button-border);
+  box-shadow: 2px 2px 0 0 var(--button-shadow);
   cursor: pointer;
   transition: transform var(--duration-fast) var(--ease),
-              box-shadow var(--duration-fast) var(--ease);
+              box-shadow var(--duration-fast) var(--ease),
+              background-color var(--duration-fast) var(--ease);
 }
 
 .run-btn:hover:not(:disabled) {
+  background-color: var(--button-secondary-hover);
   transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 0 var(--color-ink);
+  box-shadow: 1px 1px 0 0 var(--button-shadow);
 }
 
 .run-btn:active:not(:disabled) {
@@ -216,12 +218,13 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 
 .run-btn--running {
   background-color: var(--color-yellow);
+  color: var(--color-accent-ink);
 }
 
 .run-btn__shortcut {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-ink);
+  color: currentColor;
   opacity: 0.5;
   margin-left: var(--space-1);
 }
@@ -229,7 +232,7 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 .run-btn__spinner {
   width: 12px;
   height: 12px;
-  border: 2px solid var(--color-ink);
+  border: 2px solid currentColor;
   border-top-color: transparent;
   animation: spin 0.6s linear infinite;
 }
