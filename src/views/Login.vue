@@ -2,21 +2,23 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
-import Text from '../design-system/components/Text.vue'
-import Button from '../design-system/components/Button.vue'
+import BrutalInput from '../components/brutal/BrutalInput.vue'
+import BrutalButton from '../components/brutal/BrutalButton.vue'
+import BrutalCard from '../components/brutal/BrutalCard.vue'
 
 const router = useRouter()
 const { login, error: authError, isLoading } = useAuth()
 
 const email = ref('')
 const password = ref('')
-const formError = ref<string | null>(null)
+const showPassword = ref(false)
+const formError = ref<string>('')
 
 const handleSubmit = async () => {
-  formError.value = null
+  formError.value = ''
 
   if (!email.value || !password.value) {
-    formError.value = 'Please fill in all fields'
+    formError.value = 'Please fill in all fields.'
     return
   }
 
@@ -24,96 +26,87 @@ const handleSubmit = async () => {
     await login(email.value, password.value)
     router.push('/dashboard')
   } catch {
-    formError.value = authError.value
+    formError.value = authError.value ?? 'Login failed.'
   }
+}
+
+const goToRegister = () => {
+  router.push('/register')
+}
+
+const socialUnavailable = () => {
+  formError.value = 'Social login is coming soon.'
 }
 </script>
 
 <template>
-  <div class="auth-page">
-    <!-- Decorative -->
-    <div class="auth-deco auth-deco--1" />
-    <div class="auth-deco auth-deco--2" />
+  <div class="auth-page mesh-bg">
+    <div class="auth-layout">
+      <section class="auth-illustration animate-rise-in">
+        <h1 class="auth-brand">CodeCraft</h1>
+        <p class="auth-kicker">Welcome back</p>
+        <p class="auth-copy">Jump into your workspace and keep your streak alive.</p>
 
-    <div class="auth-container">
-      <!-- Left: Branding -->
-      <div class="auth-brand">
-        <router-link to="/" class="auth-brand__logo">
-          <Text as="div" variant="hero" weight="extrabold" class="auth-brand__name">
-            Code<span class="auth-brand__accent">Craft</span>
-          </Text>
-        </router-link>
-        <Text variant="body" class="auth-brand__tagline">
-          Master technical interviews with bold, hands-on practice.
-        </Text>
-      </div>
-
-      <!-- Right: Form -->
-      <div class="auth-form-card">
-        <div class="auth-form-header">
-          <Text as="h1" variant="h2" weight="bold">Welcome back</Text>
-          <Text variant="muted">Sign in to sync your progress</Text>
+        <div class="auth-visual" aria-hidden="true">
+          <div class="chip chip--one">function solve()</div>
+          <div class="chip chip--two">while (practice)</div>
+          <div class="chip chip--three">return growth</div>
         </div>
+      </section>
+
+      <BrutalCard variant="elevated" padding="lg" class="auth-form-card animate-rise-in">
+        <h2 class="auth-title">Sign in</h2>
+        <p class="auth-subtitle">Track your progress and compete on leaderboard.</p>
 
         <form class="auth-form" @submit.prevent="handleSubmit">
-          <div class="auth-field">
-            <Text as="label" variant="body-sm" weight="semibold" class="auth-label" for="email">
-              Email
-            </Text>
-            <input
-              id="email"
-              v-model="email"
-              type="email"
-              placeholder="you@example.com"
-              class="auth-input"
-              autocomplete="email"
-            />
-          </div>
+          <BrutalInput
+            v-model="email"
+            type="email"
+            label="Email"
+            placeholder="you@example.com"
+            :error="!email && formError ? 'Email is required.' : ''"
+          />
 
-          <div class="auth-field">
-            <Text as="label" variant="body-sm" weight="semibold" class="auth-label" for="password">
-              Password
-            </Text>
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              placeholder="At least 8 characters"
-              class="auth-input"
-              autocomplete="current-password"
-            />
-          </div>
-
-          <div v-if="formError" class="auth-error">
-            <Text variant="body-sm">{{ formError }}</Text>
-          </div>
-
-          <Button
-            variant="primary"
-            size="lg"
-            :disabled="isLoading"
-            :loading="isLoading"
-            @click="handleSubmit"
+          <BrutalInput
+            v-model="password"
+            :type="showPassword ? 'text' : 'password'"
+            label="Password"
+            placeholder="Your password"
+            :error="!password && formError ? 'Password is required.' : ''"
           >
-            {{ isLoading ? 'Signing in...' : 'Sign in' }}
-          </Button>
+            <template #icon>
+              <button
+                type="button"
+                class="auth-eye"
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                @click="showPassword = !showPassword"
+              >
+                {{ showPassword ? '🙈' : '👁' }}
+              </button>
+            </template>
+          </BrutalInput>
 
-          <div class="auth-footer">
-            <Text variant="body-sm" class="auth-footer__text">
-              Don't have an account?
-            </Text>
-            <router-link to="/register" class="auth-link">
-              <Text variant="body-sm" weight="bold">Sign up</Text>
-            </router-link>
+          <p v-if="formError" class="auth-error">{{ formError }}</p>
+
+          <BrutalButton type="submit" variant="primary" size="lg" :loading="isLoading" block>
+            {{ isLoading ? 'Logging in...' : 'Log in' }}
+          </BrutalButton>
+
+          <div class="social-row">
+            <BrutalButton type="button" variant="ghost" size="sm" @click="socialUnavailable">
+              GitHub
+            </BrutalButton>
+            <BrutalButton type="button" variant="ghost" size="sm" @click="socialUnavailable">
+              Google
+            </BrutalButton>
           </div>
         </form>
 
-        <div class="auth-skip">
-          <router-link to="/dashboard" class="auth-skip-link">
-            Continue without an account
-          </router-link>
-        </div>
-      </div>
+        <p class="auth-switch">
+          New here?
+          <button type="button" class="auth-link" @click="goToRegister">Create account</button>
+        </p>
+      </BrutalCard>
     </div>
   </div>
 </template>
@@ -121,187 +114,143 @@ const handleSubmit = async () => {
 <style scoped>
 .auth-page {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-8);
-  position: relative;
-  overflow: hidden;
-}
-
-.auth-deco {
-  position: absolute;
-  border: var(--border-width) solid var(--color-ink);
-  z-index: 0;
-}
-
-.auth-deco--1 {
-  width: 200px;
-  height: 200px;
-  background-color: var(--color-yellow);
-  opacity: 0.15;
-  bottom: -60px;
-  left: -60px;
-  transform: rotate(15deg);
-}
-
-.auth-deco--2 {
-  width: 140px;
-  height: 140px;
-  background-color: var(--color-turquoise);
-  opacity: 0.15;
-  top: -40px;
-  right: -40px;
-  transform: rotate(-10deg);
-}
-
-.auth-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-16);
-  max-width: 900px;
-  width: 100%;
-  align-items: center;
-  z-index: 1;
-  position: relative;
+  place-items: center;
+  padding: 1.2rem;
 }
 
-@media (max-width: 768px) {
-  .auth-container {
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-    max-width: 440px;
-  }
-
-  .auth-brand {
-    text-align: center;
-  }
+.auth-layout {
+  width: min(70rem, 100%);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1rem;
 }
 
-/* ── Brand side ── */
+.auth-illustration {
+  border: 4px solid var(--color-ink);
+  box-shadow: 8px 8px 0 0 var(--color-ink);
+  background: var(--color-cream);
+  padding: 1.2rem;
+}
+
 .auth-brand {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5vw, 3.3rem);
+  line-height: 1;
 }
 
-.auth-brand__logo {
-  text-decoration: none;
-}
-
-.auth-brand__name {
-  color: var(--color-text-primary);
-}
-
-.auth-brand__accent {
+.auth-kicker {
+  margin-top: 0.7rem;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   color: var(--color-coral);
 }
 
-.auth-brand__tagline {
+.auth-copy {
+  margin-top: 0.35rem;
+  max-width: 32ch;
   color: var(--color-text-secondary);
-  max-width: 320px;
 }
 
-/* ── Form Card ── */
+.auth-visual {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.chip {
+  width: fit-content;
+  border: 3px solid var(--color-ink);
+  box-shadow: 4px 4px 0 0 var(--color-ink);
+  padding: 0.45rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--color-white);
+}
+
+.chip--one {
+  background: var(--color-yellow);
+  transform: rotate(-1.5deg);
+}
+
+.chip--two {
+  background: var(--color-turquoise);
+  transform: rotate(1deg);
+}
+
+.chip--three {
+  background: var(--color-coral);
+  color: var(--color-white);
+  transform: rotate(-0.5deg);
+}
+
 .auth-form-card {
-  background-color: var(--color-surface);
-  border: var(--border-thick) solid var(--color-ink);
-  box-shadow: var(--shadow-brutal-lg);
-  padding: var(--space-8);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-  animation: slideUp 0.4s ease-out both;
+  background: var(--color-white);
 }
 
-.auth-form-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+.auth-title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  line-height: 1;
+}
+
+.auth-subtitle {
+  margin-top: 0.35rem;
+  color: var(--color-text-secondary);
 }
 
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
 }
 
-.auth-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.auth-label {
-  color: var(--color-text-primary);
-}
-
-.auth-input {
-  height: 3rem;
-  padding: 0 var(--space-4);
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  color: var(--color-text-primary);
-  background-color: var(--color-background);
-  border: var(--border-width) solid var(--color-ink);
-  transition: box-shadow var(--duration-fast) var(--ease);
-}
-
-.auth-input:focus {
-  outline: none;
-  box-shadow: var(--shadow-brutal-sm);
-}
-
-.auth-input::placeholder {
-  color: var(--color-text-tertiary);
+.auth-eye {
+  pointer-events: auto;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
 }
 
 .auth-error {
-  padding: var(--space-3) var(--space-4);
-  background-color: var(--color-error-bg);
-  color: var(--color-coral);
-  border: var(--border-thin) solid var(--color-coral);
-  animation: shake 0.4s ease-in-out;
+  border: 3px solid var(--color-coral);
+  background: #fff2f2;
+  color: #b53131;
+  padding: 0.5rem 0.6rem;
+  font-size: var(--text-sm);
 }
 
-.auth-footer {
+.social-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
+  gap: 0.5rem;
 }
 
-.auth-footer__text {
+.auth-switch {
+  margin-top: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
 }
 
 .auth-link {
+  margin-left: 0.3rem;
+  border: 0;
+  background: transparent;
   color: var(--color-coral);
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-  transition: border-color var(--duration-fast) var(--ease);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
 }
 
-.auth-link:hover {
-  border-color: var(--color-coral);
-}
+@media (max-width: 880px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+  }
 
-.auth-skip {
-  text-align: center;
-  border-top: var(--border-thin) solid var(--color-border-subtle);
-  padding-top: var(--space-6);
-}
+  .auth-illustration {
+    order: 2;
+  }
 
-.auth-skip-link {
-  color: var(--color-text-tertiary);
-  text-decoration: none;
-  font-size: var(--text-sm);
-  border-bottom: 1px dashed var(--color-text-tertiary);
-  transition: color var(--duration-fast) var(--ease);
-}
-
-.auth-skip-link:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-text-primary);
+  .auth-form-card {
+    order: 1;
+  }
 }
 </style>

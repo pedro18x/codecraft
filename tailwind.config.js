@@ -15,6 +15,7 @@ export default {
           yellow: '#FFE66D',
           'yellow-dark': '#E6CF5A',
           cream: '#FFFEF9',
+          black: '#1A1A1A',
           ink: '#1A1A1A',
           white: '#FFFFFF',
           gray: {
@@ -33,9 +34,9 @@ export default {
         warning: '#FFE66D',
       },
       fontFamily: {
-        display: ['Syne', 'Impact', 'sans-serif'],
-        body: ['Plus Jakarta Sans', 'Helvetica Neue', 'sans-serif'],
-        mono: ['JetBrains Mono', 'SF Mono', 'monospace'],
+        display: ['Syne', 'sans-serif'],
+        body: ['Plus Jakarta Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       boxShadow: {
         'brutal-sm': '2px 2px 0 0 #1A1A1A',

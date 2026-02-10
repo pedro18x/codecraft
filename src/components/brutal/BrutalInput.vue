@@ -142,7 +142,7 @@ textarea.brutal-input__field {
   transform: translateY(-50%);
   display: inline-flex;
   color: var(--color-text-tertiary);
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .brutal-input--error .brutal-input__field {
