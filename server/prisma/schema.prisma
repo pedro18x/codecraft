@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  username     String         @unique
+  password     String
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  refreshTokens RefreshToken[]
+  progress      Progress[]
+  savedCode     SavedCode[]
+  submissions   Submission[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int      @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Problem {
+  id          Int      @id
+  title       String
+  slug        String   @unique
+  difficulty  String   // 'Easy' | 'Medium' | 'Hard'
+  categories  String[]
+  description String   @db.Text
+  examples    Json     // Array of { input, output, explanation? }
+  constraints String[]
+  testCases   Json     // Array of { input, expectedOutput, explanation? }
+  starterCode Json     // { javascript?, typescript?, python? }
+  hints       String[] @default([])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  progress    Progress[]
+  savedCode   SavedCode[]
+  submissions Submission[]
+
+  @@index([difficulty])
+  @@map("problems")
+}
+
+model Progress {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  problemId   Int       @map("problem_id")
+  status      String    @default("attempted") // 'attempted' | 'completed'
+  attempts    Int       @default(1)
+  lastAttempt DateTime  @default(now()) @map("last_attempt")
+  completedAt DateTime? @map("completed_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId])
+  @@index([userId])
+  @@map("progress")
+}
+
+model SavedCode {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  problemId Int      @map("problem_id")
+  language  String   // 'javascript' | 'typescript' | 'python'
+  code      String   @db.Text
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId, language])
+  @@index([userId])
+  @@map("saved_code")
+}
+
+model Submission {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @map("user_id")
+  problemId       Int      @map("problem_id")
+  language        String
+  code            String   @db.Text
+  success         Boolean
+  testResults     Json     // Array of TestResult
+  executionTimeMs Int?     @map("execution_time_ms")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([userId, problemId])
+  @@index([userId, createdAt])
+  @@map("submissions")
+}

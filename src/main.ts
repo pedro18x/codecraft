@@ -1,0 +1,20 @@
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+
+// 🎨 Easter Egg Console Art
+console.log(
+  '%c╔═══════════════════════════════════════╗\n' +
+  '║                                       ║\n' +
+  '║   💜  Built by Pedro                  ║\n' +
+  '║       With love to Gabriela ✨        ║\n' +
+  '║                                       ║\n' +
+  '║   CodeCraft - Where code meets art    ║\n' +
+  '║                                       ║\n' +
+  '╚═══════════════════════════════════════╝',
+  'color: #FF6B6B; font-weight: bold; font-size: 14px; font-family: monospace; text-shadow: 2px 2px 0px #000;'
+)
+
+const app = createApp(App)
+app.use(router)
+app.mount('#app')
