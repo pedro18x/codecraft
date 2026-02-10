@@ -1,6 +1,7 @@
 import vm from 'node:vm'
 import type { ICodeExecutor, ExecuteRequest, ExecuteResult, TestResult } from './types.js'
 import { generateTestRunner, extractFunctionName } from './testRunnerTemplate.js'
+import { transpileTypeScript } from './transpile.js'
 
 /**
  * VM-based executor using Node's built-in vm module.
@@ -21,16 +22,27 @@ export class VMExecutor implements ICodeExecutor {
     const startTime = Date.now()
     const timeout = request.timeoutMs || 5000
 
-    const fnName = extractFunctionName(request.code)
+    const sourceCode =
+      request.language === 'typescript'
+        ? (() => {
+            const compiled = transpileTypeScript(request.code)
+            if (!compiled.ok) {
+              return compiled
+            }
+            return compiled.code
+          })()
+        : request.code
+
+    if (typeof sourceCode !== 'string') {
+      return this.allFailed(request, startTime, sourceCode.error)
+    }
+
+    const fnName = extractFunctionName(sourceCode)
     if (!fnName) {
       return this.allFailed(request, startTime, 'No function declaration found in your code.')
     }
 
-    const runnerCode = generateTestRunner(request.code, request.testCases, fnName)
-
-    // For TypeScript, strip type annotations
-    const execCode =
-      request.language === 'typescript' ? this.stripTypes(runnerCode) : runnerCode
+    const execCode = generateTestRunner(sourceCode, request.testCases, fnName)
 
     try {
       // Capture console.log output
@@ -100,15 +112,6 @@ export class VMExecutor implements ICodeExecutor {
           : 'Execution failed'
       return this.allFailed(request, startTime, message)
     }
-  }
-
-  private stripTypes(code: string): string {
-    return code
-      .replace(/:\s*(?:number|string|boolean|void|any|unknown|never|null|undefined)(?:\[\])?/g, '')
-      .replace(/:\s*\w+\[\]/g, '')
-      .replace(/<[^>]+>/g, '')
-      .replace(/^(interface|type)\s+.*$/gm, '')
-      .replace(/\s+as\s+\w+/g, '')
   }
 
   private allFailed(request: ExecuteRequest, startTime: number, error: string): ExecuteResult {

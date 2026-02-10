@@ -2,6 +2,7 @@ import Dockerode from 'dockerode'
 import { Writable } from 'stream'
 import type { ICodeExecutor, ExecuteRequest, ExecuteResult, TestResult } from './types.js'
 import { generateTestRunner, extractFunctionName } from './testRunnerTemplate.js'
+import { transpileTypeScript } from './transpile.js'
 
 export class DockerExecutor implements ICodeExecutor {
   name = 'DockerExecutor'
@@ -29,16 +30,27 @@ export class DockerExecutor implements ICodeExecutor {
     const timeout = request.timeoutMs || 5000
     const memoryLimit = (request.memoryLimitMb || 128) * 1024 * 1024
 
-    const fnName = extractFunctionName(request.code)
+    const sourceCode =
+      request.language === 'typescript'
+        ? (() => {
+            const compiled = transpileTypeScript(request.code)
+            if (!compiled.ok) {
+              return compiled
+            }
+            return compiled.code
+          })()
+        : request.code
+
+    if (typeof sourceCode !== 'string') {
+      return this.allFailed(request, startTime, sourceCode.error)
+    }
+
+    const fnName = extractFunctionName(sourceCode)
     if (!fnName) {
       return this.allFailed(request, startTime, 'No function declaration found in your code.')
     }
 
-    const runnerCode = generateTestRunner(request.code, request.testCases, fnName)
-
-    // For TypeScript, we strip type annotations to run as plain JS
-    const execCode =
-      request.language === 'typescript' ? stripTypeAnnotations(runnerCode) : runnerCode
+    const execCode = generateTestRunner(sourceCode, request.testCases, fnName)
 
     let container: Dockerode.Container | undefined
     try {
@@ -155,23 +167,4 @@ export class DockerExecutor implements ICodeExecutor {
       executionTimeMs: Date.now() - startTime,
     }
   }
-}
-
-/**
- * Naive TypeScript → JavaScript type stripping.
- * Removes type annotations, interfaces, and type imports.
- * For proper TS execution in Docker, you'd use tsx or ts-node in the container.
- */
-function stripTypeAnnotations(code: string): string {
-  return code
-    // Remove : Type from parameters and return types
-    .replace(/:\s*(?:number|string|boolean|void|any|unknown|never|null|undefined)(?:\[\])?/g, '')
-    // Remove : Type[] patterns
-    .replace(/:\s*\w+\[\]/g, '')
-    // Remove generic type parameters <T>
-    .replace(/<[^>]+>/g, '')
-    // Remove interface/type declarations
-    .replace(/^(interface|type)\s+.*$/gm, '')
-    // Remove 'as Type' assertions
-    .replace(/\s+as\s+\w+/g, '')
 }

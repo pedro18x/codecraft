@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { applyCodecraftMonacoTheme } from '../../utils/monacoTheme'
 import type { Language } from '../../types'
 
@@ -18,6 +18,7 @@ const emit = defineEmits<{ (event: 'update:modelValue', value: string): void }>(
 const rootRef = ref<HTMLDivElement | null>(null)
 const loading = ref(true)
 const failed = ref(false)
+const editorReady = ref(false)
 
 let monacoModule: typeof import('monaco-editor') | null = null
 let editorInstance: import('monaco-editor').editor.IStandaloneCodeEditor | null = null
@@ -29,6 +30,8 @@ const monacoLanguage = (language: Language) => {
 }
 
 const createEditor = async () => {
+  await nextTick()
+
   if (!rootRef.value) {
     failed.value = true
     loading.value = false
@@ -74,9 +77,11 @@ const createEditor = async () => {
       emit('update:modelValue', value)
     })
 
+    editorReady.value = true
     loading.value = false
   } catch {
     failed.value = true
+    editorReady.value = false
     loading.value = false
   }
 }
@@ -112,10 +117,10 @@ onUnmounted(() => {
 
 <template>
   <div class="monaco-lazy">
-    <div ref="rootRef" v-show="!failed" class="monaco-root" />
+    <div ref="rootRef" v-show="editorReady && !failed" class="monaco-root" />
 
     <textarea
-      v-if="failed"
+      v-show="!editorReady || failed"
       class="monaco-fallback"
       :value="modelValue"
       spellcheck="false"

@@ -7,11 +7,14 @@ import routes from './routes/index.js'
 
 export function createApp() {
   const app = express()
+  const allowedOrigins = env.CORS_ORIGIN.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
 
   // CORS
   app.use(
     cors({
-      origin: env.CORS_ORIGIN.split(','),
+      origin: allowedOrigins,
       credentials: true,
     })
   )
