@@ -62,6 +62,14 @@ const clearFilters = () => {
   selectedDifficulty.value = 'All'
 }
 
+const goToProfile = () => {
+  router.push('/profile')
+}
+
+const goToLeaderboard = () => {
+  router.push('/leaderboard')
+}
+
 </script>
 
 <template>
@@ -74,18 +82,26 @@ const clearFilters = () => {
             <Text as="h1" variant="h2" weight="bold">Dashboard</Text>
             <Text variant="muted">{{ completedCount }} of {{ totalProblems }} completed</Text>
           </div>
-          <button
-            class="theme-toggle"
-            @click="toggleTheme"
-            :title="`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`"
-          >
-            <svg v-if="theme === 'light'" width="18" height="18" viewBox="0 0 20 20" fill="none">
-              <path d="M10 3V1M10 19V17M17 10H19M1 10H3M15.657 15.657L17.07 17.07M2.929 2.929L4.343 4.343M15.657 4.343L17.07 2.929M2.929 17.07L4.343 15.657M14 10C14 12.209 12.209 14 10 14C7.791 14 6 12.209 6 10C6 7.791 7.791 6 10 6C12.209 6 14 7.791 14 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <svg v-else width="18" height="18" viewBox="0 0 20 20" fill="none">
-              <path d="M17 10.836C15.9 11.286 14.686 11.536 13.414 11.536C8.387 11.536 4.314 7.464 4.314 2.436C4.314 1.914 4.364 1.414 4.464 0.936C2.236 2.186 0.764 4.636 0.764 7.436C0.764 11.586 4.114 14.936 8.264 14.936C11.464 14.936 14.236 13.036 15.314 10.286L17 10.836Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
+          <div class="header-actions">
+            <Button variant="ghost" size="sm" @click="goToLeaderboard">
+              Leaderboard
+            </Button>
+            <Button variant="ghost" size="sm" @click="goToProfile">
+              Profile
+            </Button>
+            <button
+              class="theme-toggle"
+              @click="toggleTheme"
+              :title="`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`"
+            >
+              <svg v-if="theme === 'light'" width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M10 3V1M10 19V17M17 10H19M1 10H3M15.657 15.657L17.07 17.07M2.929 2.929L4.343 4.343M15.657 4.343L17.07 2.929M2.929 17.07L4.343 15.657M14 10C14 12.209 12.209 14 10 14C7.791 14 6 12.209 6 10C6 7.791 7.791 6 10 6C12.209 6 14 7.791 14 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <svg v-else width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M17 10.836C15.9 11.286 14.686 11.536 13.414 11.536C8.387 11.536 4.314 7.464 4.314 2.436C4.314 1.914 4.364 1.414 4.464 0.936C2.236 2.186 0.764 4.636 0.764 7.436C0.764 11.586 4.114 14.936 8.264 14.936C11.464 14.936 14.236 13.036 15.314 10.286L17 10.836Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <!-- Progress Bar -->
@@ -279,6 +295,14 @@ const clearFilters = () => {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .theme-toggle {

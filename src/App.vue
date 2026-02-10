@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router'
 import { onMounted, onUnmounted } from 'vue'
 import { useAuth } from './composables/useAuth'
+import BrutalToastStack from './components/brutal/BrutalToastStack.vue'
 
 const { fetchMe } = useAuth()
 
@@ -66,9 +67,47 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <RouterView />
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <RouterView v-slot="{ Component, route }">
+    <Transition name="route-fade" mode="out-in">
+      <main :id="'main-content'" :key="route.path">
+        <component :is="Component" />
+      </main>
+    </Transition>
+  </RouterView>
+
+  <BrutalToastStack />
 </template>
 
-<style>
-@import './design-system/tokens.css';
+<style scoped>
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 999;
+  transform: translateY(-150%);
+  border: 3px solid var(--color-ink);
+  background: var(--color-yellow);
+  box-shadow: 3px 3px 0 0 var(--color-ink);
+  color: var(--color-ink);
+  font-weight: var(--font-weight-bold);
+  padding: 0.4rem 0.6rem;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:global(.route-fade-enter-active),
+:global(.route-fade-leave-active) {
+  transition: opacity 200ms var(--ease), transform 200ms var(--ease);
+}
+
+:global(.route-fade-enter-from),
+:global(.route-fade-leave-to) {
+  opacity: 0;
+  transform: scale(0.985);
+}
 </style>

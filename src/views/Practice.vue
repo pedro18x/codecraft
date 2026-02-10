@@ -8,6 +8,7 @@ import { useProblemProgress } from '../composables/useProblemProgress'
 import { useAuth } from '../composables/useAuth'
 import { api } from '../api/client'
 import { getProblemSlug } from '../utils/problemUtils'
+import { useToast } from '../composables/useToast'
 import ProblemPanel from '../components/practice/ProblemPanel.vue'
 import EditorPanel from '../components/practice/EditorPanel.vue'
 import Text from '../design-system/components/Text.vue'
@@ -57,6 +58,7 @@ const isRunning = ref(false)
 
 // Auth state
 const { isAuthenticated } = useAuth()
+const { success, error: toastError, info } = useToast()
 
 // Progress tracking
 const { markAttempted, markCompleted } = useProblemProgress()
@@ -205,6 +207,9 @@ const runTests = async () => {
 
       if (result.success && problem.value) {
         markCompleted(problem.value.id)
+        success('All tests passed', `Problem #${problem.value.id} marked as solved.`)
+      } else {
+        info('Tests finished', `${result.testResults.filter(item => item.passed).length}/${result.testResults.length} passed.`)
       }
     } catch (err) {
       // Show error as a failed test result
@@ -214,6 +219,7 @@ const runTests = async () => {
         expectedOutput: testCase.expectedOutput,
         error: err instanceof Error ? err.message : 'Execution failed',
       }))
+      toastError('Execution failed', err instanceof Error ? err.message : 'Execution failed')
     }
   } else {
     // Guest execution — real code execution without persistence
@@ -232,6 +238,9 @@ const runTests = async () => {
 
       if (result.success && problem.value) {
         markCompleted(problem.value.id)
+        success('All tests passed', `Problem #${problem.value.id} marked as solved.`)
+      } else {
+        info('Tests finished', `${result.testResults.filter(item => item.passed).length}/${result.testResults.length} passed.`)
       }
     } catch (err) {
       testResults.value = problem.value.testCases.map((testCase) => ({
@@ -240,6 +249,7 @@ const runTests = async () => {
         expectedOutput: testCase.expectedOutput,
         error: err instanceof Error ? err.message : 'Execution failed',
       }))
+      toastError('Execution failed', err instanceof Error ? err.message : 'Execution failed')
     }
   }
 

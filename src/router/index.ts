@@ -23,6 +23,16 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/Dashboard.vue'),
   },
   {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../views/Profile.vue'),
+  },
+  {
+    path: '/leaderboard',
+    name: 'leaderboard',
+    component: () => import('../views/Leaderboard.vue'),
+  },
+  {
     path: '/practice/:slug',
     name: 'practice',
     component: () => import('../views/Practice.vue'),
