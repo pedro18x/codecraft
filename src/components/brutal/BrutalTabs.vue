@@ -113,7 +113,7 @@ onUnmounted(() => {
 }
 
 .brutal-tabs__tab:focus-visible {
-  outline: 4px solid var(--color-yellow);
+  outline: 4px solid var(--color-focus-ring);
   outline-offset: 1px;
 }
 
@@ -122,7 +122,7 @@ onUnmounted(() => {
   left: 0;
   bottom: -3px;
   height: 4px;
-  background: var(--color-coral);
+  background: var(--color-primary);
   transition: transform 220ms var(--ease), width 220ms var(--ease);
 }
 </style>

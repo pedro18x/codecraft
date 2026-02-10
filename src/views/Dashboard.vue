@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { problems } from '../data/problems'
 import { useProblemProgress } from '../composables/useProblemProgress'
 import { useTheme } from '../composables/useTheme'
+import { useBreakpoints } from '../composables/useBreakpoints'
 import { getProblemSlug } from '../utils/problemUtils'
-import PageShell from '../components/shared/PageShell.vue'
+import AppShell from '../components/shared/AppShell.vue'
 import DashboardTopBar from '../components/dashboard/DashboardTopBar.vue'
 import DailyChallengeCard from '../components/dashboard/DailyChallengeCard.vue'
 import VirtualProblemList, { type VirtualProblemItem } from '../components/dashboard/VirtualProblemList.vue'
@@ -18,6 +19,7 @@ import BrutalProgress from '../components/brutal/BrutalProgress.vue'
 const router = useRouter()
 const { attempts, isCompleted, completedCount } = useProblemProgress()
 const { theme, toggleTheme } = useTheme()
+const { isDesktop } = useBreakpoints()
 
 const searchInput = ref('')
 const searchQuery = ref('')
@@ -35,6 +37,7 @@ const sortBy = ref('recommended')
 const statusFilter = ref<'all' | 'todo' | 'attempted' | 'solved'>('all')
 const selectedCategories = ref<string[]>([])
 const filterRailOpen = ref(false)
+const listViewportHeight = ref(620)
 
 const categories = computed(() => {
   return [...new Set(problems.flatMap(problem => problem.categories))].sort((a, b) => a.localeCompare(b))
@@ -109,9 +112,29 @@ const dailyChallenge = computed(() => {
   return problems.find(problem => problem.id === next.id) ?? null
 })
 
+const updateListViewportHeight = () => {
+  const reservedHeight = window.innerWidth < 1000 ? 385 : 300
+  listViewportHeight.value = Math.max(350, Math.floor(window.innerHeight - reservedHeight))
+}
+
+onMounted(() => {
+  updateListViewportHeight()
+  window.addEventListener('resize', updateListViewportHeight)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateListViewportHeight)
+  if (debounceTimer) clearTimeout(debounceTimer)
+})
+
+watch(isDesktop, (desktop) => {
+  if (desktop) filterRailOpen.value = false
+})
+
 const startProblem = (problemId: number) => {
   const problem = problems.find(item => item.id === problemId)
   if (!problem) return
+  filterRailOpen.value = false
   router.push(`/practice/${getProblemSlug(problem)}`)
 }
 
@@ -131,6 +154,10 @@ const clearFilters = () => {
   selectedCategories.value = []
 }
 
+const closeMobileFilters = () => {
+  filterRailOpen.value = false
+}
+
 const goProfile = () => router.push('/profile')
 const goLeaderboard = () => router.push('/leaderboard')
 
@@ -148,26 +175,34 @@ const updateSort = (value: string) => {
 </script>
 
 <template>
-  <PageShell>
-    <div class="dashboard-grid">
-      <DashboardTopBar
-        :search-query="searchInput"
-        :selected-difficulty="selectedDifficulty"
-        :sort-by="sortBy"
-        :mobile-filters-open="filterRailOpen"
-        @update:search-query="updateSearchQuery"
-        @update:selected-difficulty="updateDifficulty"
-        @update:sort-by="updateSort"
-        @toggle-filters="filterRailOpen = !filterRailOpen"
-        @open-profile="goProfile"
-        @open-leaderboard="goLeaderboard"
-      />
+  <AppShell
+    title="Dashboard"
+    subtitle="Choose your next pressure test."
+    :scroll-main="true"
+  >
+    <button
+      v-if="filterRailOpen && !isDesktop"
+      class="dashboard-sidebar-backdrop"
+      type="button"
+      aria-label="Close filters"
+      @click="closeMobileFilters"
+    />
 
+    <div class="dashboard-layout">
       <aside
         id="dashboard-filter-rail"
-        class="filter-rail"
-        :class="{ 'filter-rail--open': filterRailOpen }"
+        class="dashboard-sidebar"
+        :class="{ 'dashboard-sidebar--open': filterRailOpen }"
       >
+        <BrutalButton
+          class="dashboard-sidebar__close"
+          variant="secondary"
+          size="sm"
+          @click="closeMobileFilters"
+        >
+          Close filters
+        </BrutalButton>
+
         <BrutalCard variant="flat" padding="lg">
           <div class="rail-section">
             <h2 class="rail-title">Status</h2>
@@ -216,7 +251,20 @@ const updateSort = (value: string) => {
         <DailyChallengeCard :problem="dailyChallenge" @start="startProblem" />
       </aside>
 
-      <main class="dashboard-main">
+      <section class="dashboard-main">
+        <DashboardTopBar
+          :search-query="searchInput"
+          :selected-difficulty="selectedDifficulty"
+          :sort-by="sortBy"
+          :mobile-filters-open="filterRailOpen"
+          @update:search-query="updateSearchQuery"
+          @update:selected-difficulty="updateDifficulty"
+          @update:sort-by="updateSort"
+          @toggle-filters="filterRailOpen = !filterRailOpen"
+          @open-profile="goProfile"
+          @open-leaderboard="goLeaderboard"
+        />
+
         <BrutalCard variant="flat" padding="lg">
           <div class="progress-row">
             <div>
@@ -232,51 +280,57 @@ const updateSort = (value: string) => {
           <BrutalProgress variant="bar" :value="progressPercent" :max="100" />
         </BrutalCard>
 
-        <VirtualProblemList
-          v-if="filteredProblems.length"
-          :items="filteredProblems"
-          :viewport-height="620"
-          @select="startProblem"
-        />
+        <section class="dashboard-list-region">
+          <VirtualProblemList
+            v-if="filteredProblems.length"
+            :items="filteredProblems"
+            :viewport-height="listViewportHeight"
+            @select="startProblem"
+          />
 
-        <BrutalEmptyState
-          v-else
-          title="No matching problems"
-          description="Try a broader search or relax category filters."
-          action-label="Clear filters"
-          @action="clearFilters"
-        />
-      </main>
+          <BrutalEmptyState
+            v-else
+            title="No matching problems"
+            description="Try a broader search or relax category filters."
+            action-label="Clear filters"
+            @action="clearFilters"
+          />
+        </section>
+      </section>
     </div>
-  </PageShell>
+  </AppShell>
 </template>
 
 <style scoped>
-.dashboard-grid {
+.dashboard-layout {
+  min-height: 0;
   display: grid;
-  grid-template-columns: minmax(14rem, 18.5rem) minmax(0, 1fr);
-  grid-template-areas:
-    'topbar topbar'
-    'rail main';
-  gap: 0.8rem;
-  padding-bottom: 2rem;
+  grid-template-columns: minmax(14rem, var(--app-sidebar-width)) minmax(0, 1fr);
+  gap: var(--app-layout-gap);
 }
 
-:deep(.dashboard-topbar) {
-  grid-area: topbar;
-}
-
-.filter-rail {
-  grid-area: rail;
+.dashboard-sidebar {
   display: grid;
-  gap: 0.75rem;
+  gap: var(--app-layout-gap);
   align-self: start;
+  position: sticky;
+  top: 0;
+  min-width: 0;
+}
+
+.dashboard-sidebar__close {
+  display: none;
 }
 
 .dashboard-main {
-  grid-area: main;
+  min-width: 0;
+  min-height: 0;
   display: grid;
-  gap: 0.75rem;
+  gap: var(--app-layout-gap);
+}
+
+.dashboard-list-region {
+  min-height: 0;
 }
 
 .rail-section {
@@ -313,8 +367,13 @@ const updateSort = (value: string) => {
 }
 
 .category-chip--active {
-  background: var(--color-yellow);
+  background: var(--color-warning);
   color: var(--color-accent-ink);
+}
+
+.category-chip:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
 }
 
 .progress-row {
@@ -336,21 +395,41 @@ const updateSort = (value: string) => {
   color: var(--color-text-secondary);
 }
 
+.dashboard-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  border: 0;
+  background: color-mix(in srgb, var(--color-background) 64%, transparent);
+}
+
 @media (max-width: 1000px) {
-  .dashboard-grid {
+  .dashboard-layout {
     grid-template-columns: 1fr;
-    grid-template-areas:
-      'topbar'
-      'rail'
-      'main';
   }
 
-  .filter-rail {
-    display: none;
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 56;
+    width: min(21rem, 88vw);
+    overflow: auto;
+    transform: translateX(-108%);
+    transition: transform var(--duration-normal) var(--ease);
+    border-right: 3px solid var(--color-border-strong);
+    background: var(--color-background);
+    box-shadow: 6px 0 0 0 var(--color-shadow-strong);
+    padding: clamp(4.5rem, 8vw, 5.25rem) var(--app-shell-gutter) var(--app-shell-pad-y);
   }
 
-  .filter-rail--open {
-    display: grid;
+  .dashboard-sidebar__close {
+    display: inline-flex;
+  }
+
+  .dashboard-sidebar--open {
+    transform: translateX(0);
   }
 }
 </style>

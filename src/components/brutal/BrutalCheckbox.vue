@@ -110,7 +110,7 @@ const onChange = () => {
 
 .brutal-check__control--checked {
   border-width: 4px;
-  background: var(--color-yellow);
+  background: var(--color-warning);
 }
 
 .brutal-check__control--checked .brutal-check__icon,
@@ -125,7 +125,7 @@ const onChange = () => {
 }
 
 .brutal-check__native:focus-visible + .brutal-check__control {
-  outline: 4px solid var(--color-yellow);
+  outline: 4px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 

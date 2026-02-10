@@ -61,15 +61,15 @@ const stripeClass = computed(() => `brutal-toast--${props.toast.type}`)
 }
 
 .brutal-toast--success {
-  border-left-color: var(--color-turquoise);
+  border-left-color: var(--color-success);
 }
 
 .brutal-toast--error {
-  border-left-color: var(--color-coral);
+  border-left-color: var(--color-error);
 }
 
 .brutal-toast--warning {
-  border-left-color: var(--color-yellow);
+  border-left-color: var(--color-warning);
 }
 
 .brutal-toast--info {
@@ -101,7 +101,7 @@ const stripeClass = computed(() => `brutal-toast--${props.toast.type}`)
 }
 
 .brutal-toast__close:focus-visible {
-  outline: 3px solid var(--color-yellow);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 

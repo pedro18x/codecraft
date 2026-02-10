@@ -35,7 +35,7 @@ withDefaults(defineProps<Props>(), {
 <style scoped>
 .brutal-card {
   background-color: var(--color-surface);
-  border: var(--border-width) solid var(--color-ink);
+  border: var(--border-width) solid var(--color-border-strong);
   box-shadow: var(--shadow-brutal);
   transition: transform var(--duration-fast) var(--ease),
               box-shadow var(--duration-fast) var(--ease);

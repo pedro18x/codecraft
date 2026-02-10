@@ -73,25 +73,25 @@ const toneClass = computed(() => {
 
 .brutal-badge--difficulty-easy,
 .brutal-badge--success {
-  background: var(--color-turquoise);
+  background: var(--color-success);
   color: var(--color-accent-ink);
 }
 
 .brutal-badge--difficulty-medium,
 .brutal-badge--warning {
-  background: var(--color-yellow);
+  background: var(--color-warning);
   color: var(--color-accent-ink);
 }
 
 .brutal-badge--difficulty-hard,
 .brutal-badge--error {
-  background: var(--color-coral);
-  color: var(--color-white);
+  background: var(--color-error);
+  color: var(--color-on-danger);
 }
 
 .brutal-badge--info {
   background: var(--color-info);
-  color: var(--color-white);
+  color: var(--color-on-info);
 }
 
 .brutal-badge--neutral {

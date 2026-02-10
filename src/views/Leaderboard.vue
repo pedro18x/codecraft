@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api/client'
 import { useAuth } from '../composables/useAuth'
+import AppShell from '../components/shared/AppShell.vue'
 import BrutalCard from '../components/brutal/BrutalCard.vue'
 import BrutalTabs from '../components/brutal/BrutalTabs.vue'
 import BrutalBadge from '../components/brutal/BrutalBadge.vue'
@@ -98,8 +99,11 @@ const rankedEntries = computed<LeaderboardRow[]>(() => {
 
 const topThree = computed(() => rankedEntries.value.slice(0, 3))
 const tableEntries = computed(() => rankedEntries.value.slice(3))
+const panelEntries = computed(() => rankedEntries.value.slice(0, 6))
 
 const currentUserId = computed(() => user.value?.id ?? null)
+const firstPlace = computed(() => rankedEntries.value[0] ?? null)
+const topTenCutoff = computed(() => rankedEntries.value[9]?.score ?? null)
 
 const goToDashboard = () => {
   router.push('/dashboard')
@@ -113,20 +117,17 @@ const scoreLabel = computed(() => {
 </script>
 
 <template>
-  <div class="leaderboard">
-    <div class="leaderboard__container">
-      <header class="leaderboard__header">
-        <div>
-          <h1 class="leaderboard__title">Leaderboard</h1>
-          <p class="leaderboard__subtitle">Live rankings from real solved progress. No seed data.</p>
-        </div>
+  <AppShell
+    title="Leaderboard"
+    subtitle="Live rankings from real solved progress."
+    :scroll-main="true"
+  >
+    <template #topbar-actions>
+      <BrutalButton variant="secondary" size="sm" @click="fetchLeaderboard">Refresh</BrutalButton>
+      <BrutalButton variant="secondary" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
+    </template>
 
-        <div class="leaderboard__header-actions">
-          <BrutalButton variant="secondary" size="sm" @click="fetchLeaderboard">Refresh</BrutalButton>
-          <BrutalButton variant="secondary" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
-        </div>
-      </header>
-
+    <div class="leaderboard">
       <BrutalCard variant="flat" padding="lg">
         <div class="leaderboard__toolbar">
           <BrutalTabs v-model="activeTab" :items="tabs" />
@@ -188,7 +189,7 @@ const scoreLabel = computed(() => {
           >
             <div class="podium-card" :class="`podium-card--${entry.computedRank}`">
               <p class="podium-rank">#{{ entry.computedRank }}</p>
-              <p class="podium-name">{{ entry.computedRank === 1 ? '👑 ' : '' }}{{ entry.username }}</p>
+              <p class="podium-name">{{ entry.computedRank === 1 ? 'Champion ' : '' }}{{ entry.username }}</p>
               <p class="podium-score">{{ entry.score }} {{ scoreLabel.toLowerCase() }}</p>
               <p class="podium-meta">Hard {{ entry.hard }} · Medium {{ entry.medium }} · Easy {{ entry.easy }}</p>
             </div>
@@ -196,80 +197,78 @@ const scoreLabel = computed(() => {
         </section>
 
         <BrutalCard variant="flat" padding="none">
-          <table class="leaderboard-table">
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Coder</th>
-                <th>{{ scoreLabel }}</th>
-                <th>Breakdown</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="entry in tableEntries"
-                :key="entry.userId"
-                :class="{ 'leaderboard-row--me': entry.userId === currentUserId }"
-              >
-                <td>#{{ entry.computedRank }}</td>
-                <td>{{ entry.username }}</td>
-                <td>{{ entry.score }}</td>
-                <td>H{{ entry.hard }} · M{{ entry.medium }} · E{{ entry.easy }}</td>
-                <td>
-                  <BrutalBadge
-                    variant="status"
-                    :tone="entry.computedRank <= 10 ? 'success' : 'neutral'"
-                  >
-                    {{ entry.computedRank <= 10 ? 'Top 10' : 'Climbing' }}
-                  </BrutalBadge>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="leaderboard-table-wrap">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Coder</th>
+                  <th>{{ scoreLabel }}</th>
+                  <th>Breakdown</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="entry in tableEntries"
+                  :key="entry.userId"
+                  :class="{ 'leaderboard-row--me': entry.userId === currentUserId }"
+                >
+                  <td>#{{ entry.computedRank }}</td>
+                  <td>{{ entry.username }}</td>
+                  <td>{{ entry.score }}</td>
+                  <td>H{{ entry.hard }} · M{{ entry.medium }} · E{{ entry.easy }}</td>
+                  <td>
+                    <BrutalBadge
+                      variant="status"
+                      :tone="entry.computedRank <= 10 ? 'success' : 'neutral'"
+                    >
+                      {{ entry.computedRank <= 10 ? 'Top 10' : 'Climbing' }}
+                    </BrutalBadge>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </BrutalCard>
       </template>
     </div>
-  </div>
+
+    <template #panel>
+      <div v-if="!loading && !error && rankedEntries.length" class="leaderboard-panel">
+        <BrutalCard variant="flat" padding="lg">
+          <h2 class="panel-title">Current Cutoff</h2>
+          <p class="panel-value">{{ topTenCutoff ?? '—' }}</p>
+          <p class="panel-copy">{{ scoreLabel }} needed to hold a top 10 spot.</p>
+        </BrutalCard>
+
+        <BrutalCard variant="flat" padding="lg">
+          <h2 class="panel-title">First Place</h2>
+          <p class="panel-value">{{ firstPlace ? firstPlace.username : '—' }}</p>
+          <p class="panel-copy">
+            {{ firstPlace ? `${firstPlace.score} ${scoreLabel.toLowerCase()}` : 'No score yet' }}
+          </p>
+        </BrutalCard>
+
+        <BrutalCard variant="flat" padding="none">
+          <h2 class="panel-title panel-title--list">Top Momentum</h2>
+          <ul class="panel-list">
+            <li v-for="entry in panelEntries" :key="entry.userId" class="panel-list-item">
+              <span>#{{ entry.computedRank }} {{ entry.username }}</span>
+              <strong>{{ entry.score }}</strong>
+            </li>
+          </ul>
+        </BrutalCard>
+      </div>
+    </template>
+  </AppShell>
 </template>
 
 <style scoped>
 .leaderboard {
-  min-height: 100vh;
-  padding: 2rem 1rem 3rem;
-}
-
-.leaderboard__container {
-  width: min(72rem, 100%);
-  margin: 0 auto;
+  min-height: 0;
   display: grid;
-  gap: 1rem;
-}
-
-.leaderboard__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.9rem;
-  flex-wrap: wrap;
-}
-
-.leaderboard__header-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.leaderboard__title {
-  font-family: var(--font-display);
-  font-size: var(--text-4xl);
-  line-height: 1;
-  margin: 0;
-}
-
-.leaderboard__subtitle {
-  margin-top: 0.35rem;
-  color: var(--color-text-secondary);
+  gap: var(--app-layout-gap);
 }
 
 .leaderboard__toolbar {
@@ -287,7 +286,7 @@ const scoreLabel = computed(() => {
 .podium {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: var(--app-layout-gap);
 }
 
 .podium-skeleton {
@@ -328,8 +327,13 @@ const scoreLabel = computed(() => {
   transform: translateY(-6px);
 }
 
+.leaderboard-table-wrap {
+  overflow-x: auto;
+}
+
 .leaderboard-table {
   width: 100%;
+  min-width: 48rem;
   border-collapse: collapse;
 }
 
@@ -348,16 +352,62 @@ const scoreLabel = computed(() => {
 }
 
 .leaderboard-table tbody tr:nth-child(odd) {
-  background: rgba(255, 255, 255, 0.35);
+  background: color-mix(in srgb, var(--color-surface) 90%, var(--color-border-strong) 10%);
 }
 
 .leaderboard-table tbody tr:hover {
-  background: rgba(255, 230, 109, 0.24);
+  background: color-mix(in srgb, var(--color-warning-bg) 72%, var(--color-surface) 28%);
 }
 
 .leaderboard-row--me {
-  background: rgba(255, 230, 109, 0.55) !important;
+  background: color-mix(in srgb, var(--color-warning-bg) 84%, var(--color-surface) 16%) !important;
   font-weight: var(--font-weight-bold);
+}
+
+.leaderboard-panel {
+  display: grid;
+  gap: var(--app-layout-gap);
+}
+
+.panel-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+
+.panel-title--list {
+  padding: 1rem 1rem 0;
+}
+
+.panel-value {
+  margin: 0.45rem 0 0;
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+}
+
+.panel-copy {
+  margin: 0.45rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0;
+}
+
+.panel-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-bottom: 2px solid var(--color-border-subtle);
+  font-size: var(--text-sm);
+}
+
+.panel-list-item:last-child {
+  border-bottom: 0;
 }
 
 @media (max-width: 940px) {

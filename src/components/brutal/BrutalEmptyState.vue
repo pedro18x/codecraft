@@ -34,9 +34,9 @@ defineEmits<{ (event: 'action'): void }>()
 
 <style scoped>
 .brutal-empty {
-  border: 4px dashed var(--color-ink);
+  border: 4px dashed var(--color-border-strong);
   background: var(--color-surface);
-  box-shadow: 6px 6px 0 0 var(--color-ink);
+  box-shadow: 6px 6px 0 0 var(--color-shadow-strong);
   padding: 1.2rem;
   display: grid;
   gap: 0.6rem;
@@ -48,8 +48,9 @@ defineEmits<{ (event: 'action'): void }>()
   height: 2.4rem;
   display: grid;
   place-items: center;
-  border: 3px solid var(--color-ink);
-  background: var(--color-yellow);
+  border: 3px solid var(--color-border-strong);
+  background: var(--color-warning);
+  color: var(--color-accent-ink);
 }
 
 .brutal-empty__title {

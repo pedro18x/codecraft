@@ -106,7 +106,7 @@ textarea.brutal-input__field {
 
 .brutal-input__field:focus {
   outline: 0;
-  box-shadow: 0 0 0 4px var(--color-yellow);
+  box-shadow: 0 0 0 4px var(--color-focus-ring);
 }
 
 .brutal-input__field::placeholder {
@@ -152,12 +152,12 @@ textarea.brutal-input__field {
 }
 
 .brutal-input--error .brutal-input__field {
-  border-color: var(--color-coral);
+  border-color: var(--color-error);
   animation: brutal-shake 360ms ease-in-out;
 }
 
 .brutal-input--success .brutal-input__field {
-  border-color: var(--color-turquoise);
+  border-color: var(--color-success);
 }
 
 .brutal-input__helper {
@@ -166,7 +166,7 @@ textarea.brutal-input__field {
 }
 
 .brutal-input__helper--error {
-  color: var(--color-coral);
+  color: var(--color-error);
 }
 
 .brutal-input__helper--success {

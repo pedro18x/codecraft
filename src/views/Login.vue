@@ -127,9 +127,9 @@ const socialUnavailable = () => {
 }
 
 .auth-illustration {
-  border: 4px solid var(--color-ink);
-  box-shadow: 8px 8px 0 0 var(--color-ink);
-  background: var(--color-cream);
+  border: 4px solid var(--color-border-strong);
+  box-shadow: 8px 8px 0 0 var(--color-shadow-strong);
+  background: var(--surface-auth-illustration);
   padding: 1.2rem;
 }
 
@@ -143,7 +143,7 @@ const socialUnavailable = () => {
   margin-top: 0.7rem;
   font-family: var(--font-display);
   font-size: var(--text-xl);
-  color: var(--color-coral);
+  color: var(--color-primary);
 }
 
 .auth-copy {
@@ -160,12 +160,12 @@ const socialUnavailable = () => {
 
 .chip {
   width: fit-content;
-  border: 3px solid var(--color-ink);
-  box-shadow: 4px 4px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  box-shadow: 4px 4px 0 0 var(--color-shadow-strong);
   padding: 0.45rem 0.6rem;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  background: var(--color-white);
+  background: var(--color-surface-raised);
 }
 
 .chip--one {
@@ -174,18 +174,18 @@ const socialUnavailable = () => {
 }
 
 .chip--two {
-  background: var(--color-turquoise);
+  background: var(--color-secondary);
   transform: rotate(1deg);
 }
 
 .chip--three {
-  background: var(--color-coral);
-  color: var(--color-white);
+  background: var(--color-danger);
+  color: var(--color-on-danger);
   transform: rotate(-0.5deg);
 }
 
 .auth-form-card {
-  background: var(--color-white);
+  background: var(--color-surface);
 }
 
 .auth-title {
@@ -213,9 +213,9 @@ const socialUnavailable = () => {
 }
 
 .auth-error {
-  border: 3px solid var(--color-coral);
-  background: #fff2f2;
-  color: #b53131;
+  border: 3px solid var(--color-error);
+  background: var(--color-error-bg);
+  color: var(--color-error);
   padding: 0.5rem 0.6rem;
   font-size: var(--text-sm);
 }
@@ -235,9 +235,15 @@ const socialUnavailable = () => {
   margin-left: 0.3rem;
   border: 0;
   background: transparent;
-  color: var(--color-coral);
+  color: var(--color-primary);
   font-weight: var(--font-weight-bold);
   cursor: pointer;
+}
+
+.auth-link:focus-visible,
+.auth-eye:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
 }
 
 @media (max-width: 880px) {

@@ -142,7 +142,7 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  border-bottom: var(--border-width) solid var(--color-ink);
+  border-bottom: var(--border-width) solid var(--color-border-strong);
   background-color: var(--color-background);
   flex-shrink: 0;
 }
@@ -172,11 +172,11 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 
 .lang-tab--active {
   color: var(--color-text-primary);
-  border-bottom-color: var(--color-coral);
+  border-bottom-color: var(--color-primary);
 }
 
 .lang-tab:focus-visible {
-  outline: 2px solid var(--color-yellow);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: -2px;
 }
 
@@ -211,13 +211,18 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
   box-shadow: none;
 }
 
+.run-btn:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
 .run-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
 .run-btn--running {
-  background-color: var(--color-yellow);
+  background-color: var(--color-warning);
   color: var(--color-accent-ink);
 }
 
@@ -250,7 +255,7 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 
 /* ── Results Panel ── */
 .results-panel {
-  border-top: var(--border-width) solid var(--color-ink);
+  border-top: var(--border-width) solid var(--color-border-strong);
   background-color: var(--color-background);
   max-height: 40%;
   overflow-y: auto;
@@ -279,17 +284,17 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
   height: 1.75rem;
   font-weight: bold;
   font-size: var(--text-sm);
-  border: var(--border-thin) solid var(--color-ink);
+  border: var(--border-thin) solid var(--color-border-strong);
 }
 
 .results-icon--pass {
-  background-color: var(--color-turquoise);
-  color: var(--color-ink);
+  background-color: var(--color-success);
+  color: var(--color-accent-ink);
 }
 
 .results-icon--fail {
-  background-color: var(--color-coral);
-  color: var(--color-white);
+  background-color: var(--color-error);
+  color: var(--color-on-danger);
 }
 
 .results-list {
@@ -307,11 +312,11 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 }
 
 .result-card--passed {
-  border-left: 4px solid var(--color-turquoise);
+  border-left: 4px solid var(--color-success);
 }
 
 .result-card--failed {
-  border-left: 4px solid var(--color-coral);
+  border-left: 4px solid var(--color-error);
 }
 
 .result-card__header {
@@ -341,7 +346,7 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 }
 
 .result-label--error {
-  color: var(--color-coral);
+  color: var(--color-error);
 }
 
 .result-value {
@@ -349,7 +354,7 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 }
 
 .result-value--error {
-  color: var(--color-coral);
+  color: var(--color-error);
 }
 
 .result-badge {
@@ -358,16 +363,16 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
   font-size: 0.625rem;
   letter-spacing: 0.06em;
   padding: 2px var(--space-2);
-  border: 1px solid var(--color-ink);
+  border: 1px solid var(--color-border-strong);
 }
 
 .result-badge--passed {
-  background-color: var(--color-turquoise);
-  color: var(--color-ink);
+  background-color: var(--color-success);
+  color: var(--color-accent-ink);
 }
 
 .result-badge--failed {
-  background-color: var(--color-coral);
-  color: var(--color-white);
+  background-color: var(--color-error);
+  color: var(--color-on-danger);
 }
 </style>

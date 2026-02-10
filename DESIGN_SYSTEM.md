@@ -14,21 +14,28 @@ CodeCraft uses a neo-brutalist systems UI language: heavy borders, directional h
 - Code: `JetBrains Mono` with ligatures
 
 ## Dark Theme Palette
-Dark mode is a black-first palette with neutral charcoal surfaces and warm contrast accents.
+Dark mode uses a dedicated, non-inverted palette tuned for contrast on deep blue-black surfaces.
 
-- `--color-background`: `#0f0f10`
-- `--color-surface`: `#171719`
-- `--color-surface-raised`: `#202124`
-- `--color-surface-hover`: `#2a2b30`
-- `--color-border-strong`: `#fffef9`
-- `--color-shadow-strong`: `#fffef9`
-- `--color-coral`: `#c84a56`
-- `--color-turquoise`: `#2fc2b5`
-- `--color-yellow`: `#e8b93f`
-- `--color-info`: `#5d6ec4`
+- Base surfaces
+  - `--dark-bg`: `#0F1115`
+  - `--dark-surface-1`: `#161A22`
+  - `--dark-surface-2`: `#1D2330`
+  - `--dark-surface-3`: `#252D3D`
+- Borders
+  - `--dark-border`: `#353F52`
+  - `--dark-border-strong`: `#4A5670`
+- Text
+  - `--dark-text-primary`: `#EEF2FF`
+  - `--dark-text-secondary`: `#B7C0D4`
+  - `--dark-text-muted`: `#8E99B0`
+- Dark-only accents
+  - `--dark-accent-primary`: `#7C9BFF`
+  - `--dark-accent-secondary`: `#4DD4AC`
+  - `--dark-accent-warning`: `#F6C760`
+  - `--dark-accent-danger`: `#FF7A90`
+  - `--dark-accent-info`: `#78C4FF`
 
-Dark-mode button accents are mapped through dedicated button tokens (`--button-*`) so primary/secondary/ghost/danger buttons are tuned for black surfaces without reusing light-theme values. Button borders and button shadows are also white in dark mode.
-Key dark button tones: primary `#a6414d`, secondary `#2f8f89`, danger `#8f313d`.
+All component states consume semantic tokens (`--color-*`, `--button-*`) that remap in dark mode, so light theme visuals stay unchanged while dark mode gets a distinct accent system.
 
 ## Core Components
 - Buttons, cards, inputs/textarea, badges

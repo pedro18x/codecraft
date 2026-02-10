@@ -71,6 +71,7 @@ const sortOptions = [
       />
 
       <BrutalButton
+        class="filters-toggle"
         variant="secondary"
         size="sm"
         :aria-expanded="mobileFiltersOpen"
@@ -147,12 +148,12 @@ const sortOptions = [
 }
 
 .difficulty-pill--active {
-  background: var(--color-yellow);
+  background: var(--color-warning);
   color: var(--color-accent-ink);
 }
 
 .difficulty-pill:focus-visible {
-  outline: 4px solid var(--color-yellow);
+  outline: 4px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -163,6 +164,12 @@ const sortOptions = [
 
   .dashboard-topbar__filters > * {
     min-width: 100%;
+  }
+}
+
+@media (min-width: 981px) {
+  .filters-toggle {
+    display: none;
   }
 }
 </style>

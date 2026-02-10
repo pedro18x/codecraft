@@ -49,7 +49,7 @@
   }
 
   .btn-brutal:focus-visible {
-    outline: 3px solid var(--color-yellow);
+    outline: 3px solid var(--color-focus-ring);
     outline-offset: 2px;
   }
 
@@ -110,7 +110,7 @@
   /* ── Brutal Card ── */
   .card-brutal {
     background-color: var(--color-surface);
-    border: var(--border-width) solid var(--color-ink);
+    border: var(--border-width) solid var(--color-border-strong);
     box-shadow: var(--shadow-brutal);
     transition: transform var(--duration-fast) var(--ease),
                 box-shadow var(--duration-fast) var(--ease);
@@ -145,7 +145,7 @@
     font-size: var(--text-base);
     color: var(--color-text-primary);
     background-color: var(--color-surface);
-    border: var(--border-width) solid var(--color-ink);
+    border: var(--border-width) solid var(--color-border-strong);
     padding: var(--space-3) var(--space-4);
     transition: box-shadow var(--duration-fast) var(--ease);
   }
@@ -160,13 +160,13 @@
   }
 
   .input-brutal--error {
-    border-color: var(--color-coral);
-    box-shadow: var(--shadow-coral);
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px var(--color-error-bg);
     animation: shake 0.4s ease-in-out;
   }
 
   .input-brutal--success {
-    border-color: var(--color-turquoise);
+    border-color: var(--color-success);
   }
 
   /* ── Brutal Badge ── */
@@ -179,7 +179,7 @@
     letter-spacing: 0.03em;
     text-transform: uppercase;
     padding: var(--space-1) var(--space-3);
-    border: var(--border-thin) solid var(--color-ink);
+    border: var(--border-thin) solid var(--color-border-strong);
     transform: rotate(-1deg);
     transition: transform var(--duration-fast) var(--ease);
   }
@@ -189,38 +189,51 @@
   }
 
   .badge-brutal--easy {
-    background-color: var(--color-turquoise);
-    color: var(--color-ink);
+    background-color: var(--color-success);
+    color: var(--color-accent-ink);
   }
 
   .badge-brutal--medium {
-    background-color: var(--color-yellow);
-    color: var(--color-ink);
+    background-color: var(--color-warning);
+    color: var(--color-accent-ink);
   }
 
   .badge-brutal--hard {
-    background-color: var(--color-coral);
-    color: var(--color-white);
+    background-color: var(--color-error);
+    color: var(--color-on-danger);
   }
 
   /* ── Code Block ── */
   .code-brutal {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
-    background-color: var(--color-ink);
-    color: var(--color-turquoise);
+    background-color: var(--color-accent-ink);
+    color: var(--color-success);
     padding: var(--space-4) var(--space-5);
-    border: var(--border-width) solid var(--color-ink);
+    border: var(--border-width) solid var(--color-border-strong);
     box-shadow: var(--shadow-brutal-sm);
   }
 
   [data-theme="dark"] .code-brutal {
-    background-color: #0A0A0A;
+    background-color: var(--dark-bg);
     border-color: var(--color-border);
   }
 }
 
 @layer utilities {
+  .app-min-h-dvh {
+    min-height: 100dvh;
+  }
+
+  .app-gutters {
+    padding-left: var(--app-shell-gutter);
+    padding-right: var(--app-shell-gutter);
+  }
+
+  .app-section-gap {
+    gap: var(--app-layout-gap);
+  }
+
   .text-balance {
     text-wrap: balance;
   }

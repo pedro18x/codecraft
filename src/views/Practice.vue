@@ -9,6 +9,7 @@ import { useAuth } from '../composables/useAuth'
 import { api } from '../api/client'
 import { getProblemSlug } from '../utils/problemUtils'
 import { useToast } from '../composables/useToast'
+import { useBreakpoints } from '../composables/useBreakpoints'
 import ProblemPanel from '../components/practice/ProblemPanel.vue'
 import EditorPanel from '../components/practice/EditorPanel.vue'
 import Text from '../design-system/components/Text.vue'
@@ -16,6 +17,7 @@ import Button from '../design-system/components/Button.vue'
 
 const route = useRoute()
 const router = useRouter()
+const { isDesktop } = useBreakpoints()
 
 // Find problem from slug
 const problem = computed(() => {
@@ -105,10 +107,12 @@ const resetCode = () => {
 
 // Split pane dragging
 const handleMouseDown = () => {
+  if (!isDesktop.value) return
   isDragging.value = true
 }
 
 const handleMouseMove = (e: MouseEvent) => {
+  if (!isDesktop.value) return
   if (!isDragging.value) return
   const container = document.querySelector('.practice__content')
   if (!container) return
@@ -130,6 +134,12 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('mousemove', handleMouseMove)
   document.removeEventListener('mouseup', handleMouseUp)
+})
+
+watch(isDesktop, (desktop) => {
+  if (!desktop) {
+    isDragging.value = false
+  }
 })
 
 // Keyboard shortcuts
@@ -390,11 +400,11 @@ const goBack = () => {
     </div>
 
     <!-- Split Pane Content -->
-    <div class="practice__content">
+    <div class="practice__content" :class="{ 'practice__content--stacked': !isDesktop }">
       <!-- Problem Description Panel -->
       <div
         class="practice__panel practice__panel--problem"
-        :style="{ width: `${splitPosition}%` }"
+        :style="isDesktop ? { width: `${splitPosition}%` } : undefined"
       >
         <ProblemPanel :problem="problem" />
       </div>
@@ -410,7 +420,7 @@ const goBack = () => {
       <!-- Editor Panel -->
       <div
         class="practice__panel practice__panel--editor"
-        :style="{ width: `${100 - splitPosition}%` }"
+        :style="isDesktop ? { width: `${100 - splitPosition}%` } : undefined"
       >
         <EditorPanel
           v-model:code="userCode"
@@ -426,7 +436,9 @@ const goBack = () => {
 
 <style scoped>
 .practice {
-  height: 100vh;
+  width: 100%;
+  min-height: 100dvh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -434,7 +446,7 @@ const goBack = () => {
 }
 
 .practice__not-found {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -454,12 +466,15 @@ const goBack = () => {
   border-bottom: var(--border-width) solid var(--button-border);
   flex-shrink: 0;
   background-color: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 40;
 }
 
 .practice__header-content {
   height: 100%;
-  max-width: 100%;
-  margin: 0 auto;
+  width: 100%;
+  min-width: 0;
   padding: 0 var(--space-4);
   display: flex;
   align-items: center;
@@ -472,7 +487,7 @@ const goBack = () => {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   background: none;
   border: var(--border-thin) solid transparent;
   cursor: pointer;
@@ -486,7 +501,7 @@ const goBack = () => {
 }
 
 .practice__back:focus-visible {
-  outline: 2px solid var(--color-yellow);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -504,6 +519,9 @@ const goBack = () => {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 /* ── Nav buttons ── */
@@ -518,7 +536,7 @@ const goBack = () => {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   background: var(--button-ghost-bg);
   border: none;
   cursor: pointer;
@@ -540,7 +558,7 @@ const goBack = () => {
 }
 
 .practice__nav-btn:focus-visible {
-  outline: 2px solid var(--color-yellow);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: -2px;
 }
 
@@ -550,7 +568,7 @@ const goBack = () => {
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   background: var(--button-ghost-bg);
   border: var(--border-thin) solid var(--button-border);
   cursor: pointer;
@@ -563,7 +581,7 @@ const goBack = () => {
 }
 
 .practice__action-btn:focus-visible {
-  outline: 2px solid var(--color-yellow);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -583,26 +601,33 @@ const goBack = () => {
 }
 
 .practice__focus-toggle:focus-visible {
-  outline: 2px solid var(--color-yellow);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
 /* ── Content Panes ── */
 .practice__content {
   flex: 1;
+  min-height: 0;
   display: flex;
   overflow: hidden;
 }
 
 .practice__panel {
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
+.practice__panel--problem {
+  border-right: var(--border-thin) solid var(--color-border-subtle);
+}
+
 .practice__resizer {
   width: 3px;
-  background-color: var(--color-ink);
+  background-color: var(--color-border-strong);
   cursor: col-resize;
   flex-shrink: 0;
   position: relative;
@@ -611,7 +636,7 @@ const goBack = () => {
 
 .practice__resizer:hover,
 .practice__resizer--dragging {
-  background-color: var(--color-coral);
+  background-color: var(--color-primary);
 }
 
 .practice__resizer::before {
@@ -627,7 +652,7 @@ const goBack = () => {
 .shortcuts-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(26, 26, 26, 0.6);
+  background-color: color-mix(in srgb, var(--color-background) 78%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -636,7 +661,7 @@ const goBack = () => {
 
 .shortcuts-panel {
   background-color: var(--color-surface);
-  border: var(--border-thick) solid var(--color-ink);
+  border: var(--border-thick) solid var(--color-border-strong);
   box-shadow: var(--shadow-brutal-lg);
   padding: var(--space-6);
   max-width: 400px;
@@ -657,7 +682,7 @@ const goBack = () => {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   background: none;
   border: var(--border-thin) solid transparent;
   cursor: pointer;
@@ -666,7 +691,7 @@ const goBack = () => {
 
 .shortcuts-close:hover {
   color: var(--color-text-primary);
-  border-color: var(--color-ink);
+  border-color: var(--color-border-strong);
 }
 
 .shortcuts-list {
@@ -683,14 +708,59 @@ const goBack = () => {
 
 .shortcut-keys {
   font-family: var(--font-mono);
-  background-color: var(--color-ink);
-  color: var(--color-surface);
-  border: var(--border-thin) solid var(--color-ink);
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  border: var(--border-thin) solid var(--color-border-strong);
   padding: var(--space-1) var(--space-3);
   min-width: 5rem;
   text-align: center;
   font-size: var(--text-sm);
   font-weight: var(--font-weight-bold);
+}
+
+@media (max-width: 1024px) {
+  .practice__content,
+  .practice__content--stacked {
+    flex-direction: column;
+  }
+
+  .practice__panel--problem {
+    width: 100% !important;
+    height: min(52vh, 25rem);
+    border-right: 0;
+    border-bottom: var(--border-thin) solid var(--color-border-subtle);
+  }
+
+  .practice__panel--editor {
+    width: 100% !important;
+    flex: 1;
+  }
+
+  .practice__resizer {
+    display: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .practice__header {
+    height: auto;
+  }
+
+  .practice__header-content {
+    flex-wrap: wrap;
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .practice__title {
+    width: 100%;
+    order: 2;
+  }
+
+  .practice__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
 
 /* ── Focus Mode ── */

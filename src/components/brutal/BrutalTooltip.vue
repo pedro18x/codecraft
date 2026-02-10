@@ -30,9 +30,10 @@ withDefaults(defineProps<Props>(), {
   z-index: 45;
   width: max-content;
   max-width: 14rem;
-  border: 3px solid var(--color-ink);
-  background: var(--color-yellow);
-  box-shadow: 3px 3px 0 0 var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  background: var(--color-warning);
+  color: var(--color-accent-ink);
+  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
   font-size: var(--text-xs);
   font-weight: var(--font-weight-semibold);
   padding: 0.35rem 0.45rem;
@@ -57,7 +58,12 @@ withDefaults(defineProps<Props>(), {
 }
 
 .brutal-tooltip-wrap:focus-visible {
-  outline: 3px solid var(--color-yellow);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 3px;
+}
+
+[data-theme='dark'] .brutal-tooltip {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
 }
 </style>

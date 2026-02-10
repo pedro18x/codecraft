@@ -65,6 +65,9 @@ const statusTone = (status: VirtualProblemItem['status']) => {
   return 'info'
 }
 
+const difficultyTone = (difficulty: VirtualProblemItem['difficulty']) =>
+  difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'
+
 watch(activeIndex, (index) => {
   const container = containerRef.value
   if (!container) return
@@ -125,7 +128,7 @@ watch(activeIndex, (index) => {
           <BrutalBadge
             variant="difficulty"
             size="sm"
-            :tone="item.difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'"
+            :tone="difficultyTone(item.difficulty)"
           >
             {{ item.difficulty }}
           </BrutalBadge>
@@ -160,7 +163,7 @@ watch(activeIndex, (index) => {
   grid-template-columns: minmax(0, 1.8fr) 0.8fr 0.95fr 0.8fr;
   gap: 0.5rem;
   border-bottom: 3px solid var(--color-border-strong);
-  background: var(--color-background);
+  background: var(--color-surface-raised);
   padding: 0.6rem 0.7rem;
   font-size: var(--text-xs);
   text-transform: uppercase;
@@ -173,7 +176,7 @@ watch(activeIndex, (index) => {
 }
 
 .virtual-list:focus-visible {
-  outline: 4px solid var(--color-yellow);
+  outline: 4px solid var(--color-focus-ring);
   outline-offset: -4px;
 }
 
@@ -200,15 +203,15 @@ watch(activeIndex, (index) => {
 }
 
 .problem-row:nth-child(odd) {
-  background: color-mix(in srgb, var(--color-surface) 86%, var(--color-text-primary) 14%);
+  background: color-mix(in srgb, var(--color-surface) 88%, var(--color-border-strong) 12%);
 }
 
 .problem-row:hover {
-  background: rgba(255, 230, 109, 0.25);
+  background: color-mix(in srgb, var(--color-warning-bg) 74%, var(--color-surface) 26%);
 }
 
 .problem-row--active {
-  background: rgba(255, 230, 109, 0.45) !important;
+  background: color-mix(in srgb, var(--color-warning-bg) 86%, var(--color-surface) 14%) !important;
 }
 
 .problem-row__title-wrap {
@@ -253,17 +256,13 @@ watch(activeIndex, (index) => {
 .progress-fill {
   display: block;
   height: 100%;
-  background: var(--color-turquoise);
+  background: var(--color-success);
 }
 
 .progress-label {
   font-size: var(--text-xs);
   font-family: var(--font-mono);
   color: var(--color-text-secondary);
-}
-
-[data-theme='dark'] .problem-row:nth-child(odd) {
-  background: color-mix(in srgb, var(--color-surface) 82%, var(--color-border-strong) 18%);
 }
 
 @media (max-width: 940px) {

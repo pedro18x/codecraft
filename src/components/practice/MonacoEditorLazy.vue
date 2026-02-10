@@ -157,7 +157,7 @@ onUnmounted(() => {
   place-items: center;
   align-content: center;
   gap: 0.7rem;
-  background: var(--color-accent-ink);
+  background: var(--color-surface-raised);
   color: var(--color-text-primary);
   font-family: var(--font-mono);
 }
@@ -165,8 +165,8 @@ onUnmounted(() => {
 .monaco-loading__bar {
   width: min(18rem, 78%);
   height: 0.8rem;
-  border: 3px solid var(--color-yellow);
-  background: linear-gradient(90deg, var(--color-turquoise) 0%, var(--color-yellow) 50%, var(--color-coral) 100%);
+  border: 3px solid var(--color-focus-ring);
+  background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-warning) 50%, var(--color-danger) 100%);
   background-size: 200% 100%;
   animation: monaco-load 1.2s linear infinite;
 }
@@ -175,7 +175,7 @@ onUnmounted(() => {
   border: 0;
   outline: none;
   resize: none;
-  background: #101012;
+  background: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-mono);
   font-size: 14px;

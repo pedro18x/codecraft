@@ -24,12 +24,12 @@ withDefaults(defineProps<Props>(), {
 <style scoped>
 .brutal-skeleton {
   display: inline-block;
-  border: 3px solid var(--color-ink);
+  border: 3px solid var(--color-border-strong);
   background: linear-gradient(
     90deg,
-    var(--color-background) 0%,
-    rgba(255, 230, 109, 0.65) 45%,
-    var(--color-background) 100%
+    var(--color-surface-raised) 0%,
+    var(--color-warning-bg) 45%,
+    var(--color-surface-raised) 100%
   );
   background-size: 200% 100%;
   animation: brutal-skeleton 1.2s linear infinite;

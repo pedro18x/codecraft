@@ -71,7 +71,7 @@ onUnmounted(() => {
 
   <RouterView v-slot="{ Component, route }">
     <Transition name="route-fade" mode="out-in">
-      <main :id="'main-content'" :key="route.path">
+      <main :id="'main-content'" :key="route.path" class="route-frame">
         <component :is="Component" />
       </main>
     </Transition>
@@ -87,10 +87,10 @@ onUnmounted(() => {
   left: 0.5rem;
   z-index: 999;
   transform: translateY(-150%);
-  border: 3px solid var(--color-ink);
-  background: var(--color-yellow);
-  box-shadow: 3px 3px 0 0 var(--color-ink);
-  color: var(--color-ink);
+  border: 3px solid var(--color-border-strong);
+  background: var(--color-warning);
+  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
+  color: var(--color-accent-ink);
   font-weight: var(--font-weight-bold);
   padding: 0.4rem 0.6rem;
   text-decoration: none;
@@ -98,6 +98,8 @@ onUnmounted(() => {
 
 .skip-link:focus {
   transform: translateY(0);
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
 }
 
 :global(.route-fade-enter-active),
@@ -109,5 +111,10 @@ onUnmounted(() => {
 :global(.route-fade-leave-to) {
   opacity: 0;
   transform: scale(0.985);
+}
+
+:global(.route-frame) {
+  width: 100%;
+  min-height: 100dvh;
 }
 </style>

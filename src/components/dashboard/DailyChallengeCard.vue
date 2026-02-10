@@ -10,6 +10,9 @@ interface Props {
 defineProps<Props>()
 
 defineEmits<{ (event: 'start', problemId: number): void }>()
+
+const difficultyTone = (difficulty: NonNullable<Props['problem']>['difficulty']) =>
+  difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'
 </script>
 
 <template>
@@ -19,7 +22,7 @@ defineEmits<{ (event: 'start', problemId: number): void }>()
       <BrutalBadge
         v-if="problem"
         variant="difficulty"
-        :tone="problem.difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'"
+        :tone="difficultyTone(problem.difficulty)"
       >
         {{ problem.difficulty }}
       </BrutalBadge>
@@ -63,8 +66,8 @@ defineEmits<{ (event: 'start', problemId: number): void }>()
   align-items: center;
   border: 2px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
-  background: var(--color-coral);
-  color: var(--color-white);
+  background: var(--color-danger);
+  color: var(--color-on-danger);
   font-family: var(--font-display);
   font-size: var(--text-xs);
   font-weight: var(--font-weight-bold);

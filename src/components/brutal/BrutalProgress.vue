@@ -95,8 +95,8 @@ const dashOffset = computed(() => circumference - (percentage.value / 100) * cir
   width: 0;
   background: repeating-linear-gradient(
     -45deg,
-    var(--color-turquoise),
-    var(--color-turquoise) 9px,
+    var(--color-success),
+    var(--color-success) 9px,
     var(--color-success-bg) 9px,
     var(--color-success-bg) 18px
   );
@@ -139,7 +139,7 @@ const dashOffset = computed(() => circumference - (percentage.value / 100) * cir
 }
 
 .brutal-progress__ring-fill {
-  stroke: var(--color-coral);
+  stroke: var(--color-primary);
   transition: stroke-dashoffset 260ms var(--ease);
 }
 
@@ -183,12 +183,12 @@ const dashOffset = computed(() => circumference - (percentage.value / 100) * cir
 }
 
 .brutal-progress__step--done {
-  background: var(--color-turquoise);
+  background: var(--color-success);
   color: var(--color-accent-ink);
 }
 
 .brutal-progress__step--active {
-  background: var(--color-yellow);
+  background: var(--color-warning);
   color: var(--color-accent-ink);
 }
 

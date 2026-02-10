@@ -38,8 +38,10 @@ withDefaults(defineProps<Props>(), {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
   border: var(--border-width) solid var(--button-border);
   cursor: pointer;
   user-select: none;
@@ -64,7 +66,7 @@ withDefaults(defineProps<Props>(), {
 }
 
 .brutal-btn:focus-visible {
-  outline: 3px solid var(--color-yellow);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 

@@ -8,6 +8,7 @@
 
 ## Production Data Policy (Critical)
 
+- Do not EVER apply hardcoded runtime business info or mock records in production UI flows.
 - Never ship hardcoded domain data, fake leaderboard users, or mock product records in frontend views/components.
 - For production behavior, always consume real backend APIs or persisted storage.
 - If backend support is missing for a feature, surface an explicit loading/error/empty state instead of inventing placeholder business data.

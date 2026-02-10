@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api/client'
 import { useAuth } from '../composables/useAuth'
+import AppShell from '../components/shared/AppShell.vue'
 import BrutalButton from '../components/brutal/BrutalButton.vue'
 import BrutalCard from '../components/brutal/BrutalCard.vue'
 import BrutalTabs from '../components/brutal/BrutalTabs.vue'
@@ -224,6 +225,9 @@ const badges = computed<BadgeItem[]>(() => [
   },
 ])
 
+const difficultyTone = (difficulty: ProgressEntry['problem']['difficulty']) =>
+  difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'
+
 const selectedBadge = ref<BadgeItem | null>(null)
 const badgeModal = useModal('badge-details')
 
@@ -240,18 +244,24 @@ const formatDate = (date: Date) =>
 </script>
 
 <template>
-  <div class="profile">
-    <div class="profile__container">
+  <AppShell
+    title="Profile"
+    subtitle="Progress and activity from your real submissions."
+    :scroll-main="true"
+  >
+    <template #topbar-actions>
+      <BrutalButton variant="secondary" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
+    </template>
+
+    <div class="profile">
       <header class="profile__header">
         <div class="profile__identity">
           <div class="profile__avatar" aria-hidden="true">{{ (user?.username ?? 'G').slice(0, 1).toUpperCase() }}</div>
           <div>
             <h1 class="profile__name">{{ user?.username ?? 'Guest Coder' }}</h1>
-            <p class="profile__bio">Progress and activity from your real submissions.</p>
+            <p class="profile__bio">Track progress, streaks, and contribution depth.</p>
           </div>
         </div>
-
-        <BrutalButton variant="secondary" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
       </header>
 
       <BrutalCard v-if="!isAuthenticated" variant="flat" padding="lg">
@@ -334,7 +344,7 @@ const formatDate = (date: Date) =>
                   </div>
                   <BrutalBadge
                     variant="difficulty"
-                    :tone="entry.problem.difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'"
+                    :tone="difficultyTone(entry.problem.difficulty)"
                   >
                     {{ entry.problem.difficulty }}
                   </BrutalBadge>
@@ -387,6 +397,42 @@ const formatDate = (date: Date) =>
       </template>
     </div>
 
+    <template #panel>
+      <div v-if="isAuthenticated && !loading && !loadError && stats" class="profile-side">
+        <BrutalCard variant="flat" padding="lg">
+          <h2 class="section-title">Snapshot</h2>
+          <div class="profile-side__stats">
+            <p><strong>{{ stats.completedCount }}</strong> solved</p>
+            <p><strong>{{ stats.attemptedCount }}</strong> attempted</p>
+            <p><strong>{{ completionRate }}%</strong> completion</p>
+          </div>
+        </BrutalCard>
+
+        <BrutalCard variant="flat" padding="lg">
+          <h2 class="section-title">Difficulty Mix</h2>
+          <div class="difficulty-stack">
+            <div class="difficulty-row">
+              <span>Easy</span>
+              <span>{{ stats.byDifficulty.Easy }}</span>
+            </div>
+            <BrutalProgress variant="bar" :value="stats.byDifficulty.Easy" :max="stats.totalProblems || 1" />
+
+            <div class="difficulty-row">
+              <span>Medium</span>
+              <span>{{ stats.byDifficulty.Medium }}</span>
+            </div>
+            <BrutalProgress variant="bar" :value="stats.byDifficulty.Medium" :max="stats.totalProblems || 1" />
+
+            <div class="difficulty-row">
+              <span>Hard</span>
+              <span>{{ stats.byDifficulty.Hard }}</span>
+            </div>
+            <BrutalProgress variant="bar" :value="stats.byDifficulty.Hard" :max="stats.totalProblems || 1" />
+          </div>
+        </BrutalCard>
+      </div>
+    </template>
+
     <BrutalModal
       :model-value="badgeModal.isOpen.value"
       title="Badge Details"
@@ -401,20 +447,14 @@ const formatDate = (date: Date) =>
         <BrutalButton variant="secondary" size="sm" @click="badgeModal.close">Close</BrutalButton>
       </template>
     </BrutalModal>
-  </div>
+  </AppShell>
 </template>
 
 <style scoped>
 .profile {
-  min-height: 100vh;
-  padding: 2rem 1rem 3rem;
-}
-
-.profile__container {
-  width: min(70rem, 100%);
-  margin: 0 auto;
+  min-height: 0;
   display: grid;
-  gap: 1.2rem;
+  gap: var(--app-layout-gap);
 }
 
 .profile__header {
@@ -429,14 +469,15 @@ const formatDate = (date: Date) =>
   display: flex;
   gap: 0.8rem;
   align-items: center;
+  min-width: 0;
 }
 
 .profile__avatar {
   width: 3.4rem;
   height: 3.4rem;
-  border: 4px solid var(--color-ink);
-  box-shadow: 4px 4px 0 0 var(--color-ink);
-  background: var(--color-yellow);
+  border: 4px solid var(--color-border-strong);
+  box-shadow: 4px 4px 0 0 var(--color-shadow-strong);
+  background: var(--color-warning);
   display: grid;
   place-items: center;
   font-family: var(--font-display);
@@ -463,8 +504,8 @@ const formatDate = (date: Date) =>
 
 .profile__stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--app-layout-gap);
 }
 
 .stat__value {
@@ -483,11 +524,11 @@ const formatDate = (date: Date) =>
 
 .profile__panel {
   display: grid;
-  gap: 0.8rem;
+  gap: var(--app-layout-gap);
 }
 
 .profile__panel--overview {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
 }
 
 .section-title {
@@ -504,14 +545,14 @@ const formatDate = (date: Date) =>
 .heatmap-grid {
   margin-top: 0.45rem;
   display: grid;
-  grid-template-columns: repeat(14, 1fr);
+  grid-template-columns: repeat(14, minmax(0, 1fr));
   gap: 0.28rem;
 }
 
 .heat-cell {
   width: 100%;
   aspect-ratio: 1;
-  border: 2px solid var(--color-ink);
+  border: 2px solid var(--color-border-strong);
 }
 
 .heat--0 {
@@ -519,15 +560,15 @@ const formatDate = (date: Date) =>
 }
 
 .heat--1 {
-  background: #b8f0eb;
+  background: var(--heat-level-1);
 }
 
 .heat--2 {
-  background: #66d8ce;
+  background: var(--heat-level-2);
 }
 
 .heat--3 {
-  background: #1ca79b;
+  background: var(--heat-level-3);
 }
 
 .solutions-list,
@@ -567,18 +608,18 @@ const formatDate = (date: Date) =>
   width: 0.8rem;
   height: 0.8rem;
   border-radius: 999px;
-  background: var(--color-coral);
-  border: 2px solid var(--color-ink);
+  background: var(--color-danger);
+  border: 2px solid var(--color-border-strong);
 }
 
 .activity-dot--done {
-  background: var(--color-turquoise);
+  background: var(--color-success);
 }
 
 .badges-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
-  gap: 0.8rem;
+  gap: var(--app-layout-gap);
 }
 
 .badge-card {
@@ -602,6 +643,33 @@ const formatDate = (date: Date) =>
   color: var(--color-text-secondary);
 }
 
+.profile-side {
+  display: grid;
+  gap: var(--app-layout-gap);
+}
+
+.profile-side__stats {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.profile-side__stats p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.difficulty-stack {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.difficulty-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
 .modal-title {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
@@ -613,7 +681,6 @@ const formatDate = (date: Date) =>
 }
 
 @media (max-width: 920px) {
-  .profile__stats,
   .profile__panel--overview {
     grid-template-columns: 1fr;
   }

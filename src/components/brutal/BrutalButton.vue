@@ -108,7 +108,7 @@ const onRippleEnd = (id: number) => {
   font-family: var(--font-body);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.005em;
-  line-height: 1.2;
+  line-height: 1.15;
   cursor: pointer;
   user-select: none;
   overflow: hidden;
@@ -127,7 +127,7 @@ const onRippleEnd = (id: number) => {
 }
 
 .brutal-button:focus-visible {
-  outline: 4px solid var(--color-yellow);
+  outline: 4px solid var(--color-focus-ring);
   outline-offset: 3px;
 }
 

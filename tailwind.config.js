@@ -7,6 +7,22 @@ export default {
   theme: {
     extend: {
       colors: {
+        theme: {
+          bg: 'var(--theme-bg)',
+          'surface-1': 'var(--surface-1)',
+          'surface-2': 'var(--surface-2)',
+          'surface-3': 'var(--surface-3)',
+          border: 'var(--theme-border)',
+          'border-strong': 'var(--theme-border-strong)',
+          text: 'var(--text-primary)',
+          'text-secondary': 'var(--text-secondary)',
+          'text-muted': 'var(--text-muted)',
+          'accent-primary': 'var(--accent-primary)',
+          'accent-secondary': 'var(--accent-secondary)',
+          'accent-warning': 'var(--accent-warning)',
+          'accent-danger': 'var(--accent-danger)',
+          'accent-info': 'var(--accent-info)',
+        },
         brutal: {
           coral: '#FF6B6B',
           'coral-dark': '#E05555',

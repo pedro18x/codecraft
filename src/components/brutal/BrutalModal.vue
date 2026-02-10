@@ -125,7 +125,7 @@ onUnmounted(() => {
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(15, 15, 15, 0.5);
+  background: color-mix(in srgb, var(--color-background) 72%, transparent);
   backdrop-filter: blur(4px);
   z-index: 70;
   padding: 1.25rem;
@@ -162,8 +162,8 @@ onUnmounted(() => {
   width: 2rem;
   height: 2rem;
   border: 2px solid var(--color-border-strong);
-  background: var(--color-coral);
-  color: var(--color-white);
+  background: var(--color-danger);
+  color: var(--button-danger-text);
   font-size: 1.25rem;
   line-height: 1;
   font-weight: 700;
@@ -172,7 +172,7 @@ onUnmounted(() => {
 }
 
 .brutal-modal__close:focus-visible {
-  outline: 4px solid var(--color-yellow);
+  outline: 4px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 

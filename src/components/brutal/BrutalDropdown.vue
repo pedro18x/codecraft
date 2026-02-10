@@ -148,7 +148,7 @@ onUnmounted(() => {
 }
 
 .brutal-dropdown__trigger:focus-visible {
-  outline: 4px solid var(--color-yellow);
+  outline: 4px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -196,7 +196,7 @@ onUnmounted(() => {
 }
 
 .brutal-dropdown__option--active {
-  background: var(--color-yellow);
+  background: var(--color-warning);
   color: var(--color-accent-ink);
   font-weight: var(--font-weight-bold);
 }

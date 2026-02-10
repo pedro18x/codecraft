@@ -135,9 +135,9 @@ const showHints = ref(false)
 }
 
 .problem-panel__content {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
+  max-width: min(72rem, 100%);
+  margin: 0;
+  padding: var(--space-6) clamp(var(--space-4), 2vw, var(--space-8));
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
@@ -261,8 +261,8 @@ const showHints = ref(false)
   top: 0.6em;
   width: 6px;
   height: 6px;
-  background-color: var(--color-turquoise);
-  border: 1px solid var(--color-ink);
+  background-color: var(--color-success);
+  border: 1px solid var(--color-border-strong);
 }
 
 /* ── Badges ── */
@@ -275,23 +275,23 @@ const showHints = ref(false)
   letter-spacing: 0.03em;
   text-transform: uppercase;
   padding: var(--space-1) var(--space-3);
-  border: var(--border-thin) solid var(--color-ink);
+  border: var(--border-thin) solid var(--color-border-strong);
   transform: rotate(-1deg);
 }
 
 .badge-brutal--easy {
-  background-color: var(--color-turquoise);
-  color: var(--color-ink);
+  background-color: var(--color-success);
+  color: var(--color-accent-ink);
 }
 
 .badge-brutal--medium {
   background-color: var(--color-yellow);
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
 }
 
 .badge-brutal--hard {
-  background-color: var(--color-coral);
-  color: var(--color-white);
+  background-color: var(--color-danger);
+  color: var(--color-on-danger);
 }
 
 /* ── Hints ── */
@@ -308,7 +308,12 @@ const showHints = ref(false)
 }
 
 .hints-toggle:hover .section-heading {
-  color: var(--color-coral);
+  color: var(--color-primary);
+}
+
+.hints-toggle:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
 }
 
 .hints-icon {
@@ -332,7 +337,7 @@ const showHints = ref(false)
   align-items: flex-start;
   padding: var(--space-3) var(--space-4);
   background-color: var(--color-warning-bg);
-  border: 1px solid var(--color-yellow);
+  border: 1px solid var(--color-warning);
 }
 
 .hint-number {
@@ -342,8 +347,9 @@ const showHints = ref(false)
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-yellow);
-  border: 1px solid var(--color-ink);
+  background-color: var(--color-warning);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-accent-ink);
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
   font-size: var(--text-xs);
