@@ -21,6 +21,6 @@
 - [x] Build and type-check pass without errors
 
 ## Remaining Next Pass Targets
-- [ ] Virtualized dashboard list component integration
-- [ ] Lazy Monaco runtime integration in practice editor
+- [x] Virtualized dashboard list component integration
+- [x] Lazy Monaco runtime integration in practice editor
 - [ ] Keyboard traversal audit across all list/table flows

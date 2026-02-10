@@ -19,14 +19,9 @@ export const codecraftMonacoTheme = {
     'editorIndentGuide.background1': '#2E2E2E',
     'editorIndentGuide.activeBackground1': '#444444',
   },
-}
+} as const
 
-export async function applyCodecraftMonacoTheme(monaco: {
-  editor: {
-    defineTheme: (name: string, theme: Record<string, unknown>) => void
-    setTheme: (name: string) => void
-  }
-}) {
+export async function applyCodecraftMonacoTheme(monaco: any) {
   monaco.editor.defineTheme('codecraft-brutal', codecraftMonacoTheme)
   monaco.editor.setTheme('codecraft-brutal')
 }

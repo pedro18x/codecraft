@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { Language, TestResult } from '../../types'
 import Text from '../../design-system/components/Text.vue'
+import MonacoEditorLazy from './MonacoEditorLazy.vue'
 
 interface Props {
   code: string
@@ -68,26 +69,10 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 
     <!-- Code Editor -->
     <div class="editor-area">
-      <div class="editor-wrapper">
-        <div class="line-numbers" aria-hidden="true">
-          <div
-            v-for="n in code.split('\n').length"
-            :key="n"
-            class="line-number"
-          >
-            {{ n }}
-          </div>
-        </div>
-        <textarea
-          v-model="localCode"
-          class="code-textarea"
-          spellcheck="false"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          aria-label="Code editor"
-        />
-      </div>
+      <MonacoEditorLazy
+        v-model="localCode"
+        :language="localLanguage"
+      />
     </div>
 
     <!-- Test Results -->
@@ -258,51 +243,6 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
   flex: 1;
   overflow: auto;
   background-color: var(--color-surface);
-}
-
-.editor-wrapper {
-  display: flex;
-  min-height: 100%;
-}
-
-.line-numbers {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-4) var(--space-3);
-  padding-right: var(--space-2);
-  user-select: none;
-  flex-shrink: 0;
-  border-right: var(--border-thin) solid var(--color-border-subtle);
-  background-color: var(--color-background);
-}
-
-.line-number {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--color-text-tertiary);
-  text-align: right;
-  min-width: 2.5ch;
-}
-
-.code-textarea {
-  flex: 1;
-  font-family: var(--font-mono);
-  font-feature-settings: 'liga' 1, 'calt' 1;
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--color-text-primary);
-  background: transparent;
-  border: none;
-  outline: none;
-  resize: none;
-  padding: var(--space-4);
-  min-height: 400px;
-  tab-size: 2;
-}
-
-.code-textarea::selection {
-  background-color: rgba(78, 205, 196, 0.2);
 }
 
 /* ── Results Panel ── */
