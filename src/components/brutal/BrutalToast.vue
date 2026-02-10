@@ -7,19 +7,32 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-defineEmits<{ (event: 'close', id: number): void }>()
+const emit = defineEmits<{
+  (event: 'close', id: number): void
+  (event: 'pause', id: number): void
+  (event: 'resume', id: number): void
+}>()
 
 const stripeClass = computed(() => `brutal-toast--${props.toast.type}`)
 </script>
 
 <template>
-  <article class="brutal-toast" :class="stripeClass" role="status" aria-live="polite">
+  <article
+    class="brutal-toast"
+    :class="stripeClass"
+    role="status"
+    aria-live="polite"
+    @mouseenter="emit('pause', toast.id)"
+    @mouseleave="emit('resume', toast.id)"
+    @focusin="emit('pause', toast.id)"
+    @focusout="emit('resume', toast.id)"
+  >
     <div class="brutal-toast__content">
       <strong class="brutal-toast__title">{{ toast.title }}</strong>
       <p v-if="toast.message" class="brutal-toast__message">{{ toast.message }}</p>
     </div>
 
-    <button type="button" class="brutal-toast__close" aria-label="Dismiss notification" @click="$emit('close', toast.id)">
+    <button type="button" class="brutal-toast__close" aria-label="Dismiss notification" @click="emit('close', toast.id)">
       ×
     </button>
 
@@ -102,6 +115,11 @@ const stripeClass = computed(() => `brutal-toast--${props.toast.type}`)
   animation-name: brutal-progress;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
+}
+
+.brutal-toast:hover .brutal-toast__progress,
+.brutal-toast:focus-within .brutal-toast__progress {
+  animation-play-state: paused;
 }
 
 @keyframes brutal-progress {

@@ -2,7 +2,7 @@
 import BrutalToast from './BrutalToast.vue'
 import { useToast } from '../../composables/useToast'
 
-const { toasts, remove } = useToast()
+const { toasts, remove, pause, resume } = useToast()
 </script>
 
 <template>
@@ -14,6 +14,8 @@ const { toasts, remove } = useToast()
           :key="toast.id"
           :toast="toast"
           @close="remove"
+          @pause="pause"
+          @resume="resume"
         />
       </TransitionGroup>
     </section>
