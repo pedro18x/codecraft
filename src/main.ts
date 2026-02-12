@@ -1,9 +1,11 @@
 import { createApp } from 'vue'
+import { MotionPlugin } from '@vueuse/motion'
 import App from './App.vue'
 import router from './router'
 import './assets/styles/tokens.css'
 import './style.css'
 import './assets/styles/brutal.css'
+import './assets/styles/nav.css'
 import './assets/styles/animations.css'
 
 // 🎨 Easter Egg Console Art
@@ -21,4 +23,5 @@ console.log(
 
 const app = createApp(App)
 app.use(router)
+app.use(MotionPlugin)
 app.mount('#app')

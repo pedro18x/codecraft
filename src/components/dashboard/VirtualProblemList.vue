@@ -257,6 +257,7 @@ watch(activeIndex, (index) => {
   display: block;
   height: 100%;
   background: var(--color-success);
+  transition: width 300ms ease-out;
 }
 
 .progress-label {

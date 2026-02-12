@@ -16,7 +16,7 @@ const difficultyTone = (difficulty: NonNullable<Props['problem']>['difficulty'])
 </script>
 
 <template>
-  <aside class="daily-card animate-glow">
+  <aside class="daily-card animate-float">
     <div class="daily-card__header">
       <span class="daily-card__tag">Daily Challenge</span>
       <BrutalBadge
@@ -45,9 +45,8 @@ const difficultyTone = (difficulty: NonNullable<Props['problem']>['difficulty'])
 .daily-card {
   position: sticky;
   top: 8.8rem;
-  border: 3px solid var(--color-border-strong);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 0 0 var(--color-shadow-strong);
+  border: var(--border-width) solid var(--color-border-strong);
+  box-shadow: var(--shadow-brutal-md);
   background: var(--color-surface);
   padding: 0.9rem;
   display: grid;

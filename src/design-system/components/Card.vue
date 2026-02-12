@@ -72,7 +72,7 @@ withDefaults(defineProps<Props>(), {
 .brutal-card--padding-lg { padding: var(--space-8); }
 
 /* ── Color accent strips ── */
-.brutal-card--accent-coral { border-left: 6px solid var(--color-coral); }
-.brutal-card--accent-turquoise { border-left: 6px solid var(--color-turquoise); }
-.brutal-card--accent-yellow { border-left: 6px solid var(--color-yellow); }
+.brutal-card--accent-coral { border-left: 8px solid var(--color-coral); }
+.brutal-card--accent-turquoise { border-left: 8px solid var(--color-turquoise); }
+.brutal-card--accent-yellow { border-left: 8px solid var(--color-yellow); }
 </style>

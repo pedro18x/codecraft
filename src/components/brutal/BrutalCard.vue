@@ -50,33 +50,32 @@ const hasFooter = computed(() => !!slots.footer)
 .brutal-card {
   position: relative;
   background: var(--color-surface);
-  border: 3px solid var(--color-border-strong);
-  border-radius: var(--radius-lg);
-  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
+  border: var(--border-width) solid var(--color-border-strong);
+  box-shadow: var(--shadow-brutal);
   transition: transform var(--duration-fast) var(--ease), box-shadow var(--duration-fast) var(--ease);
 }
 
 .brutal-card--flat {
-  box-shadow: 3px 3px 0 0 var(--color-shadow-strong);
+  box-shadow: var(--shadow-brutal);
 }
 
 .brutal-card--elevated {
-  box-shadow: 6px 6px 0 0 var(--color-shadow-strong);
+  box-shadow: var(--shadow-brutal-lg);
 }
 
 .brutal-card--interactive {
   cursor: pointer;
-  box-shadow: 6px 6px 0 0 var(--color-shadow-strong);
+  box-shadow: var(--shadow-brutal-lg);
 }
 
 .brutal-card--interactive:hover {
-  transform: translate(1px, 1px);
-  box-shadow: 4px 4px 0 0 var(--color-shadow-strong);
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-brutal-sm);
 }
 
 .brutal-card--interactive:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0 0 transparent;
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 .brutal-card--padding-none .brutal-card__body {
@@ -96,17 +95,17 @@ const hasFooter = computed(() => !!slots.footer)
 }
 
 .brutal-card--accent-coral {
-  border-left-width: 10px;
+  border-left-width: 8px;
   border-left-color: var(--color-coral);
 }
 
 .brutal-card--accent-turquoise {
-  border-left-width: 10px;
+  border-left-width: 8px;
   border-left-color: var(--color-turquoise);
 }
 
 .brutal-card--accent-yellow {
-  border-left-width: 10px;
+  border-left-width: 8px;
   border-left-color: var(--color-yellow);
 }
 

@@ -236,7 +236,6 @@ const openBadge = (badge: BadgeItem) => {
   badgeModal.open()
 }
 
-const goToDashboard = () => router.push('/dashboard')
 const goToLogin = () => router.push('/login')
 
 const formatDate = (date: Date) =>
@@ -250,7 +249,7 @@ const formatDate = (date: Date) =>
     :scroll-main="true"
   >
     <template #topbar-actions>
-      <BrutalButton variant="secondary" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
+      <BrutalButton variant="secondary" size="sm" @click="fetchProfileData">Refresh profile</BrutalButton>
     </template>
 
     <div class="profile">

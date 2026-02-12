@@ -136,6 +136,8 @@
   --app-layout-gap: clamp(0.7rem, 1.15vw, 1rem);
   --app-sidebar-width: clamp(15rem, 21vw, 19rem);
   --app-panel-width: clamp(16rem, 24vw, 23rem);
+  --max-width-content: 72rem;
+  --max-width-prose: 48rem;
 
   --border-thin: 2px;
   --border-width: 3px;
@@ -159,29 +161,29 @@
 }
 
 :root[data-theme='dark'] {
-  --dark-bg: #0a0a0a;
-  --dark-surface-1: #111111;
-  --dark-surface-2: #171717;
-  --dark-surface-3: #1f1f1f;
-  --dark-surface-elevated: #262626;
+  --dark-bg: #080808;
+  --dark-surface-1: #121212;
+  --dark-surface-2: #1d1d1d;
+  --dark-surface-3: #262626;
+  --dark-surface-elevated: #303030;
 
-  --dark-border: rgba(255, 255, 255, 0.82);
-  --dark-border-strong: #ffffff;
+  --dark-border: #474747;
+  --dark-border-strong: #5a5a5a;
 
-  --dark-text-primary: #f5f5f5;
-  --dark-text-secondary: #d4d4d4;
-  --dark-text-muted: #a3a3a3;
-  --dark-text-disabled: #737373;
+  --dark-text-primary: #f2f2f2;
+  --dark-text-secondary: #d8d8d8;
+  --dark-text-muted: #a8a8a8;
+  --dark-text-disabled: #6f6f6f;
 
-  --dark-accent-primary: #ff6b6b;
-  --dark-accent-secondary: #4ecdc4;
-  --dark-accent-warning: #ffe66d;
-  --dark-accent-danger: #ff5c5c;
-  --dark-accent-info: #d4d4d4;
+  --dark-accent-primary: #e07272;
+  --dark-accent-secondary: #5db8b1;
+  --dark-accent-warning: #d5c15f;
+  --dark-accent-danger: #df6666;
+  --dark-accent-info: #bdbdbd;
 
-  --dark-shadow-sm: 2px 2px 0 0 rgba(255, 255, 255, 0.58);
-  --dark-shadow-md: 4px 4px 0 0 rgba(255, 255, 255, 0.7);
-  --dark-shadow-lg: 8px 8px 0 0 rgba(255, 255, 255, 0.82);
+  --dark-shadow-sm: 2px 2px 0 0 rgba(75, 75, 75, 0.72);
+  --dark-shadow-md: 4px 4px 0 0 rgba(75, 75, 75, 0.82);
+  --dark-shadow-lg: 8px 8px 0 0 rgba(75, 75, 75, 0.9);
 
   --bg: var(--dark-bg);
   --surface-1: var(--dark-surface-1);
@@ -199,18 +201,18 @@
   --accent-warning: var(--dark-accent-warning);
   --accent-danger: var(--dark-accent-danger);
   --accent-info: var(--dark-accent-info);
-  --focus-ring: #ffffff;
+  --focus-ring: #f0e38a;
   --shadow-sm: var(--dark-shadow-sm);
   --shadow-md: var(--dark-shadow-md);
   --shadow-lg: var(--dark-shadow-lg);
 
   --color-ink: var(--dark-bg);
   --color-primary: var(--accent-primary);
-  --color-primary-hover: #ff5c5c;
+  --color-primary-hover: #d96565;
   --color-secondary: var(--accent-success);
-  --color-secondary-hover: #3fb8af;
+  --color-secondary-hover: #52a8a2;
   --color-danger: var(--accent-danger);
-  --color-danger-hover: #e84f4f;
+  --color-danger-hover: #cf5a5a;
   --color-focus-ring: var(--focus-ring);
   --color-coral: var(--accent-danger);
   --color-turquoise: var(--accent-success);
@@ -223,9 +225,9 @@
   --color-surface-elevated: var(--surface-elevated);
   --surface-auth-illustration: var(--surface-2);
   --color-border: var(--border);
-  --color-border-subtle: rgba(255, 255, 255, 0.42);
+  --color-border-subtle: #363636;
   --color-border-strong: var(--border-strong);
-  --color-shadow-strong: rgba(255, 255, 255, 0.72);
+  --color-shadow-strong: rgba(75, 75, 75, 0.82);
 
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -239,12 +241,12 @@
   --color-on-danger: var(--dark-bg);
   --color-on-info: var(--dark-bg);
   --color-success-bg: #163130;
-  --color-warning-bg: #3a3117;
-  --color-error-bg: #3a1818;
-  --color-info-bg: #2a2a2a;
-  --heat-level-1: #19302f;
-  --heat-level-2: #2a6b66;
-  --heat-level-3: #4ecdc4;
+  --color-warning-bg: #332c16;
+  --color-error-bg: #351a1a;
+  --color-info-bg: #262626;
+  --heat-level-1: #1b2d2b;
+  --heat-level-2: #2d5f5b;
+  --heat-level-3: #5db8b1;
 
   --theme-bg: var(--bg);
   --theme-border: var(--border);
@@ -252,7 +254,7 @@
   --accent-secondary: var(--accent-success);
 
   --button-border: var(--border-strong);
-  --button-shadow: rgba(255, 255, 255, 0.72);
+  --button-shadow: rgba(75, 75, 75, 0.86);
   --button-primary-bg: var(--accent-primary);
   --button-primary-hover: var(--color-primary-hover);
   --button-primary-text: var(--dark-bg);
@@ -265,6 +267,10 @@
   --button-danger-bg: var(--accent-danger);
   --button-danger-hover: var(--color-danger-hover);
   --button-danger-text: var(--dark-bg);
+
+  --dark-lp-accent-wash-1: color-mix(in srgb, var(--dark-accent-primary) 22%, var(--dark-surface-2));
+  --dark-lp-accent-wash-2: color-mix(in srgb, var(--dark-accent-warning) 20%, var(--dark-surface-2));
+  --dark-lp-accent-wash-3: color-mix(in srgb, var(--dark-accent-secondary) 18%, var(--dark-surface-2));
 
   --shadow-brutal-sm: var(--shadow-sm);
   --shadow-brutal: var(--shadow-md);

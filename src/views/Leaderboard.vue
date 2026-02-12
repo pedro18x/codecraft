@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { api } from '../api/client'
 import { useAuth } from '../composables/useAuth'
 import AppShell from '../components/shared/AppShell.vue'
@@ -28,7 +27,6 @@ interface LeaderboardRow extends LeaderboardApiItem {
   computedRank: number
 }
 
-const router = useRouter()
 const { user } = useAuth()
 
 const activeTab = ref<'global' | 'weighted' | 'hard'>('global')
@@ -105,10 +103,6 @@ const currentUserId = computed(() => user.value?.id ?? null)
 const firstPlace = computed(() => rankedEntries.value[0] ?? null)
 const topTenCutoff = computed(() => rankedEntries.value[9]?.score ?? null)
 
-const goToDashboard = () => {
-  router.push('/dashboard')
-}
-
 const scoreLabel = computed(() => {
   if (activeTab.value === 'global') return 'Solved'
   if (activeTab.value === 'hard') return 'Hard Solves'
@@ -124,7 +118,6 @@ const scoreLabel = computed(() => {
   >
     <template #topbar-actions>
       <BrutalButton variant="secondary" size="sm" @click="fetchLeaderboard">Refresh</BrutalButton>
-      <BrutalButton variant="secondary" size="sm" @click="goToDashboard">Back to Dashboard</BrutalButton>
     </template>
 
     <div class="leaderboard">
@@ -217,7 +210,11 @@ const scoreLabel = computed(() => {
                   <td>#{{ entry.computedRank }}</td>
                   <td>{{ entry.username }}</td>
                   <td>{{ entry.score }}</td>
-                  <td>H{{ entry.hard }} · M{{ entry.medium }} · E{{ entry.easy }}</td>
+                  <td class="breakdown-cell">
+                    <span class="breakdown-dot breakdown-dot--hard" />{{ entry.hard }} Hard
+                    <span class="breakdown-dot breakdown-dot--med" />{{ entry.medium }} Med
+                    <span class="breakdown-dot breakdown-dot--easy" />{{ entry.easy }} Easy
+                  </td>
                   <td>
                     <BrutalBadge
                       variant="status"
@@ -410,12 +407,64 @@ const scoreLabel = computed(() => {
   border-bottom: 0;
 }
 
+.breakdown-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.breakdown-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--color-border-strong);
+  flex-shrink: 0;
+}
+
+.breakdown-dot--hard {
+  background: var(--color-danger);
+}
+
+.breakdown-dot--med {
+  background: var(--color-warning);
+  margin-left: 0.35rem;
+}
+
+.breakdown-dot--easy {
+  background: var(--color-success);
+  margin-left: 0.35rem;
+}
+
 @media (max-width: 940px) {
   .podium {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .podium-rank {
+    font-size: var(--text-xl);
+  }
+
+  .podium-name {
+    font-size: var(--text-sm);
+  }
+
+  .podium-score {
+    font-size: var(--text-base);
+  }
+
+  .podium-meta {
+    display: none;
   }
 
   .leaderboard__filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .podium {
     grid-template-columns: 1fr;
   }
 }

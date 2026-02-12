@@ -1,15 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { Problem } from '../../types'
 import Text from '../../design-system/components/Text.vue'
+import BrutalBadge from '../brutal/BrutalBadge.vue'
 
 interface Props {
   problem: Problem
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const showHints = ref(false)
+const revealedHints = ref(0)
+
+watch(() => props.problem.id, () => {
+  showHints.value = false
+  revealedHints.value = 0
+})
+
+const revealNextHint = () => {
+  if (props.problem.hints && revealedHints.value < props.problem.hints.length) {
+    revealedHints.value++
+  }
+}
 </script>
 
 <template>
@@ -18,9 +31,11 @@ const showHints = ref(false)
       <!-- Header -->
       <div class="problem-panel__header">
         <div class="problem-panel__meta">
-          <span :class="['badge-brutal', `badge-brutal--${problem.difficulty.toLowerCase()}`]">
-            {{ problem.difficulty }}
-          </span>
+          <BrutalBadge
+            variant="difficulty"
+            :tone="problem.difficulty.toLowerCase() as 'easy' | 'medium' | 'hard'"
+            :label="problem.difficulty"
+          />
           <div class="problem-panel__categories">
             <span
               v-for="cat in problem.categories"
@@ -91,7 +106,7 @@ const showHints = ref(false)
       <template v-if="problem.hints && problem.hints.length > 0">
         <div class="section-divider" />
         <div class="problem-panel__section">
-          <button class="hints-toggle" @click="showHints = !showHints">
+          <button class="hints-toggle" @click="showHints = !showHints; if (showHints && revealedHints === 0) revealedHints = 1">
             <Text as="h2" variant="h4" weight="bold" class="section-heading">
               Hints ({{ problem.hints.length }})
             </Text>
@@ -109,13 +124,25 @@ const showHints = ref(false)
 
           <div v-if="showHints" class="hints-list">
             <div
-              v-for="(hint, index) in problem.hints"
+              v-for="(hint, index) in problem.hints.slice(0, revealedHints)"
               :key="index"
               class="hint-item"
             >
               <span class="hint-number">{{ index + 1 }}</span>
               <Text variant="body-sm">{{ hint }}</Text>
             </div>
+
+            <button
+              v-if="revealedHints < problem.hints.length"
+              class="hints-reveal-btn"
+              @click="revealNextHint"
+            >
+              Show hint {{ revealedHints + 1 }} of {{ problem.hints.length }}
+            </button>
+
+            <Text v-if="revealedHints === 0" variant="muted" class="hints-collapsed">
+              Click below to reveal hints one at a time
+            </Text>
           </div>
 
           <Text v-else variant="muted" class="hints-collapsed">
@@ -166,10 +193,16 @@ const showHints = ref(false)
 .category-pill {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-border-subtle);
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-thin) solid var(--color-border-strong);
+  box-shadow: 1px 1px 0 0 var(--color-shadow-strong);
   color: var(--color-text-secondary);
-  background: var(--color-surface);
+  background: var(--color-surface-raised);
+  transition: transform var(--duration-fast) var(--ease);
+}
+
+.category-pill:hover {
+  transform: translate(-1px, -1px);
 }
 
 /* ── Section ── */
@@ -265,35 +298,6 @@ const showHints = ref(false)
   border: 1px solid var(--color-border-strong);
 }
 
-/* ── Badges ── */
-.badge-brutal {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font-display);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--text-xs);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  padding: var(--space-1) var(--space-3);
-  border: var(--border-thin) solid var(--color-border-strong);
-  transform: rotate(-1deg);
-}
-
-.badge-brutal--easy {
-  background-color: var(--color-success);
-  color: var(--color-accent-ink);
-}
-
-.badge-brutal--medium {
-  background-color: var(--color-yellow);
-  color: var(--color-accent-ink);
-}
-
-.badge-brutal--hard {
-  background-color: var(--color-danger);
-  color: var(--color-on-danger);
-}
-
 /* ── Hints ── */
 .hints-toggle {
   display: flex;
@@ -353,6 +357,34 @@ const showHints = ref(false)
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
   font-size: var(--text-xs);
+}
+
+.hints-reveal-btn {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-sm);
+  background: var(--color-warning);
+  color: var(--color-accent-ink);
+  border: var(--border-thin) solid var(--color-border-strong);
+  box-shadow: 2px 2px 0 0 var(--color-shadow-strong);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease),
+              box-shadow var(--duration-fast) var(--ease);
+}
+
+.hints-reveal-btn:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 var(--color-shadow-strong);
+}
+
+.hints-reveal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 .hints-collapsed {

@@ -25,11 +25,12 @@ const { toasts, remove, pause, resume } = useToast()
 <style scoped>
 .brutal-toast-stack {
   position: fixed;
-  top: 1rem;
+  top: calc(5.5rem);
   right: 1rem;
   z-index: 90;
   display: grid;
   gap: 0.65rem;
+  max-width: min(24rem, calc(100vw - 2rem));
 }
 
 .toast-slide-enter-active,

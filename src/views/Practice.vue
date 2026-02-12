@@ -12,6 +12,7 @@ import { useToast } from '../composables/useToast'
 import { useBreakpoints } from '../composables/useBreakpoints'
 import ProblemPanel from '../components/practice/ProblemPanel.vue'
 import EditorPanel from '../components/practice/EditorPanel.vue'
+import BrutalModal from '../components/brutal/BrutalModal.vue'
 import Text from '../design-system/components/Text.vue'
 import Button from '../design-system/components/Button.vue'
 
@@ -97,12 +98,21 @@ watch(
   { immediate: true }
 )
 
-// Reset code to starter
+// Reset code modal
+const showResetModal = ref(false)
+
 const resetCode = () => {
-  if (codeStorage.value && confirm('Reset code to starter template? This cannot be undone.')) {
+  if (codeStorage.value) {
+    showResetModal.value = true
+  }
+}
+
+const confirmReset = () => {
+  if (codeStorage.value) {
     codeStorage.value.resetCode()
     testResults.value = []
   }
+  showResetModal.value = false
 }
 
 // Split pane dragging
@@ -431,6 +441,19 @@ const goBack = () => {
         />
       </div>
     </div>
+
+    <!-- Reset Code Confirmation Modal -->
+    <BrutalModal v-model="showResetModal" title="Reset code?" @close="showResetModal = false">
+      <Text variant="body" class="reset-modal__body">
+        This will replace your code with the starter template. Your current work will be lost.
+      </Text>
+      <template #footer>
+        <div class="reset-modal__actions">
+          <Button variant="ghost" size="sm" @click="showResetModal = false">Cancel</Button>
+          <Button variant="danger" size="sm" @click="confirmReset">Reset code</Button>
+        </div>
+      </template>
+    </BrutalModal>
   </div>
 </template>
 
@@ -485,11 +508,11 @@ const goBack = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
   color: var(--color-text-primary);
   background: none;
-  border: var(--border-thin) solid transparent;
+  border: var(--border-width) solid transparent;
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease);
 }
@@ -498,6 +521,7 @@ const goBack = () => {
   color: var(--color-text-primary);
   border-color: var(--button-border);
   background-color: var(--button-ghost-hover);
+  box-shadow: 2px 2px 0 0 var(--button-shadow);
 }
 
 .practice__back:focus-visible {
@@ -527,15 +551,16 @@ const goBack = () => {
 /* ── Nav buttons ── */
 .practice__nav {
   display: flex;
-  border: var(--border-thin) solid var(--button-border);
+  border: var(--border-width) solid var(--button-border);
+  box-shadow: 2px 2px 0 0 var(--button-shadow);
 }
 
 .practice__nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
   color: var(--color-text-primary);
   background: var(--button-ghost-bg);
   border: none;
@@ -544,7 +569,7 @@ const goBack = () => {
 }
 
 .practice__nav-btn + .practice__nav-btn {
-  border-left: var(--border-thin) solid var(--button-border);
+  border-left: var(--border-width) solid var(--button-border);
 }
 
 .practice__nav-btn:hover:not(:disabled) {
@@ -570,7 +595,8 @@ const goBack = () => {
   padding: var(--space-2) var(--space-3);
   color: var(--color-text-primary);
   background: var(--button-ghost-bg);
-  border: var(--border-thin) solid var(--button-border);
+  border: var(--border-width) solid var(--button-border);
+  box-shadow: 2px 2px 0 0 var(--button-shadow);
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease);
 }
@@ -578,6 +604,8 @@ const goBack = () => {
 .practice__action-btn:hover {
   color: var(--color-text-primary);
   background-color: var(--button-ghost-hover);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 var(--button-shadow);
 }
 
 .practice__action-btn:focus-visible {
@@ -591,13 +619,16 @@ const goBack = () => {
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
   background: var(--button-ghost-bg);
-  border: var(--border-thin) solid var(--button-border);
+  border: var(--border-width) solid var(--button-border);
+  box-shadow: 2px 2px 0 0 var(--button-shadow);
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease);
 }
 
 .practice__focus-toggle:hover {
   background-color: var(--button-ghost-hover);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 var(--button-shadow);
 }
 
 .practice__focus-toggle:focus-visible {
@@ -726,7 +757,7 @@ const goBack = () => {
 
   .practice__panel--problem {
     width: 100% !important;
-    height: min(52vh, 25rem);
+    height: min(55vh, 30rem);
     border-right: 0;
     border-bottom: var(--border-thin) solid var(--color-border-subtle);
   }
@@ -776,5 +807,17 @@ const goBack = () => {
 /* Prevent text selection during drag */
 .practice__resizer--dragging ~ * {
   user-select: none;
+}
+
+/* ── Reset Modal ── */
+.reset-modal__body {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-secondary);
+}
+
+.reset-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
 }
 </style>

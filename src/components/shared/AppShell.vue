@@ -2,6 +2,7 @@
 import { computed, useSlots } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useAuth } from '../../composables/useAuth'
+import { useTheme } from '../../composables/useTheme'
 import BrutalButton from '../brutal/BrutalButton.vue'
 
 interface Props {
@@ -21,11 +22,21 @@ const props = withDefaults(defineProps<Props>(), {
 const route = useRoute()
 const slots = useSlots()
 const { isAuthenticated, logout } = useAuth()
+const { theme, toggleTheme } = useTheme()
 
 const hasSidebar = computed(() => Boolean(slots.sidebar))
 const hasPanel = computed(() => Boolean(slots.panel))
+const themeLabel = computed(() => `Theme: ${theme.value === 'dark' ? 'Dark' : 'Light'}`)
+const screenContext = computed(() => {
+  const routeName = String(route.name ?? '')
+  if (routeName === 'dashboard') return 'dashboard'
+  if (routeName === 'profile') return 'profile'
+  if (routeName === 'leaderboard') return 'leaderboard'
+  return 'default'
+})
 
 const navItems = [
+  { label: 'Home', to: '/', routeNames: ['landing'] },
   { label: 'Dashboard', to: '/dashboard', routeNames: ['dashboard'] },
   { label: 'Profile', to: '/profile', routeNames: ['profile'] },
   { label: 'Leaderboard', to: '/leaderboard', routeNames: ['leaderboard'] },
@@ -40,30 +51,81 @@ const handleLogout = async () => {
 
 <template>
   <div class="app-shell">
-    <header v-if="showTopbar" class="app-shell__topbar">
-      <div class="app-shell__topbar-inner">
+    <header
+      v-if="showTopbar"
+      class="neo-nav neo-nav--shell app-shell__topbar"
+      :data-screen-context="screenContext"
+      data-testid="app-nav"
+    >
+      <div class="neo-nav__inner app-shell__topbar-inner">
         <div class="app-shell__brand">
-          <RouterLink class="app-shell__brand-link" to="/dashboard">CodeCraft</RouterLink>
+          <RouterLink class="neo-nav__brand app-shell__brand-link" to="/">
+            <span class="neo-nav__brand-dot" />
+            CodeCraft
+          </RouterLink>
           <div v-if="title || subtitle" class="app-shell__headline">
             <p v-if="title" class="app-shell__title">{{ title }}</p>
             <p v-if="subtitle" class="app-shell__subtitle">{{ subtitle }}</p>
           </div>
         </div>
 
-        <nav class="app-shell__nav" aria-label="App sections">
+        <nav class="neo-nav__links app-shell__nav" aria-label="App sections">
           <RouterLink
             v-for="item in navItems"
             :key="item.to"
             :to="item.to"
-            class="app-shell__nav-link"
-            :class="{ 'app-shell__nav-link--active': isNavActive(item.routeNames) }"
+            class="neo-nav__link"
+            :class="{ 'is-active': isNavActive(item.routeNames) }"
+            :aria-current="isNavActive(item.routeNames) ? 'page' : undefined"
           >
             {{ item.label }}
           </RouterLink>
         </nav>
 
-        <div class="app-shell__actions">
+        <div class="neo-nav__actions app-shell__actions">
           <slot name="topbar-actions" />
+
+          <button
+            class="neo-nav__theme-toggle"
+            :aria-label="themeLabel"
+            @click="toggleTheme"
+          >
+            <span class="neo-nav__theme-label">{{ themeLabel }}</span>
+            <svg
+              v-if="theme === 'dark'"
+              class="neo-nav__theme-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            <svg
+              v-else
+              class="neo-nav__theme-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
 
           <BrutalButton
             v-if="isAuthenticated"
@@ -73,7 +135,7 @@ const handleLogout = async () => {
           >
             Sign out
           </BrutalButton>
-          <RouterLink v-else class="app-shell__auth-link" to="/login">Sign in</RouterLink>
+          <RouterLink v-else class="neo-nav__auth-link" to="/login">Sign in</RouterLink>
         </div>
       </div>
     </header>
@@ -110,35 +172,30 @@ const handleLogout = async () => {
 }
 
 .app-shell__topbar {
-  position: sticky;
-  top: 0;
   z-index: 60;
-  border-bottom: 3px solid var(--color-border-strong);
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  backdrop-filter: blur(10px);
 }
 
 .app-shell__topbar-inner {
-  min-height: 4.35rem;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--app-layout-gap);
-  padding: var(--app-shell-pad-y) var(--app-shell-gutter);
+  min-height: 4.2rem;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'brand actions'
+    'links links';
+  row-gap: var(--space-2);
 }
 
 .app-shell__brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
   min-width: 0;
+  grid-area: brand;
 }
 
 .app-shell__brand-link {
-  text-decoration: none;
-  color: var(--color-text-primary);
   font-family: var(--font-display);
-  font-size: var(--text-2xl);
+  font-size: var(--text-xl);
   font-weight: var(--font-weight-extrabold);
   line-height: 1;
 }
@@ -161,64 +218,20 @@ const handleLogout = async () => {
 }
 
 .app-shell__nav {
-  justify-self: center;
-  display: flex;
+  justify-content: flex-start;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  min-width: 0;
-}
-
-.app-shell__nav-link {
-  text-decoration: none;
-  color: var(--color-text-secondary);
-  border: 2px solid var(--color-border-strong);
-  background: var(--color-surface-raised);
-  box-shadow: 2px 2px 0 0 var(--color-shadow-strong);
-  padding: 0.35rem 0.55rem;
-  font-size: var(--text-sm);
-  font-family: var(--font-mono);
-}
-
-.app-shell__nav-link:hover {
-  color: var(--color-text-primary);
-  background: var(--color-surface-hover);
-}
-
-.app-shell__nav-link--active {
-  background: var(--color-yellow);
-  color: var(--color-accent-ink);
+  row-gap: 0.35rem;
+  grid-area: links;
 }
 
 .app-shell__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  min-width: 0;
+  gap: var(--space-2);
+  grid-area: actions;
+  pointer-events: none;
 }
 
-.app-shell__auth-link {
-  text-decoration: none;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  border: 2px solid var(--color-border-strong);
-  background: var(--color-surface);
-  padding: 0.35rem 0.55rem;
-}
-
-[data-theme='dark'] .app-shell__nav-link {
-  color: var(--color-text-primary);
-  background: var(--color-surface);
-}
-
-[data-theme='dark'] .app-shell__nav-link--active {
-  background: var(--color-primary);
-  color: var(--color-accent-ink);
-}
-
-[data-theme='dark'] .app-shell__auth-link {
-  background: var(--color-surface-raised);
+.app-shell__actions > * {
+  pointer-events: auto;
 }
 
 .app-shell__body {
@@ -278,11 +291,11 @@ const handleLogout = async () => {
 
 @media (max-width: 1024px) {
   .app-shell__topbar-inner {
-    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
   }
 
   .app-shell__nav {
-    justify-self: start;
+    justify-content: flex-start;
   }
 
   .app-shell__actions {

@@ -17,8 +17,6 @@ const emit = defineEmits<{
   (event: 'update:selectedDifficulty', value: 'All' | 'Easy' | 'Medium' | 'Hard'): void
   (event: 'update:sortBy', value: string): void
   (event: 'toggleFilters'): void
-  (event: 'open-profile'): void
-  (event: 'open-leaderboard'): void
 }>()
 
 const sortOptions = [
@@ -33,12 +31,6 @@ const sortOptions = [
   <header class="dashboard-topbar">
     <div class="dashboard-topbar__left">
       <h1 class="dashboard-topbar__title">CodeCraft Control Center</h1>
-      <p class="dashboard-topbar__subtitle">Choose your next pressure test.</p>
-    </div>
-
-    <div class="dashboard-topbar__actions">
-      <BrutalButton variant="secondary" size="sm" @click="emit('open-profile')">Profile</BrutalButton>
-      <BrutalButton variant="secondary" size="sm" @click="emit('open-leaderboard')">Leaderboard</BrutalButton>
     </div>
 
     <div class="dashboard-topbar__filters">
@@ -114,16 +106,11 @@ const sortOptions = [
   color: var(--color-text-secondary);
 }
 
-.dashboard-topbar__actions,
 .dashboard-topbar__filters {
   display: flex;
   gap: 0.6rem;
   flex-wrap: wrap;
   align-items: end;
-}
-
-.dashboard-topbar__actions {
-  justify-content: flex-end;
 }
 
 .dashboard-topbar__filters > * {
@@ -158,10 +145,6 @@ const sortOptions = [
 }
 
 @media (max-width: 980px) {
-  .dashboard-topbar__actions {
-    justify-content: flex-start;
-  }
-
   .dashboard-topbar__filters > * {
     min-width: 100%;
   }

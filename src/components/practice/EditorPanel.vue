@@ -155,28 +155,32 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
   padding: var(--space-2) var(--space-3);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-tertiary);
-  background: none;
-  border: none;
+  background: transparent;
+  border: var(--border-thin) solid transparent;
   border-bottom: 3px solid transparent;
   cursor: pointer;
   transition: color var(--duration-fast) var(--ease),
+              background-color var(--duration-fast) var(--ease),
               border-color var(--duration-fast) var(--ease);
   text-transform: capitalize;
 }
 
 .lang-tab:hover {
   color: var(--color-text-primary);
+  background-color: var(--color-surface-hover);
 }
 
 .lang-tab--active {
   color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border-color: var(--color-border-strong);
   border-bottom-color: var(--color-primary);
 }
 
 .lang-tab:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: -2px;
 }
 
@@ -185,15 +189,15 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  height: 2.25rem;
-  padding: 0 var(--space-4);
+  height: 2.5rem;
+  padding: 0 var(--space-5);
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
   font-size: var(--text-sm);
-  background-color: var(--button-secondary-bg);
-  color: var(--button-secondary-text);
-  border: var(--border-thin) solid var(--button-border);
-  box-shadow: 2px 2px 0 0 var(--button-shadow);
+  background-color: var(--color-coral);
+  color: var(--color-white);
+  border: var(--border-width) solid var(--button-border);
+  box-shadow: 4px 4px 0 0 var(--button-shadow);
   cursor: pointer;
   transition: transform var(--duration-fast) var(--ease),
               box-shadow var(--duration-fast) var(--ease),
@@ -201,13 +205,13 @@ const allPassed = computed(() => hasResults.value && passedCount.value === props
 }
 
 .run-btn:hover:not(:disabled) {
-  background-color: var(--button-secondary-hover);
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 0 var(--button-shadow);
+  background-color: var(--color-primary-hover);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 0 var(--button-shadow);
 }
 
 .run-btn:active:not(:disabled) {
-  transform: translate(2px, 2px);
+  transform: translate(4px, 4px);
   box-shadow: none;
 }
 

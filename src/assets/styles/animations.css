@@ -8,6 +8,18 @@
   }
 }
 
+@keyframes brutal-pulse-soft {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 4px 4px 0 0 var(--button-shadow);
+  }
+  50% {
+    transform: scale(1.017);
+    box-shadow: 5px 5px 0 0 var(--button-shadow);
+  }
+}
+
 @keyframes brutal-float {
   0%,
   100% {
@@ -15,6 +27,16 @@
   }
   50% {
     transform: translateY(-6px);
+  }
+}
+
+@keyframes brutal-float-soft {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--shape-rotation, 0deg));
+  }
+  50% {
+    transform: translate3d(0, -8px, 0) rotate(calc(var(--shape-rotation, 0deg) + 0.5deg));
   }
 }
 
@@ -26,6 +48,15 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes brutal-tilt-reset {
+  0% {
+    transform: rotate(calc(var(--shape-rotation, 0deg) + 1deg));
+  }
+  100% {
+    transform: rotate(var(--shape-rotation, 0deg));
   }
 }
 
@@ -55,11 +86,47 @@
   animation: brutal-glow 2s ease-in-out infinite;
 }
 
+.lp-cta-pulse {
+  animation: brutal-pulse-soft var(--lp-pulse-duration, 3200ms) var(--ease) infinite;
+  transform-origin: center;
+}
+
+.lp-cta-pulse:hover,
+.lp-cta-pulse:focus-visible,
+.lp-cta-pulse:active {
+  animation-play-state: paused;
+}
+
+.lp-float-shape {
+  animation:
+    brutal-float-soft var(--lp-float-duration, 3200ms) ease-in-out infinite,
+    brutal-tilt-reset 460ms var(--ease) both;
+  animation-delay: var(--lp-float-delay, 0ms), 0ms;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@keyframes target-ring-flash {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-focus-ring) 80%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 16px transparent;
+  }
+}
+
+.lp-target-flash {
+  animation: target-ring-flash 520ms var(--ease) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-rise-in,
   .animate-float,
   .animate-pulse-brutal,
-  .animate-glow {
+  .animate-glow,
+  .lp-cta-pulse,
+  .lp-float-shape,
+  .lp-target-flash {
     animation: none !important;
   }
 }

@@ -100,13 +100,12 @@ const onRippleEnd = (id: number) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid var(--button-border);
-  border-radius: var(--radius-md);
-  box-shadow: 3px 3px 0 0 var(--button-shadow);
+  border: var(--border-width) solid var(--button-border);
+  box-shadow: 4px 4px 0 0 var(--button-shadow);
   background: var(--button-primary-bg);
   color: var(--button-primary-text);
-  font-family: var(--font-body);
-  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
   letter-spacing: 0.005em;
   line-height: 1.2;
   cursor: pointer;
@@ -117,18 +116,18 @@ const onRippleEnd = (id: number) => {
 }
 
 .brutal-button:hover:not(:disabled) {
-  transform: translate(1px, 1px);
+  transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 0 var(--button-shadow);
 }
 
 .brutal-button:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0 0 transparent;
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 .brutal-button:focus-visible {
-  outline: 4px solid var(--color-focus-ring);
-  outline-offset: 3px;
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
 }
 
 .brutal-button:disabled {
