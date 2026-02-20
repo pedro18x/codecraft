@@ -24,15 +24,20 @@ model User {
 }
 
 model RefreshToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  userId    Int      @map("user_id")
-  expiresAt DateTime @map("expires_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  id           Int       @id @default(autoincrement())
+  token        String    @unique
+  userId       Int       @map("user_id")
+  tokenFamily  String    @map("token_family")
+  tokenVersion Int       @default(1) @map("token_version")
+  expiresAt    DateTime  @map("expires_at")
+  revokedAt    DateTime? @map("revoked_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([userId, tokenFamily])
+  @@index([revokedAt])
   @@map("refresh_tokens")
 }
 

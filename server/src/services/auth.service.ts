@@ -1,22 +1,18 @@
+import { createHash, randomUUID } from 'node:crypto'
 import { prisma } from '../config/database.js'
 import { env } from '../config/env.js'
 import { hashPassword, comparePassword } from '../utils/bcrypt.js'
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/jwt.js'
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+  type RefreshTokenPayload,
+} from '../utils/jwt.js'
 import { ApiError } from '../utils/apiResponse.js'
+import { parseDurationToMs } from '../utils/duration.js'
 
-/** Parse duration strings like "7d", "24h", "30m" to milliseconds */
-function parseDurationToMs(duration: string): number {
-  const match = duration.match(/^(\d+)([smhd])$/)
-  if (!match) return 7 * 24 * 60 * 60 * 1000 // default 7 days
-  const value = parseInt(match[1])
-  const unit = match[2]
-  switch (unit) {
-    case 's': return value * 1000
-    case 'm': return value * 60 * 1000
-    case 'h': return value * 60 * 60 * 1000
-    case 'd': return value * 24 * 60 * 60 * 1000
-    default: return 7 * 24 * 60 * 60 * 1000
-  }
+function hashRefreshToken(token: string) {
+  return createHash('sha256').update(token).digest('hex')
 }
 
 interface RegisterInput {
@@ -91,7 +87,7 @@ export async function login(input: LoginInput): Promise<AuthResult> {
 
 export async function refresh(refreshTokenValue: string): Promise<{ accessToken: string; refreshToken: string }> {
   // Verify the JWT itself
-  let payload
+  let payload: RefreshTokenPayload
   try {
     payload = verifyRefreshToken(refreshTokenValue)
   } catch {
@@ -99,20 +95,33 @@ export async function refresh(refreshTokenValue: string): Promise<{ accessToken:
   }
 
   // Check the token exists in DB (not revoked)
+  const refreshTokenHash = hashRefreshToken(refreshTokenValue)
   const stored = await prisma.refreshToken.findUnique({
-    where: { token: refreshTokenValue },
+    where: { token: refreshTokenHash },
   })
 
-  if (!stored || stored.expiresAt < new Date()) {
-    // Clean up expired token if it exists
+  if (!stored || stored.expiresAt < new Date() || stored.revokedAt) {
     if (stored) {
-      await prisma.refreshToken.delete({ where: { id: stored.id } })
+      await revokeTokenFamily(stored.userId, stored.tokenFamily)
     }
     throw new ApiError('TOKEN_EXPIRED', 'Refresh token expired', 401)
   }
 
-  // Delete old token (rotation)
-  await prisma.refreshToken.delete({ where: { id: stored.id } })
+  if (stored.userId !== payload.userId) {
+    await revokeTokenFamily(stored.userId, stored.tokenFamily)
+    throw new ApiError('INVALID_TOKEN', 'Invalid refresh token', 401)
+  }
+
+  if (stored.tokenFamily !== payload.tokenFamily || stored.tokenVersion !== payload.tokenVersion) {
+    await revokeTokenFamily(stored.userId, stored.tokenFamily)
+    throw new ApiError('INVALID_TOKEN', 'Refresh token family mismatch', 401)
+  }
+
+  // Revoke old token (rotation with reuse detection metadata preserved)
+  await prisma.refreshToken.update({
+    where: { id: stored.id },
+    data: { revokedAt: new Date() },
+  })
 
   // Get fresh user data
   const user = await prisma.user.findUnique({
@@ -124,17 +133,49 @@ export async function refresh(refreshTokenValue: string): Promise<{ accessToken:
     throw new ApiError('USER_NOT_FOUND', 'User no longer exists', 401)
   }
 
-  return generateTokens(user)
-}
-
-export async function logout(refreshTokenValue: string, userId: number): Promise<void> {
-  // Only delete the token if it belongs to the authenticated user
-  await prisma.refreshToken.deleteMany({
-    where: { token: refreshTokenValue, userId },
+  return generateTokens(user, {
+    tokenFamily: stored.tokenFamily,
+    tokenVersion: stored.tokenVersion + 1,
   })
 }
 
-async function generateTokens(user: { id: number; email: string; username: string }) {
+export async function logout(refreshTokenValue: string, userId: number): Promise<void> {
+  // Only revoke the token if it belongs to the authenticated user
+  const refreshTokenHash = hashRefreshToken(refreshTokenValue)
+  await prisma.refreshToken.updateMany({
+    where: { token: refreshTokenHash, userId, revokedAt: null },
+    data: { revokedAt: new Date() },
+  })
+}
+
+export async function revokeRefreshToken(refreshTokenValue: string): Promise<void> {
+  const refreshTokenHash = hashRefreshToken(refreshTokenValue)
+  const token = await prisma.refreshToken.findUnique({
+    where: { token: refreshTokenHash },
+    select: { userId: true, tokenFamily: true },
+  })
+
+  if (!token) {
+    return
+  }
+
+  await revokeTokenFamily(token.userId, token.tokenFamily)
+}
+
+async function revokeTokenFamily(userId: number, tokenFamily: string) {
+  await prisma.refreshToken.updateMany({
+    where: { userId, tokenFamily, revokedAt: null },
+    data: { revokedAt: new Date() },
+  })
+}
+
+async function generateTokens(
+  user: { id: number; email: string; username: string },
+  tokenSeed?: { tokenFamily: string; tokenVersion: number }
+) {
+  const tokenFamily = tokenSeed?.tokenFamily ?? randomUUID()
+  const tokenVersion = tokenSeed?.tokenVersion ?? 1
+
   const tokenPayload = {
     userId: user.id,
     email: user.email,
@@ -142,14 +183,21 @@ async function generateTokens(user: { id: number; email: string; username: strin
   }
 
   const accessToken = signAccessToken(tokenPayload)
-  const refreshTokenValue = signRefreshToken(tokenPayload)
+  const refreshTokenValue = signRefreshToken({
+    ...tokenPayload,
+    tokenFamily,
+    tokenVersion,
+  })
+  const refreshTokenHash = hashRefreshToken(refreshTokenValue)
 
   // Store refresh token in DB for revocation support
   await prisma.refreshToken.create({
     data: {
-      token: refreshTokenValue,
+      token: refreshTokenHash,
       userId: user.id,
       expiresAt: new Date(Date.now() + parseDurationToMs(env.JWT_REFRESH_EXPIRES_IN)),
+      tokenFamily,
+      tokenVersion,
     },
   })
 
@@ -159,7 +207,9 @@ async function generateTokens(user: { id: number; email: string; username: strin
 // Cleanup expired refresh tokens (call periodically)
 export async function cleanupExpiredTokens(): Promise<number> {
   const { count } = await prisma.refreshToken.deleteMany({
-    where: { expiresAt: { lt: new Date() } },
+    where: {
+      OR: [{ expiresAt: { lt: new Date() } }, { revokedAt: { not: null } }],
+    },
   })
   return count
 }

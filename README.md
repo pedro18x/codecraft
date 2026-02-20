@@ -1,91 +1,94 @@
-# CodeCraft - Coding Interview Platform
+# CodeCraft
 
-A distinctive, neo-brutalist coding interview preparation platform built with Vue 3, TypeScript, TailwindCSS, and Zod.
+CodeCraft is a coding interview practice platform with a Vue frontend and a Node/Express API backed by PostgreSQL.
 
-## Features
+## Production MVP Architecture
 
-- **6 Curated Problems** - Classic interview questions with varying difficulty levels
-- **Multi-Language Support** - Write solutions in JavaScript, TypeScript, or Python
-- **Live Code Editor** - Terminal-style editor with syntax highlighting
-- **Test Runner** - Execute test cases and get immediate visual feedback
-- **Smart Filtering** - Search and filter problems by difficulty and category
-- **Bold Design** - Neo-brutalist aesthetic with thick borders, bold shadows, and playful colors
+- Frontend: Vite + Vue 3 (deploy target: Vercel)
+- API: Express + Prisma (deploy target: Render/Fly)
+- Executor: dedicated isolated execution service (separate process/service)
+- Database: managed PostgreSQL
+- Auth: httpOnly cookie sessions (access + refresh), refresh-token rotation
+- Security baseline: CORS allowlist, Helmet, CSRF double-submit token
+- Observability: structured request logs with request ID, telemetry events
 
-## Tech Stack
+## Repository Layout
 
-- **Vue 3** with Composition API
-- **TypeScript** for type safety
-- **TailwindCSS** for styling
-- **Zod** for schema validation
-- **Vite** for lightning-fast development
+- `/Users/pedroernesto/Desktop/testeclaude/src`: frontend app
+- `/Users/pedroernesto/Desktop/testeclaude/src/features`: feature-owned screens/state
+- `/Users/pedroernesto/Desktop/testeclaude/src/contracts`: shared API/domain contracts
+- `/Users/pedroernesto/Desktop/testeclaude/server/src`: API and executor service code
+- `/Users/pedroernesto/Desktop/testeclaude/server/src/services`: backend business logic layer
+- `/Users/pedroernesto/Desktop/testeclaude/server/src/routes/schemas`: route validation schemas
+- `/Users/pedroernesto/Desktop/testeclaude/server/prisma`: Prisma schema and migrations
+- `/Users/pedroernesto/Desktop/testeclaude/e2e`: Playwright tests
+- `/Users/pedroernesto/Desktop/testeclaude/docs/ops`: release, rollback, backup/restore runbooks
+- `/Users/pedroernesto/Desktop/testeclaude/docs/adr`: architecture decisions
+- `/Users/pedroernesto/Desktop/testeclaude/.github/workflows`: CI/CD workflows
 
-## Getting Started
+## Local Development
 
-### Installation
+### 1) Install dependencies
 
 ```bash
-npm install
+npm ci
+npm -C server ci
 ```
 
-### Development
+### 2) Configure env files
 
 ```bash
-npm run dev
+cp /Users/pedroernesto/Desktop/testeclaude/.env.example /Users/pedroernesto/Desktop/testeclaude/.env
+cp /Users/pedroernesto/Desktop/testeclaude/server/.env.example /Users/pedroernesto/Desktop/testeclaude/server/.env
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-### Build
+### 3) Generate Prisma client
 
 ```bash
+npm -C server run db:generate
+```
+
+### 4) Run services
+
+```bash
+npm run dev                     # frontend
+npm -C server run dev           # API
+npm -C server run dev:executor  # dedicated executor (recommended)
+```
+
+## Quality Gates
+
+```bash
+npm run type-check
+npm run lint -- --quiet
+npm run check:file-size
 npm run build
+npm -C server run build
+npm run test:e2e
 ```
 
-### Preview Production Build
+## Auth and Security Notes
 
-```bash
-npm run preview
-```
+- Browser storage does not hold auth tokens.
+- API uses cookie-based auth with `httpOnly` cookies.
+- CSRF protection is enabled on mutating routes via `X-CSRF-Token` + csrf cookie.
+- In production, VM executor fallback is disabled.
 
-## Project Structure
+## Telemetry Events
 
-```
-src/
-├── components/          # Vue components
-│   ├── Header.vue
-│   ├── ProblemList.vue
-│   ├── ProblemWorkspace.vue
-│   ├── ProblemDescription.vue
-│   ├── CodeEditor.vue
-│   └── TestRunner.vue
-├── data/               # Mock data
-│   └── problems.ts
-├── types/              # TypeScript types & Zod schemas
-│   └── index.ts
-├── App.vue             # Main app component
-├── main.ts             # App entry point
-└── style.css           # Global styles
-```
+Core product events captured:
 
-## Design Philosophy
+- `lp_cta_clicked`
+- `signup_started`
+- `signup_completed`
+- `first_problem_started`
+- `code_executed`
+- `problem_completed`
 
-CodeCraft breaks away from typical coding platform aesthetics with:
+## Operations Docs
 
-- **Neo-Brutalist Design** - Thick black borders, bold drop shadows, paper-cut effects
-- **Playful Color Palette** - Coral, turquoise, and yellow accents on warm cream backgrounds
-- **Geometric Typography** - Syne for display, JetBrains Mono for code
-- **Tactile Interactions** - Satisfying button states and smooth transitions
-- **Terminal-Inspired Editor** - Dark background with green text for that classic coding feel
-
-## Future Enhancements
-
-- Implement actual code execution (consider using WebAssembly or sandboxed environments)
-- Add user authentication and progress tracking
-- Integrate with Monaco Editor for advanced IDE features
-- Add solution discussions and hints system
-- Implement difficulty-based progression system
-- Add more problems across different categories
-
-## License
-
-MIT
+- Rollback: `/Users/pedroernesto/Desktop/testeclaude/docs/ops/ROLLBACK_RUNBOOK.md`
+- Backups/restore: `/Users/pedroernesto/Desktop/testeclaude/docs/ops/DB_BACKUP_RESTORE.md`
+- Release checklist: `/Users/pedroernesto/Desktop/testeclaude/docs/ops/RELEASE_CHECKLIST.md`
+- ADR 0001 (frontend architecture): `/Users/pedroernesto/Desktop/testeclaude/docs/adr/0001-frontend-feature-architecture.md`
+- ADR 0002 (backend service layer): `/Users/pedroernesto/Desktop/testeclaude/docs/adr/0002-backend-service-layer.md`

@@ -103,7 +103,7 @@ export class DockerExecutor implements ICodeExecutor {
         try {
           await container.stop({ t: 0 })
         } catch {
-          // Already stopped or removed
+          // Ignore cleanup failures (container may already be removed).
         }
       }
     }
@@ -120,7 +120,9 @@ export class DockerExecutor implements ICodeExecutor {
       const timer = setTimeout(async () => {
         try {
           await container.kill()
-        } catch {}
+        } catch {
+          // Ignore kill failures after timeout.
+        }
         reject(new Error('timeout'))
       }, timeoutMs)
 
