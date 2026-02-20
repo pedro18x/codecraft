@@ -4,6 +4,11 @@
 
 **CodeCraft** is a neo-brutalist coding interview preparation platform built with Vue 3, TypeScript, TailwindCSS, and Zod. The platform features a distinctive design aesthetic with thick borders, bold shadows, and playful colors that stand apart from typical coding platforms.
 
+## Git Commit Rules
+
+- **Never** include `Co-Authored-By: Claude` or any AI authorship trailer in commit messages.
+- Commit messages must contain only significant information: what changed and why.
+
 ## Architecture & Design Philosophy
 
 ## Production Data Policy (Critical)
