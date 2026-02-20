@@ -1,41 +1,44 @@
 import { Router } from 'express'
-import { z } from 'zod'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '../config/database.js'
 import { validate } from '../middleware/validate.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { successResponse, ApiError } from '../utils/apiResponse.js'
+import { ListProblemsQuerySchema, type ListProblemsQuery } from './schemas/problems.schema.js'
 
 const router = Router()
 
-const ListQuerySchema = z.object({
-  difficulty: z.string().optional(),
-  category: z.string().optional(),
-  search: z.string().optional(),
-})
+function buildProblemWhereInput({
+  difficulty,
+  category,
+  search,
+}: ListProblemsQuery): Prisma.ProblemWhereInput {
+  const where: Prisma.ProblemWhereInput = {}
+
+  if (difficulty) {
+    where.difficulty = { in: difficulty.split(',') }
+  }
+
+  if (category) {
+    where.categories = { hasSome: category.split(',') }
+  }
+
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { categories: { hasSome: [search] } },
+    ]
+  }
+
+  return where
+}
 
 // GET /api/problems
 router.get(
   '/',
-  validate(ListQuerySchema, 'query'),
+  validate(ListProblemsQuerySchema, 'query'),
   asyncHandler(async (req, res) => {
-    const { difficulty, category, search } = req.query as Record<string, string | undefined>
-
-    const where: Record<string, unknown> = {}
-
-    if (difficulty) {
-      where.difficulty = { in: difficulty.split(',') }
-    }
-
-    if (category) {
-      where.categories = { hasSome: category.split(',') }
-    }
-
-    if (search) {
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { categories: { hasSome: [search] } },
-      ]
-    }
+    const where = buildProblemWhereInput(req.query as ListProblemsQuery)
 
     const problems = await prisma.problem.findMany({
       where,

@@ -7,13 +7,18 @@ export interface TokenPayload {
   username: string
 }
 
+export interface RefreshTokenPayload extends TokenPayload {
+  tokenFamily: string
+  tokenVersion: number
+}
+
 export function signAccessToken(payload: TokenPayload): string {
   return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
     expiresIn: env.JWT_ACCESS_EXPIRES_IN as string & jwt.SignOptions['expiresIn'],
   })
 }
 
-export function signRefreshToken(payload: TokenPayload): string {
+export function signRefreshToken(payload: RefreshTokenPayload): string {
   return jwt.sign(payload, env.JWT_REFRESH_SECRET, {
     expiresIn: env.JWT_REFRESH_EXPIRES_IN as string & jwt.SignOptions['expiresIn'],
   })
@@ -23,6 +28,6 @@ export function verifyAccessToken(token: string): TokenPayload {
   return jwt.verify(token, env.JWT_ACCESS_SECRET) as TokenPayload
 }
 
-export function verifyRefreshToken(token: string): TokenPayload {
-  return jwt.verify(token, env.JWT_REFRESH_SECRET) as TokenPayload
+export function verifyRefreshToken(token: string): RefreshTokenPayload {
+  return jwt.verify(token, env.JWT_REFRESH_SECRET) as RefreshTokenPayload
 }
