@@ -60,20 +60,20 @@ Routes validate input, call a service, and return a response. No business logic 
 import { Router } from 'express'
 import { validate } from '../middleware/validate.js'
 import { authenticate } from '../middleware/auth.js'
+import { asyncHandler } from '../utils/asyncHandler.js'
 import { getProblemById } from '../services/problems.service.js'
 import { GetProblemParamsSchema } from './schemas/problems.schema.js'
-import { successResponse, errorResponse } from '../utils/apiResponse.js'
+import { successResponse, ApiError } from '../utils/apiResponse.js'
 
 const router = Router()
 
-router.get('/:id', authenticate, validate({ params: GetProblemParamsSchema }), async (req, res) => {
+router.get('/:id', authenticate, validate(GetProblemParamsSchema, 'params'), asyncHandler(async (req, res) => {
   const problem = await getProblemById(Number(req.params.id))
   if (!problem) {
-    res.status(404).json(errorResponse('NOT_FOUND', 'Problem not found'))
-    return
+    throw new ApiError('NOT_FOUND', 'Problem not found', 404)
   }
   res.json(successResponse(problem))
-})
+}))
 
 export default router
 ```
@@ -113,7 +113,13 @@ export const CreateSubmissionSchema = z.object({
 })
 ```
 
-Use `validate({ params, body, query })` middleware — all three keys are optional.
+Use `validate(schema, target)` middleware with positional arguments. `target` defaults to `'body'`:
+
+```typescript
+validate(GetProblemParamsSchema, 'params')
+validate(CreateSubmissionSchema, 'body')   // 'body' is default
+validate(ListProblemsQuerySchema, 'query')
+```
 
 ## Auth Middleware
 
@@ -121,10 +127,10 @@ Use `validate({ params, body, query })` middleware — all three keys are option
 import { authenticate } from '../middleware/auth.js'
 
 // Protected route — req.user is set after this middleware runs
-router.get('/me', authenticate, async (req, res) => {
-  const { userId } = req.user!
+router.get('/me', authenticate, asyncHandler(async (req, res) => {
+  const userId = req.user!.id
   // ...
-})
+}))
 ```
 
 JWT access tokens: short-lived (15 min). Refresh tokens use token families to detect reuse attacks.
