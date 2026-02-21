@@ -2,6 +2,7 @@ import type { Response } from 'express'
 import { openrouter, AI_MODELS } from '../config/openrouter.js'
 import { prisma } from '../config/database.js'
 import { ApiError } from '../utils/apiResponse.js'
+import { logger } from '../utils/logger.js'
 import type { AiHintRequest } from '../routes/schemas/ai.schema.js'
 import type OpenAI from 'openai'
 
@@ -101,7 +102,11 @@ export async function streamAiHint(
 
   let messages: ChatMessage[]
   if (request.mode === 'hint') {
-    const level = (request.hintLevel ?? 1) as 1 | 2 | 3
+    const rawLevel = request.hintLevel ?? 1
+    if (rawLevel !== 1 && rawLevel !== 2 && rawLevel !== 3) {
+      throw new ApiError('VALIDATION_ERROR', 'Invalid hintLevel', 400)
+    }
+    const level = rawLevel
     messages = buildHintMessages({
       title: problem.title,
       description: problem.description,
@@ -127,10 +132,14 @@ export async function streamAiHint(
   res.setHeader('Connection', 'keep-alive')
   res.flushHeaders()
 
+  let currentStream: Awaited<ReturnType<typeof openrouter.chat.completions.create>> | null = null
+  const onClose = () => currentStream?.controller.abort()
+  res.on('close', onClose)
+
   let lastError: Error | null = null
   for (const model of AI_MODELS) {
     try {
-      const stream = await openrouter.chat.completions.create({
+      currentStream = await openrouter.chat.completions.create({
         model,
         messages,
         stream: true,
@@ -138,15 +147,14 @@ export async function streamAiHint(
         max_tokens: maxTokens,
       })
 
-      res.on('close', () => stream.controller.abort())
-
-      for await (const chunk of stream) {
+      for await (const chunk of currentStream) {
         const token = chunk.choices[0]?.delta?.content
         if (token) {
           res.write(`data: ${JSON.stringify({ token })}\n\n`)
         }
       }
 
+      res.off('close', onClose)
       res.write(`data: ${JSON.stringify({ done: true })}\n\n`)
       res.end()
       return
@@ -156,6 +164,8 @@ export async function streamAiHint(
     }
   }
 
+  res.off('close', onClose)
+  logger.error('ai_all_models_failed', { error: lastError?.message })
   res.write(`data: ${JSON.stringify({ error: 'MODEL_UNAVAILABLE' })}\n\n`)
   res.end()
 }
