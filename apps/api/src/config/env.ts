@@ -34,6 +34,7 @@ const EnvSchema = z.object({
   EXECUTOR_MAX_QUEUE: z.coerce.number().int().min(1).max(200).default(40),
   EXECUTOR_TIMEOUT_MS: z.coerce.number().default(5000),
   EXECUTOR_MEMORY_LIMIT_MB: z.coerce.number().default(128),
+  OPENROUTER_API_KEY: z.string().min(1),
 })
 
 const parsed = EnvSchema.safeParse(process.env)
