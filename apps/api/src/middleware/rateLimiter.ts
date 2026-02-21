@@ -1,4 +1,4 @@
-import rateLimit from 'express-rate-limit'
+import rateLimit, { type AugmentedRequest } from 'express-rate-limit'
 import { errorResponse } from '../utils/apiResponse.js'
 
 export const globalLimiter = rateLimit({
@@ -50,8 +50,8 @@ export const aiHintLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => req.userId?.toString() || req.ip || 'unknown',
-  handler: (_req, res) => {
-    const resetTime = new Date(Date.now() + 60 * 60 * 1000)
+  handler: (req, res) => {
+    const resetTime = (req as AugmentedRequest).rateLimit?.resetTime ?? new Date(Date.now() + 60 * 60 * 1000)
     const hh = resetTime.getHours().toString().padStart(2, '0')
     const mm = resetTime.getMinutes().toString().padStart(2, '0')
     res.status(429).json(
