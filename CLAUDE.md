@@ -89,6 +89,7 @@ This is **not optional**. Every feature = one memory file.
 npm run type-check    # must pass with 0 errors
 npm run lint          # must pass with 0 warnings
 npm run test:api      # all Vitest tests green
+npm run test:e2e      # Playwright E2E tests in apps/web
 npm run build         # production build must succeed
 ```
 
