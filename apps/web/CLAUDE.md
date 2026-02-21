@@ -87,6 +87,17 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
     </div>
   )
 }
+
+// app/(app)/problems/not-found.tsx
+import Link from 'next/link'
+export default function NotFound() {
+  return (
+    <div className="card p-8 shadow-brutal">
+      <p className="font-display font-bold">Problem not found.</p>
+      <Link href="/problems" className="btn bg-primary text-white mt-4">Back to Problems</Link>
+    </div>
+  )
+}
 ```
 
 Per root CLAUDE.md Production Data Policy: always surface a real error/loading state — never invent placeholder data.
