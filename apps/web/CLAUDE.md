@@ -30,14 +30,18 @@ Default to Server Components. Only add `'use client'` when you need:
 
 ```tsx
 // ✅ Server Component (default — no directive needed)
+// Use env vars for base URL — never hardcode paths
 export default async function Page() {
-  const data = await fetch('/api/...').then(r => r.json())
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/problems`)
+  const data = await res.json()
   return <div>{data.title}</div>
 }
 
-// ✅ Client Component (only when needed)
+// ✅ Client Component — 'use client' MUST be the first line (before any imports or comments)
 'use client'
+
 import { useState } from 'react'
+
 export default function Counter() {
   const [count, setCount] = useState(0)
   return <button onClick={() => setCount(c => c + 1)}>{count}</button>
@@ -58,6 +62,34 @@ const { data, isLoading, error } = useProblems()
 // ✅ Use the api client for custom fetches
 import { apiClient } from '@/lib/api-client'
 ```
+
+## Error & Loading States (App Router)
+
+Next.js App Router uses co-located special files — never omit these for async routes:
+
+- `loading.tsx` — shown while the page/layout is fetching (automatic Suspense)
+- `error.tsx` — shown when a Server Component throws (must be a Client Component)
+- `not-found.tsx` — shown when `notFound()` is called from a Server Component
+
+```tsx
+// app/(app)/problems/loading.tsx
+export default function Loading() {
+  return <div className="card p-8 shadow-brutal animate-pulse">Loading...</div>
+}
+
+// app/(app)/problems/error.tsx  — must be 'use client'
+'use client'
+export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+  return (
+    <div className="card p-8 shadow-brutal border-primary">
+      <p className="font-display font-bold">{error.message}</p>
+      <button className="btn bg-primary text-white mt-4" onClick={reset}>Retry</button>
+    </div>
+  )
+}
+```
+
+Per root CLAUDE.md Production Data Policy: always surface a real error/loading state — never invent placeholder data.
 
 ## Neo-Brutalist Design System
 
@@ -166,3 +198,11 @@ npm run test:e2e:headed       # see the browser
 - Prefer accessible selectors: `page.getByRole()`, `page.getByText()`.
 - For ambiguous matches: use `.first()`, `.nth()`, or `{ exact: true }`.
 - Never test Vue-era patterns (this is React/Next.js).
+
+## Memory Protocol
+
+After implementing any frontend feature, create a memory entry per the root `CLAUDE.md` Memory Protocol:
+
+**File:** `docs/memory/YYYY-MM-DD-<kebab-feature-name>.md`
+
+See root `CLAUDE.md` for the required template. This is mandatory.
