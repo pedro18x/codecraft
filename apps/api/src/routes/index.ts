@@ -7,6 +7,7 @@ import submissionsRoutes from './submissions.js'
 import leaderboardRoutes from './leaderboard.js'
 import executeRoutes from './execute.js'
 import telemetryRoutes from './telemetry.js'
+import aiRoutes from './ai.js'
 
 const router = Router()
 
@@ -18,5 +19,6 @@ router.use('/submissions', submissionsRoutes)
 router.use('/leaderboard', leaderboardRoutes)
 router.use('/execute', executeRoutes)
 router.use('/telemetry', telemetryRoutes)
+router.use('/ai', aiRoutes)
 
 export default router
