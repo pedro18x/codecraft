@@ -6,7 +6,12 @@ import { logger } from '../utils/logger.js'
 import type { AiHintRequest } from '../routes/schemas/ai.schema.js'
 import type OpenAI from 'openai'
 
+
 type ChatMessage = OpenAI.Chat.ChatCompletionMessageParam
+type ChatCompletionStream = Extract<
+  Awaited<ReturnType<typeof openrouter.chat.completions.create>>,
+  AsyncIterable<unknown>
+>
 
 const HINT_LEVEL_INSTRUCTIONS: Record<1 | 2 | 3, string> = {
   1: 'Level 1 — Give a conceptual nudge only. 1-2 sentences maximum. Do NOT mention any specific data structure or algorithm by name.',
@@ -132,7 +137,7 @@ export async function streamAiHint(
   res.setHeader('Connection', 'keep-alive')
   res.flushHeaders()
 
-  let currentStream: Awaited<ReturnType<typeof openrouter.chat.completions.create>> | null = null
+  let currentStream: ChatCompletionStream | null = null
   const onClose = () => currentStream?.controller.abort()
   res.on('close', onClose)
 
@@ -142,12 +147,12 @@ export async function streamAiHint(
       currentStream = await openrouter.chat.completions.create({
         model,
         messages,
-        stream: true,
+        stream: true as const,
         temperature: 0.3,
         max_tokens: maxTokens,
       })
 
-      for await (const chunk of currentStream) {
+      for await (const chunk of currentStream!) {
         const token = chunk.choices[0]?.delta?.content
         if (token) {
           res.write(`data: ${JSON.stringify({ token })}\n\n`)
