@@ -5,12 +5,12 @@ import { HowItWorks } from '@/components/landing/how-it-works'
 import { Features } from '@/components/landing/features'
 import { DashboardPreview } from '@/components/landing/dashboard-preview'
 import { FinalCta } from '@/components/landing/final-cta'
-import { LiquidEther } from '@/components/landing/liquid-ether'
+import { DotGrid } from '@/components/backgrounds/dot-grid'
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[var(--color-background)]">
-      {/* Fixed full-page Liquid Ether fluid background */}
+      {/* Fixed full-page clean dot grid background */}
       <div
         aria-hidden="true"
         style={{
@@ -22,15 +22,12 @@ export default function LandingPage() {
           height: '100vh',
         }}
       >
-        <LiquidEther
-          colors={['#1B4332', '#40916C', '#74C69D']}
-          autoDemo={true}
-          autoSpeed={0.25}
-          autoIntensity={1.8}
-          mouseForce={25}
-          cursorSize={120}
-          resolution={0.4}
-          BFECC={true}
+        <DotGrid
+          dotColor="rgba(64, 145, 108, 0.15)"
+          backgroundColor="transparent"
+          spacing={32}
+          dotSize={1.2}
+          animate={true}
         />
       </div>
 
