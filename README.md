@@ -107,7 +107,25 @@ npm run build -w @codecraft/api
 
 ### Start Development Servers
 
-**Option 1: Separate terminals**
+**Option 1: Full startup with health checks (Recommended)**
+```bash
+./start.sh
+```
+This script will:
+- ✓ Check prerequisites and database
+- ✓ Detect port conflicts
+- ✓ Start API and Web servers in parallel
+- ✓ Wait for services to be ready
+- ✓ Display color-coded logs
+- ✓ Handle graceful shutdown with Ctrl+C
+
+**Option 2: Quick start (minimal)**
+```bash
+./dev.sh
+```
+Simple parallel startup without health checks or status monitoring.
+
+**Option 3: Manual (separate terminals)**
 ```bash
 # Terminal 1: API server (http://localhost:3001)
 npm run dev:api
@@ -116,10 +134,12 @@ npm run dev:api
 npm run dev
 ```
 
-**Option 2: Parallel script**
+### Stop Development Servers
+
 ```bash
-./dev.sh  # Starts both API and web
+./stop.sh  # Stops all services and frees ports
 ```
+Or press `Ctrl+C` in the terminal running `start.sh` or `dev.sh`.
 
 ### Access Points
 
@@ -130,13 +150,21 @@ npm run dev
 
 ## Available Commands
 
+### Quick Scripts
+
+```bash
+./init.sh             # Complete environment setup (first-time only)
+./start.sh            # Start all services with health checks
+./dev.sh              # Quick start (no health checks)
+./stop.sh             # Stop all services and free ports
+```
+
 ### Root Commands
 
 ```bash
 npm run dev           # Start Next.js web app
 npm run dev:api       # Start Express API server
 npm run build         # Build Next.js production bundle
-npm run build:api     # Build API TypeScript to JS
 npm run type-check    # Run TypeScript type checking
 npm run lint          # Run ESLint
 npm run test:e2e      # Run Playwright E2E tests
