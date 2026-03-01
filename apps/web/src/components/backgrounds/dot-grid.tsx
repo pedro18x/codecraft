@@ -62,26 +62,10 @@ export function DotGrid({
   }
 
   return (
-    <>
-      {animate && (
-        <style dangerouslySetInnerHTML={{
-          __html: `
-            @keyframes dotGridFade {
-              0%, 100% {
-                opacity: 0.5;
-              }
-              50% {
-                opacity: 0.8;
-              }
-            }
-          `
-        }} />
-      )}
-      <div
-        className={className}
-        style={dotGridStyle}
-        aria-hidden="true"
-      />
-    </>
+    <div
+      className={className}
+      style={dotGridStyle}
+      aria-hidden="true"
+    />
   )
 }
