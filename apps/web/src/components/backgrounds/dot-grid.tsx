@@ -64,16 +64,18 @@ export function DotGrid({
   return (
     <>
       {animate && (
-        <style jsx global>{`
-          @keyframes dotGridFade {
-            0%, 100% {
-              opacity: 0.5;
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            @keyframes dotGridFade {
+              0%, 100% {
+                opacity: 0.5;
+              }
+              50% {
+                opacity: 0.8;
+              }
             }
-            50% {
-              opacity: 0.8;
-            }
-          }
-        `}</style>
+          `
+        }} />
       )}
       <div
         className={className}
