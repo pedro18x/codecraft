@@ -5,12 +5,12 @@ import { HowItWorks } from '@/components/landing/how-it-works'
 import { Features } from '@/components/landing/features'
 import { DashboardPreview } from '@/components/landing/dashboard-preview'
 import { FinalCta } from '@/components/landing/final-cta'
-import { DotGrid } from '@/components/backgrounds/dot-grid'
+import { PerspectiveGrid } from '@/components/backgrounds/perspective-grid'
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[var(--color-background)]">
-      {/* Fixed full-page clean dot grid background */}
+      {/* Fixed full-page perspective grid background */}
       <div
         aria-hidden="true"
         style={{
@@ -22,13 +22,7 @@ export default function LandingPage() {
           height: '100vh',
         }}
       >
-        <DotGrid
-          dotColor="rgba(64, 145, 108, 0.15)"
-          backgroundColor="transparent"
-          spacing={32}
-          dotSize={1.2}
-          animate={true}
-        />
+        <PerspectiveGrid />
       </div>
 
       {/* Content layers — all above the fixed background */}
