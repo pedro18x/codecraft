@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { GlassCard } from '@/components/ui/glass-card'
 
 // ── Token shorthands ──────────────────────────────────────────────────────────
 const kw  = 'var(--zen-accent-slate)'   // keywords: function, const, for, of, if, return
@@ -61,10 +62,7 @@ export function DashboardPreview() {
           </p>
 
           {/* Browser chrome wrapper */}
-          <div
-            className="max-w-4xl mx-auto rounded-[var(--radius-xl)] overflow-hidden"
-            style={{ boxShadow: 'var(--shadow-brutal-lg)', border: '1px solid var(--color-border)' }}
-          >
+          <GlassCard glow="jade" className="max-w-4xl mx-auto" style={{ overflow: 'hidden' }}>
             {/* Title bar */}
             <div
               className="flex items-center gap-3 px-4 py-3"
@@ -279,7 +277,7 @@ export function DashboardPreview() {
                 </div>
               </div>
             </div>
-          </div>
+          </GlassCard>
         </motion.div>
       </div>
     </section>
