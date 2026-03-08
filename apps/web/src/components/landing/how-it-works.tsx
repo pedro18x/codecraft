@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { GlassCard } from '@/components/ui/glass-card'
 
 const steps = [
   {
@@ -64,22 +65,60 @@ export function HowItWorks() {
         >
           How it works
         </motion.h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, i) => (
-            <motion.div
-              key={step.n}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="p-6 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-brutal-sm)]"
-            >
-              <div className="text-[var(--color-primary)] mb-4 opacity-80">{step.icon}</div>
-              <span className="font-[family-name:var(--font-mono)] text-xs font-medium text-[var(--color-primary)] mb-3 block">{step.n}</span>
-              <h3 className="font-[family-name:var(--font-display)] font-bold text-base text-[var(--color-text-primary)] mb-2">{step.title}</h3>
-              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">{step.body}</p>
-            </motion.div>
-          ))}
+
+        <div style={{ position: 'relative' }}>
+          {/* Connector line — desktop only */}
+          <div
+            aria-hidden="true"
+            className="hidden lg:block"
+            style={{
+              position: 'absolute',
+              top: 28,
+              left: '12.5%',
+              right: '12.5%',
+              height: 1,
+              borderTop: '1px dashed rgba(62,122,85,0.2)',
+              zIndex: 0,
+            }}
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" style={{ position: 'relative', zIndex: 1 }}>
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.n}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.09, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                <GlassCard hoverable style={{ padding: '1.5rem', height: '100%' }}>
+                  {/* Step number + icon row */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1rem' }}>
+                    <span
+                      className="font-[family-name:var(--font-mono)] font-bold"
+                      style={{
+                        fontSize: '1.5rem',
+                        color: 'var(--zen-accent-jade)',
+                        textShadow: '0 0 12px var(--glass-glow-jade)',
+                      }}
+                    >
+                      {step.n}
+                    </span>
+                    <span style={{ color: 'var(--zen-accent-jade)', opacity: 0.7 }}>{step.icon}</span>
+                  </div>
+                  <h3
+                    className="font-[family-name:var(--font-display)] font-bold text-base mb-2"
+                    style={{ color: 'var(--zen-text-primary)' }}
+                  >
+                    {step.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--zen-text-secondary)' }}>
+                    {step.body}
+                  </p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
