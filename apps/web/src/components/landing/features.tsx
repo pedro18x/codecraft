@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { SpotlightCard } from './spotlight-card'
+import { GlassCard } from '@/components/ui/glass-card'
 import { DecryptedText } from './decrypted-text'
 
 const features = [
@@ -13,7 +13,8 @@ const features = [
       </svg>
     ),
     title: 'Distraction-free editor',
-    body: 'Monaco editor with syntax highlighting. Nothing between you and the problem.',
+    body: 'Monaco editor with syntax highlighting, auto-save, and multi-language support. Nothing between you and the problem.',
+    bento: 'hero' as const,
   },
   {
     icon: (
@@ -26,6 +27,7 @@ const features = [
     ),
     title: 'Instant test feedback',
     body: 'Run all test cases in one click. See exactly which inputs fail and why.',
+    bento: 'normal' as const,
   },
   {
     icon: (
@@ -36,6 +38,7 @@ const features = [
     ),
     title: 'Track every session',
     body: 'Solved count, streak, leaderboard rank — all update the moment you submit.',
+    bento: 'normal' as const,
   },
 ]
 
@@ -60,7 +63,10 @@ export function Features() {
           />
         </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          style={{ gridAutoRows: '1fr' }}
+        >
           {features.map((feature, i) => (
             <motion.div
               key={feature.title}
@@ -68,20 +74,30 @@ export function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className={feature.bento === 'hero' ? 'md:col-span-2' : ''}
             >
-              <SpotlightCard className="h-[280px]">
-                <div className="flex flex-col h-full p-6 gap-4">
-                  <div className="text-[var(--color-primary)]">
-                    {feature.icon}
-                  </div>
-                  <h3 className="font-[family-name:var(--font-display)] font-bold text-lg text-[var(--color-text-primary)] leading-snug">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed flex-1">
-                    {feature.body}
-                  </p>
-                </div>
-              </SpotlightCard>
+              <GlassCard
+                hoverable
+                glow={feature.bento === 'hero' ? 'jade' : 'none'}
+                style={{
+                  padding: '1.75rem',
+                  height: feature.bento === 'hero' ? 280 : 220,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                }}
+              >
+                <div style={{ color: 'var(--zen-accent-jade)' }}>{feature.icon}</div>
+                <h3
+                  className="font-[family-name:var(--font-display)] font-bold text-lg leading-snug"
+                  style={{ color: 'var(--zen-text-primary)' }}
+                >
+                  {feature.title}
+                </h3>
+                <p className="text-sm leading-relaxed flex-1" style={{ color: 'var(--zen-text-secondary)' }}>
+                  {feature.body}
+                </p>
+              </GlassCard>
             </motion.div>
           ))}
         </div>
