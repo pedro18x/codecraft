@@ -22,12 +22,6 @@ export function ShinyText({ text, className = '', speed = 3 }: ShinyTextProps) {
       }}
     >
       {text}
-      <style>{`
-        @keyframes shiny-sweep {
-          0%   { background-position: 200% center; }
-          100% { background-position: -200% center; }
-        }
-      `}</style>
     </span>
   )
 }

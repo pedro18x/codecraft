@@ -17,6 +17,11 @@
   100% { background-position: 0% 50%; }
 }
 
+@keyframes shiny-sweep {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
 /* ── Tailwind v4 theme extensions ── */
 @theme {
   /* Colors — mapped to CSS custom properties */
