@@ -177,6 +177,19 @@
   --shadow-brutal-lg: 0 8px 32px rgba(0, 0, 0, 0.22);
   --shadow-glow: 0 0 24px rgba(62, 122, 85, 0.2);
 
+  /* ── Glassmorphism ─────────────────────────────── */
+  --glass-bg:              rgba(255, 255, 255, 0.03);
+  --glass-bg-hover:        rgba(255, 255, 255, 0.06);
+  --glass-border:          rgba(255, 255, 255, 0.08);
+  --glass-border-hover:    rgba(255, 255, 255, 0.14);
+  --glass-glow-jade:       rgba(62, 122, 85, 0.18);
+  --glass-glow-rust:       rgba(199, 91, 58, 0.18);
+  --glass-glow-amber:      rgba(201, 168, 76, 0.14);
+  --shadow-glass:          0 8px 32px rgba(0, 0, 0, 0.5),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-glass-lg:       0 16px 48px rgba(0, 0, 0, 0.6),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
   /* ── Timing — deliberate but alive ── */
   --duration-instant: 100ms;
   --duration-fast: 200ms;
