@@ -22,6 +22,16 @@
   100% { background-position: -200% center; }
 }
 
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes zenShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 /* ── Tailwind v4 theme extensions ── */
 @theme {
   /* Colors — mapped to CSS custom properties */
@@ -81,59 +91,7 @@
 
   /* Animations */
   --animate-fade-in: fadeIn 0.3s ease-out;
-  --animate-slide-up: fadeSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  --animate-slide-down: slideDown 0.3s ease-out;
-  --animate-zen-breathe: zenBreathe 4s ease-in-out infinite;
-  --animate-zen-float: zenFloat 3.5s ease-in-out infinite;
-  --animate-zen-rise: zenRise 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  --animate-zen-glow: zenGlow 3s ease-in-out infinite;
-  --animate-ink-spread: inkSpread 8s ease-in-out infinite;
-  --animate-aurora-shift: auroraShift 12s ease-in-out infinite alternate;
   --animate-shimmer: zenShimmer 2s ease-in-out infinite;
-
-  @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-  @keyframes fadeSlideUp {
-    0% { transform: translateY(8px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-  @keyframes slideDown {
-    0% { transform: translateY(-8px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-  @keyframes zenBreathe {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.015); opacity: 0.92; }
-  }
-  @keyframes zenFloat {
-    0%, 100% { transform: translate(0, 0); }
-    25% { transform: translate(1px, -4px); }
-    75% { transform: translate(-1px, -2px); }
-  }
-  @keyframes zenRise {
-    0% { transform: translateY(12px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-  @keyframes zenGlow {
-    0%, 100% { box-shadow: 0 0 0 rgba(199, 91, 58, 0); }
-    50% { box-shadow: 0 0 20px rgba(199, 91, 58, 0.2); }
-  }
-  @keyframes inkSpread {
-    0% { background-position: 0% 50%; background-size: 150% 150%; }
-    50% { background-position: 100% 50%; background-size: 200% 200%; }
-    100% { background-position: 0% 50%; background-size: 150% 150%; }
-  }
-  @keyframes auroraShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  @keyframes zenShimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
 }
 
 /* ── Atmospheric noise overlay ── */
