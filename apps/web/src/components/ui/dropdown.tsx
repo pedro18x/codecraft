@@ -44,7 +44,7 @@ export function Dropdown({ items, value, placeholder = 'Select…', onChange, cl
           'font-[family-name:var(--font-display)] cursor-pointer',
           'transition-[border-color] duration-[var(--duration-fast)]',
           'hover:border-[var(--color-border-strong)]',
-          'focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_rgba(199,91,58,0.35)]',
+          'focus-visible:outline-none focus-visible:shadow-[var(--focus-ring-shadow)]',
         )}
       >
         <span className={selected ? '' : 'text-[var(--color-text-tertiary)]'}>

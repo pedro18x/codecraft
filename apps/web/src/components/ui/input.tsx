@@ -32,7 +32,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
       'px-[0.9rem] pt-[0.92rem] pb-[0.62rem]',
       'transition-[box-shadow,border-color] duration-[var(--duration-fast)]',
       'placeholder:text-[var(--color-text-tertiary)]',
-      'focus:outline-none focus:border-[var(--color-primary)] focus:shadow-[0_0_0_3px_rgba(62,122,85,0.15)]',
+      'focus:outline-none focus:border-[var(--color-primary)] focus:shadow-[var(--focus-ring-shadow)]',
       'disabled:opacity-55 disabled:cursor-not-allowed',
       hasError
         ? 'border-[var(--color-error)] shadow-[0_0_0_3px_var(--color-error-bg)]'

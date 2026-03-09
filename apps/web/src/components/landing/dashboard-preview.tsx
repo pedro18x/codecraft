@@ -151,7 +151,7 @@ export function DashboardPreview() {
               <div className="w-1.5 shrink-0" style={{ background: 'var(--color-border)' }} />
 
               {/* ── Right panel: editor ───────────────────────────────── */}
-              <div className="flex-1 flex flex-col overflow-hidden" style={{ background: '#1e1e1e' }}>
+              <div className="flex-1 flex flex-col overflow-hidden" style={{ background: 'var(--color-editor-bg)' }}>
 
                 {/* Language tabs */}
                 <div
@@ -197,12 +197,12 @@ export function DashboardPreview() {
                 {/* Editor body: line numbers + code */}
                 <div
                   className="flex-1 overflow-hidden flex font-[family-name:var(--font-mono)] text-xs"
-                  style={{ background: '#1e1e1e', lineHeight: '1.7' }}
+                  style={{ background: 'var(--color-editor-bg)', lineHeight: '1.7' }}
                 >
                   {/* Line numbers */}
                   <div
                     className="shrink-0 pt-3 pb-3 pl-3 pr-2 text-right select-none text-[10px]"
-                    style={{ color: 'var(--zen-text-tertiary)', minWidth: '28px', background: '#1e1e1e' }}
+                    style={{ color: 'var(--zen-text-tertiary)', minWidth: '28px', background: 'var(--color-editor-bg)' }}
                     aria-hidden="true"
                   >
                     {CODE_LINES.map((_, i) => (

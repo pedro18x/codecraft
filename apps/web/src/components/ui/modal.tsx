@@ -94,7 +94,7 @@ export function Modal({
                 type="button"
                 aria-label="Close modal"
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center border border-[var(--color-border)] rounded-full bg-[var(--color-surface-raised)] text-[var(--color-text-secondary)] text-xl font-bold leading-none cursor-pointer hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_rgba(199,91,58,0.35)] transition-colors duration-[var(--duration-fast)]"
+                className="w-8 h-8 flex items-center justify-center border border-[var(--color-border)] rounded-full bg-[var(--color-surface-raised)] text-[var(--color-text-secondary)] text-xl font-bold leading-none cursor-pointer hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring-shadow)] transition-colors duration-[var(--duration-fast)]"
               >
                 ×
               </button>

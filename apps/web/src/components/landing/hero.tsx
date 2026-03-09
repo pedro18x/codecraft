@@ -106,8 +106,8 @@ export function Hero() {
               className="inline-flex items-center gap-2 px-6 py-3 font-[family-name:var(--font-display)] font-bold text-base rounded-[var(--radius-md)] no-underline transition-all duration-200"
               style={{
                 background: 'var(--zen-accent-jade)',
-                color: '#E8E4DF',
-                border: '1px solid rgba(62,122,85,0.6)',
+                color: 'var(--button-primary-text)',
+                border: '1px solid var(--color-primary)',
                 boxShadow: '0 0 24px var(--glass-glow-jade)',
               }}
             >

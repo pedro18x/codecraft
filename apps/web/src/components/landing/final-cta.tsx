@@ -59,7 +59,7 @@ export function FinalCta() {
                   className="inline-flex items-center gap-2 px-8 py-4 font-[family-name:var(--font-display)] font-bold text-lg rounded-[var(--radius-md)] no-underline transition-all duration-200"
                   style={{
                     background: 'var(--zen-accent-jade)',
-                    color: '#E8E4DF',
+                    color: 'var(--button-primary-text)',
                     boxShadow: '0 0 32px var(--glass-glow-jade)',
                   }}
                 >

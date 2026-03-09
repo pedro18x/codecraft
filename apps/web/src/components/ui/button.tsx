@@ -55,7 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'transition-[box-shadow,opacity,background-color,border-color] duration-[var(--duration-fast)]',
         'hover:shadow-[var(--shadow-brutal)] hover:opacity-[0.92]',
         'active:shadow-[var(--shadow-brutal-sm)] active:opacity-[0.85]',
-        'focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_rgba(199,91,58,0.35)]',
+        'focus-visible:outline-none focus-visible:shadow-[var(--focus-ring-shadow)]',
         'disabled:opacity-55 disabled:cursor-not-allowed disabled:shadow-none disabled:border-[var(--color-border-subtle)]',
         variantStyles[variant],
         sizeStyles[size],

@@ -190,6 +190,12 @@
   --shadow-glass-lg:       0 16px 48px rgba(0, 0, 0, 0.6),
                            inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
+  /* ── Focus ring ── */
+  --focus-ring-shadow: 0 0 0 3px rgba(199, 91, 58, 0.35);
+
+  /* ── Editor background ── */
+  --color-editor-bg: #1e1e1e;
+
   /* ── Timing — deliberate but alive ── */
   --duration-instant: 100ms;
   --duration-fast: 200ms;
@@ -297,6 +303,25 @@
   --button-danger-bg: #B84F30;
   --button-danger-hover: #A84D31;
   --button-danger-text: #FFFFFF;
+
+  /* ── Glassmorphism — inverted for light backgrounds ── */
+  --glass-bg:              rgba(255, 255, 255, 0.55);
+  --glass-bg-hover:        rgba(255, 255, 255, 0.7);
+  --glass-border:          rgba(0, 0, 0, 0.08);
+  --glass-border-hover:    rgba(0, 0, 0, 0.14);
+  --glass-glow-jade:       rgba(45, 107, 68, 0.12);
+  --glass-glow-rust:       rgba(184, 79, 48, 0.12);
+  --glass-glow-amber:      rgba(201, 168, 76, 0.10);
+  --shadow-glass:          0 8px 32px rgba(0, 0, 0, 0.08),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --shadow-glass-lg:       0 16px 48px rgba(0, 0, 0, 0.12),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  /* ── Focus ring ── */
+  --focus-ring-shadow: 0 0 0 3px rgba(184, 79, 48, 0.25);
+
+  /* ── Editor background ── */
+  --color-editor-bg: #FFFFFF;
 
   --dark-lp-accent-wash-1: color-mix(in srgb, #2D6B44 12%, #FAF7F2);
   --dark-lp-accent-wash-2: color-mix(in srgb, #C9A84C 10%, #FAF7F2);

@@ -23,7 +23,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           className={cn(
             'w-4 h-4 rounded border border-[var(--color-border)] bg-[var(--color-surface-raised)]',
             'accent-[var(--color-primary)]',
-            'focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_rgba(199,91,58,0.35)]',
+            'focus-visible:outline-none focus-visible:shadow-[var(--focus-ring-shadow)]',
           )}
           {...props}
         />

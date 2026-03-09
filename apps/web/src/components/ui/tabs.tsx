@@ -63,7 +63,7 @@ export function Tabs({ value, items, onChange, className }: TabsProps) {
             'px-[0.7rem] py-[0.45rem] pb-[0.35rem]',
             'font-[family-name:var(--font-display)] text-sm',
             'bg-transparent cursor-pointer transition-colors duration-[var(--duration-fast)]',
-            'focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_rgba(199,91,58,0.35)]',
+            'focus-visible:outline-none focus-visible:shadow-[var(--focus-ring-shadow)]',
             value === item.id
               ? 'bg-[var(--color-surface-raised)] text-[var(--color-text-primary)] font-semibold'
               : 'text-[var(--color-text-secondary)] font-medium hover:text-[var(--color-text-primary)]',

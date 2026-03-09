@@ -46,7 +46,7 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
             left: '10%',
             right: '10%',
             height: '1px',
-            background: `linear-gradient(90deg, transparent, ${glow !== 'none' ? glowMap[glow] : 'rgba(255,255,255,0.1)'}, transparent)`,
+            background: `linear-gradient(90deg, transparent, ${glow !== 'none' ? glowMap[glow] : 'var(--glass-border-hover)'}, transparent)`,
             pointerEvents: 'none',
           }}
         />
