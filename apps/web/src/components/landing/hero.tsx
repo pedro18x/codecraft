@@ -83,7 +83,7 @@ export function Hero() {
             />
             <br />
             <ShinyText
-              text="the zen way."
+              text="the right way."
               className="text-[var(--zen-accent-jade)]"
               speed={4}
             />
