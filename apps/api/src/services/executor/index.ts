@@ -33,7 +33,12 @@ export async function getExecutor(): Promise<ICodeExecutor> {
       executor = remote
       return executor
     }
-    throw new ExecutorUnavailableError('Dedicated executor service unavailable')
+    if (env.NODE_ENV === 'production') {
+      throw new ExecutorUnavailableError('Dedicated executor service unavailable')
+    }
+    logger.warn('executor_http_fallback', {
+      message: `HttpExecutor at ${env.EXECUTOR_URL} unavailable; falling back to local executors.`,
+    })
   }
 
   const docker = new DockerExecutor()
@@ -63,7 +68,9 @@ export async function getExecutorReadiness(): Promise<boolean> {
       serviceToken: env.EXECUTOR_SERVICE_TOKEN,
       timeoutMs: Math.max(1000, env.EXECUTOR_TIMEOUT_MS),
     })
-    return remote.isAvailable()
+    if (await remote.isAvailable()) return true
+    if (env.NODE_ENV === 'production') return false
+    // In dev, fall through to check local executors
   }
 
   const docker = new DockerExecutor()

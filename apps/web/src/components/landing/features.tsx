@@ -14,7 +14,6 @@ const features = [
     ),
     title: 'Distraction-free editor',
     body: 'Monaco editor with syntax highlighting, auto-save, and multi-language support. Nothing between you and the problem.',
-    bento: 'hero' as const,
   },
   {
     icon: (
@@ -27,7 +26,6 @@ const features = [
     ),
     title: 'Instant test feedback',
     body: 'Run all test cases in one click. See exactly which inputs fail and why.',
-    bento: 'normal' as const,
   },
   {
     icon: (
@@ -38,7 +36,6 @@ const features = [
     ),
     title: 'Track every session',
     body: 'Solved count, streak, leaderboard rank — all update the moment you submit.',
-    bento: 'normal' as const,
   },
 ]
 
@@ -74,14 +71,13 @@ export function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className={feature.bento === 'hero' ? 'md:col-span-2' : ''}
             >
               <GlassCard
                 hoverable
-                glow={feature.bento === 'hero' ? 'jade' : 'none'}
+                glow="none"
                 style={{
                   padding: '1.75rem',
-                  height: feature.bento === 'hero' ? 280 : 220,
+                  height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '1rem',
