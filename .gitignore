@@ -26,3 +26,7 @@ test-results/
 
 # Claude workspace
 .claude/
+
+# Local docs (plans, memory)
+docs/plans/
+docs/memory/

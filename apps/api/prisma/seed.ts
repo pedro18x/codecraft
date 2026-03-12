@@ -711,6 +711,194 @@ const problems = [
       { input: '3\n7', expectedOutput: '28' }
     ],
     hints: ['This can be solved using Dynamic Programming or combinatorics (nCr).']
+  },
+  // ── Hard Problems (51-60) ──────────────────────────────────────────
+  {
+    id: 51,
+    title: 'Trapping Rain Water',
+    difficulty: 'Hard',
+    categories: ['Array', 'Two Pointers', 'Stack', 'Dynamic Programming'],
+    description: 'Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.',
+    examples: [
+      { input: 'height = [0,1,0,2,1,0,1,3,2,1,2,1]', output: '6', explanation: 'The elevation map can trap 6 units of rain water.' },
+      { input: 'height = [4,2,0,3,2,5]', output: '9', explanation: null }
+    ],
+    constraints: ['n == height.length', '1 <= n <= 2 * 10^4', '0 <= height[i] <= 10^5'],
+    testCases: [
+      { input: '[0,1,0,2,1,0,1,3,2,1,2,1]', expectedOutput: '6' },
+      { input: '[4,2,0,3,2,5]', expectedOutput: '9' },
+      { input: '[1,0,1]', expectedOutput: '1' }
+    ],
+    starterCode: { javascript: 'function trap(height) {\n  \n}', typescript: 'function trap(height: number[]): number {\n  \n}' },
+    hints: ['Use two pointers from both ends, tracking the max height seen from each side.']
+  },
+  {
+    id: 52,
+    title: 'Minimum Window Substring',
+    difficulty: 'Hard',
+    categories: ['Hash Table', 'String', 'Sliding Window'],
+    description: 'Given two strings s and t of lengths m and n respectively, return the minimum window substring of s such that every character in t (including duplicates) is included in the window. If there is no such substring, return the empty string "".',
+    examples: [
+      { input: 's = "ADOBECODEBANC", t = "ABC"', output: '"BANC"', explanation: 'The minimum window substring "BANC" includes A, B, and C from string t.' }
+    ],
+    constraints: ['m == s.length', 'n == t.length', '1 <= m, n <= 10^5', 's and t consist of uppercase and lowercase English letters.'],
+    testCases: [
+      { input: '"ADOBECODEBANC"\n"ABC"', expectedOutput: '"BANC"' },
+      { input: '"a"\n"a"', expectedOutput: '"a"' },
+      { input: '"a"\n"aa"', expectedOutput: '""' }
+    ],
+    starterCode: { javascript: 'function minWindow(s, t) {\n  \n}', typescript: 'function minWindow(s: string, t: string): string {\n  \n}' },
+    hints: ['Use a sliding window with two pointers and a character frequency map.']
+  },
+  {
+    id: 53,
+    title: 'Longest Valid Parentheses',
+    difficulty: 'Hard',
+    categories: ['String', 'Dynamic Programming', 'Stack'],
+    description: 'Given a string containing just the characters \'(\' and \')\', return the length of the longest valid (well-formed) parentheses substring.',
+    examples: [
+      { input: 's = "(()"', output: '2', explanation: 'The longest valid parentheses substring is "()".' },
+      { input: 's = ")()())"', output: '4', explanation: 'The longest valid parentheses substring is "()()".' }
+    ],
+    constraints: ['0 <= s.length <= 3 * 10^4', 's[i] is \'(\', or \')\'.'],
+    testCases: [
+      { input: '"(()"', expectedOutput: '2' },
+      { input: '")()())"', expectedOutput: '4' },
+      { input: '""', expectedOutput: '0' }
+    ],
+    starterCode: { javascript: 'function longestValidParentheses(s) {\n  \n}', typescript: 'function longestValidParentheses(s: string): number {\n  \n}' },
+    hints: ['Use a stack to track indices. Push index of unmatched parentheses.']
+  },
+  {
+    id: 54,
+    title: 'Median of Two Sorted Arrays',
+    difficulty: 'Hard',
+    categories: ['Array', 'Binary Search', 'Divide and Conquer'],
+    description: 'Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).',
+    examples: [
+      { input: 'nums1 = [1,3], nums2 = [2]', output: '2.0', explanation: 'merged array = [1,2,3] and median is 2.' },
+      { input: 'nums1 = [1,2], nums2 = [3,4]', output: '2.5', explanation: 'merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.' }
+    ],
+    constraints: ['nums1.length == m', 'nums2.length == n', '0 <= m <= 1000', '0 <= n <= 1000', '1 <= m + n <= 2000'],
+    testCases: [
+      { input: '[1,3]\n[2]', expectedOutput: '2' },
+      { input: '[1,2]\n[3,4]', expectedOutput: '2.5' }
+    ],
+    starterCode: { javascript: 'function findMedianSortedArrays(nums1, nums2) {\n  \n}', typescript: 'function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n  \n}' },
+    hints: ['Binary search on the shorter array. Partition both arrays such that left halves equal right halves.']
+  },
+  {
+    id: 55,
+    title: 'First Missing Positive',
+    difficulty: 'Hard',
+    categories: ['Array', 'Hash Table'],
+    description: 'Given an unsorted integer array nums, return the smallest missing positive integer. You must implement an algorithm that runs in O(n) time and uses O(1) auxiliary space.',
+    examples: [
+      { input: 'nums = [1,2,0]', output: '3', explanation: 'The numbers 1 and 2 are present, so the answer is 3.' },
+      { input: 'nums = [3,4,-1,1]', output: '2', explanation: '1 is present but 2 is missing.' }
+    ],
+    constraints: ['1 <= nums.length <= 10^5', '-2^31 <= nums[i] <= 2^31 - 1'],
+    testCases: [
+      { input: '[1,2,0]', expectedOutput: '3' },
+      { input: '[3,4,-1,1]', expectedOutput: '2' },
+      { input: '[7,8,9,11,12]', expectedOutput: '1' }
+    ],
+    starterCode: { javascript: 'function firstMissingPositive(nums) {\n  \n}', typescript: 'function firstMissingPositive(nums: number[]): number {\n  \n}' },
+    hints: ['Place each number in its correct index (nums[i] should be i+1). Then scan for the first mismatch.']
+  },
+  {
+    id: 56,
+    title: 'Edit Distance',
+    difficulty: 'Hard',
+    categories: ['String', 'Dynamic Programming'],
+    description: 'Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2. You have three operations: insert a character, delete a character, replace a character.',
+    examples: [
+      { input: 'word1 = "horse", word2 = "ros"', output: '3', explanation: 'horse -> rorse (replace h with r) -> rose (remove r) -> ros (remove e)' },
+      { input: 'word1 = "intention", word2 = "execution"', output: '5', explanation: null }
+    ],
+    constraints: ['0 <= word1.length, word2.length <= 500', 'word1 and word2 consist of lowercase English letters.'],
+    testCases: [
+      { input: '"horse"\n"ros"', expectedOutput: '3' },
+      { input: '"intention"\n"execution"', expectedOutput: '5' },
+      { input: '""\n"a"', expectedOutput: '1' }
+    ],
+    starterCode: { javascript: 'function minDistance(word1, word2) {\n  \n}', typescript: 'function minDistance(word1: string, word2: string): number {\n  \n}' },
+    hints: ['Classic DP problem. dp[i][j] = min operations to convert word1[0..i-1] to word2[0..j-1].']
+  },
+  {
+    id: 57,
+    title: 'Largest Rectangle in Histogram',
+    difficulty: 'Hard',
+    categories: ['Array', 'Stack', 'Monotonic Stack'],
+    description: 'Given an array of integers heights representing the histogram\'s bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.',
+    examples: [
+      { input: 'heights = [2,1,5,6,2,3]', output: '10', explanation: 'The largest rectangle has an area of 10 units (bars at index 2 and 3).' }
+    ],
+    constraints: ['1 <= heights.length <= 10^5', '0 <= heights[i] <= 10^4'],
+    testCases: [
+      { input: '[2,1,5,6,2,3]', expectedOutput: '10' },
+      { input: '[2,4]', expectedOutput: '4' },
+      { input: '[1]', expectedOutput: '1' }
+    ],
+    starterCode: { javascript: 'function largestRectangleArea(heights) {\n  \n}', typescript: 'function largestRectangleArea(heights: number[]): number {\n  \n}' },
+    hints: ['Use a monotonic stack to find the nearest smaller element on both sides of each bar.']
+  },
+  {
+    id: 58,
+    title: 'Sliding Window Maximum',
+    difficulty: 'Hard',
+    categories: ['Array', 'Queue', 'Sliding Window', 'Monotonic Queue'],
+    description: 'You are given an array of integers nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves right by one position. Return the max sliding window.',
+    examples: [
+      { input: 'nums = [1,3,-1,-3,5,3,6,7], k = 3', output: '[3,3,5,5,6,7]', explanation: null }
+    ],
+    constraints: ['1 <= nums.length <= 10^5', '-10^4 <= nums[i] <= 10^4', '1 <= k <= nums.length'],
+    testCases: [
+      { input: '[1,3,-1,-3,5,3,6,7]\n3', expectedOutput: '[3,3,5,5,6,7]' },
+      { input: '[1]\n1', expectedOutput: '[1]' },
+      { input: '[9,11]\n2', expectedOutput: '[11]' }
+    ],
+    starterCode: { javascript: 'function maxSlidingWindow(nums, k) {\n  \n}', typescript: 'function maxSlidingWindow(nums: number[], k: number): number[] {\n  \n}' },
+    hints: ['Use a monotonic deque (decreasing) to track the maximum in the current window.']
+  },
+  {
+    id: 59,
+    title: 'Wildcard Matching',
+    difficulty: 'Hard',
+    categories: ['String', 'Dynamic Programming', 'Greedy'],
+    description: "Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for '?' and '*' where: '?' Matches any single character. '*' Matches any sequence of characters (including the empty sequence).",
+    examples: [
+      { input: 's = "aa", p = "a"', output: 'false', explanation: '"a" does not match the entire string "aa".' },
+      { input: 's = "aa", p = "*"', output: 'true', explanation: '"*" matches any sequence.' }
+    ],
+    constraints: ['0 <= s.length, p.length <= 2000', 's contains only lowercase English letters.', 'p contains only lowercase English letters, \'?\' or \'*\'.'],
+    testCases: [
+      { input: '"aa"\n"a"', expectedOutput: 'false' },
+      { input: '"aa"\n"*"', expectedOutput: 'true' },
+      { input: '"cb"\n"?a"', expectedOutput: 'false' },
+      { input: '"adceb"\n"*a*b"', expectedOutput: 'true' }
+    ],
+    starterCode: { javascript: 'function isMatch(s, p) {\n  \n}', typescript: 'function isMatch(s: string, p: string): boolean {\n  \n}' },
+    hints: ['DP approach: dp[i][j] = whether s[0..i-1] matches p[0..j-1]. Handle * by checking dp[i-1][j] or dp[i][j-1].']
+  },
+  {
+    id: 60,
+    title: 'Candy',
+    difficulty: 'Hard',
+    categories: ['Array', 'Greedy'],
+    description: 'There are n children standing in a line. Each child is assigned a rating value given in the integer array ratings. You are giving candies to these children: each child must have at least one candy, and children with a higher rating get more candies than their neighbors. Return the minimum number of candies you need.',
+    examples: [
+      { input: 'ratings = [1,0,2]', output: '5', explanation: 'You can allocate [2,1,2] candies respectively.' },
+      { input: 'ratings = [1,2,2]', output: '4', explanation: 'You can allocate [1,2,1] candies. The third child gets 1 because it only needs to satisfy having at least one.' }
+    ],
+    constraints: ['n == ratings.length', '1 <= n <= 2 * 10^4', '0 <= ratings[i] <= 2 * 10^4'],
+    testCases: [
+      { input: '[1,0,2]', expectedOutput: '5' },
+      { input: '[1,2,2]', expectedOutput: '4' },
+      { input: '[1,3,2,2,1]', expectedOutput: '7' }
+    ],
+    starterCode: { javascript: 'function candy(ratings) {\n  \n}', typescript: 'function candy(ratings: number[]): number {\n  \n}' },
+    hints: ['Two passes: left-to-right ensuring right neighbor constraint, then right-to-left ensuring left neighbor constraint.']
   }
 ];
 

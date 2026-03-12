@@ -19,6 +19,7 @@ export function generateTestRunner(
 ${userCode}
 
 // === Test Runner ===
+var guess; // Forward declaration for guessNumber problem
 const __testCases = ${testCasesJSON};
 
 function __parseArgs(input) {
@@ -56,8 +57,20 @@ if (typeof ${functionName} !== 'function') {
   const results = __testCases.map(tc => {
     try {
       const args = __parseArgs(tc.input);
+
+      // Inject guess() API for guessNumber problem
+      if ('${functionName}' === 'guessNumber') {
+        const __pick = args.pop();
+        guess = function(num) {
+          if (num === __pick) return 0;
+          if (num > __pick) return -1;
+          return 1;
+        };
+      }
+
       const result = ${functionName}(...args);
-      const actualOutput = JSON.stringify(result);
+      // For in-place/void functions, use the first argument (mutated) as output
+      const actualOutput = result === undefined ? JSON.stringify(args[0]) : JSON.stringify(result);
 
       let passed = false;
       try {
