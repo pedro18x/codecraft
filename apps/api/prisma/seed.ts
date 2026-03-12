@@ -950,6 +950,27 @@ async function main() {
   }
 
   console.log(`Seeded ${problems.length} problems successfully.`)
+
+  // Seed admin user (requires ADMIN_EMAIL and ADMIN_PASSWORD env vars)
+  const adminEmail = process.env.ADMIN_EMAIL
+  const adminRawPassword = process.env.ADMIN_PASSWORD
+  if (adminEmail && adminRawPassword) {
+    const { default: bcrypt } = await import('bcryptjs')
+    const adminPassword = await bcrypt.hash(adminRawPassword, 10)
+    await prisma.user.upsert({
+      where: { email: adminEmail },
+      update: { role: 'admin' },
+      create: {
+        email: adminEmail,
+        username: 'admin',
+        password: adminPassword,
+        role: 'admin',
+      },
+    })
+    console.log(`Admin user seeded: ${adminEmail}`)
+  } else {
+    console.log('Skipping admin seed: set ADMIN_EMAIL and ADMIN_PASSWORD env vars to create an admin user')
+  }
 }
 
 main()

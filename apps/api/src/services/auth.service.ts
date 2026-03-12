@@ -27,7 +27,7 @@ interface LoginInput {
 }
 
 interface AuthResult {
-  user: { id: number; email: string; username: string; createdAt: Date }
+  user: { id: number; email: string; username: string; role: string; createdAt: Date }
   accessToken: string
   refreshToken: string
 }
@@ -50,7 +50,7 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
       username: input.username,
       password: hashed,
     },
-    select: { id: true, email: true, username: true, createdAt: true },
+    select: { id: true, email: true, username: true, role: true, createdAt: true },
   })
 
   const tokens = await generateTokens(user)
@@ -79,6 +79,7 @@ export async function login(input: LoginInput): Promise<AuthResult> {
       id: user.id,
       email: user.email,
       username: user.username,
+      role: user.role,
       createdAt: user.createdAt,
     },
     ...tokens,
@@ -126,7 +127,7 @@ export async function refresh(refreshTokenValue: string): Promise<{ accessToken:
   // Get fresh user data
   const user = await prisma.user.findUnique({
     where: { id: payload.userId },
-    select: { id: true, email: true, username: true },
+    select: { id: true, email: true, username: true, role: true },
   })
 
   if (!user) {
@@ -170,7 +171,7 @@ async function revokeTokenFamily(userId: number, tokenFamily: string) {
 }
 
 async function generateTokens(
-  user: { id: number; email: string; username: string },
+  user: { id: number; email: string; username: string; role: string },
   tokenSeed?: { tokenFamily: string; tokenVersion: number }
 ) {
   const tokenFamily = tokenSeed?.tokenFamily ?? randomUUID()
@@ -180,6 +181,7 @@ async function generateTokens(
     userId: user.id,
     email: user.email,
     username: user.username,
+    role: user.role,
   }
 
   const accessToken = signAccessToken(tokenPayload)

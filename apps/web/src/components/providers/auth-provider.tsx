@@ -7,11 +7,13 @@ interface User {
   id: number
   email: string
   username: string
+  role: string
 }
 
 export interface AuthContextValue {
   user: User | null
   isAuthenticated: boolean
+  isAdmin: boolean
   isLoading: boolean
   error: string | null
   login: (email: string, password: string) => Promise<void>
@@ -100,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, isLoading, error, login, register, logout, fetchMe }}
+      value={{ user, isAuthenticated: !!user, isAdmin: user?.role === 'admin', isLoading, error, login, register, logout, fetchMe }}
     >
       {children}
     </AuthContext.Provider>

@@ -34,6 +34,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
       id: payload.userId,
       email: payload.email,
       username: payload.username,
+      role: payload.role,
     }
 
     next()
@@ -56,6 +57,7 @@ export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
         id: payload.userId,
         email: payload.email,
         username: payload.username,
+        role: payload.role,
       }
     } catch {
       // Ignore - continue as unauthenticated

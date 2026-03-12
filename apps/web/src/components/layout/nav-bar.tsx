@@ -15,7 +15,7 @@ const navItems = [
 
 export function NavBar() {
   const pathname = usePathname()
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, isAdmin, logout } = useAuth()
   const { theme, toggle } = useTheme()
 
   return (
@@ -57,6 +57,21 @@ export function NavBar() {
             )
           })}
         </nav>
+
+        {/* Admin link */}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className={cn(
+              'hidden md:inline-flex px-3 py-1.5 rounded-[var(--radius-sm)] text-sm font-medium transition-colors duration-[var(--duration-fast)] no-underline',
+              pathname.startsWith('/admin')
+                ? 'bg-[var(--color-surface-raised)] text-[var(--color-text-primary)]'
+                : 'text-[var(--color-primary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-raised)]',
+            )}
+          >
+            Admin
+          </Link>
+        )}
 
         {/* Actions */}
         <div className="flex items-center gap-2">

@@ -5,6 +5,7 @@ export interface TokenPayload {
   userId: number
   email: string
   username: string
+  role: string
 }
 
 export interface RefreshTokenPayload extends TokenPayload {

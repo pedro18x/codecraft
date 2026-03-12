@@ -8,9 +8,11 @@ import leaderboardRoutes from './leaderboard.js'
 import executeRoutes from './execute.js'
 import telemetryRoutes from './telemetry.js'
 import aiRoutes from './ai.js'
+import adminRoutes from './admin.js'
 
 const router = Router()
 
+router.use('/admin', adminRoutes)
 router.use('/auth', authRoutes)
 router.use('/problems', problemsRoutes)
 router.use('/progress', progressRoutes)
