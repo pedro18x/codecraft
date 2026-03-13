@@ -1,0 +1,19 @@
+{
+  "name": "codecraft",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev":        "npm run dev -w @codecraft/web",
+    "dev:api":    "npm run dev -w @codecraft/api",
+    "build":      "npm run build -w @codecraft/web",
+    "build:api":  "npm run build -w @codecraft/api",
+    "type-check": "npm run type-check -w @codecraft/web",
+    "lint":       "npm run lint -w @codecraft/web",
+    "test:e2e":   "npm run test:e2e -w @codecraft/web",
+    "test:api":   "npm run test -w @codecraft/api"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

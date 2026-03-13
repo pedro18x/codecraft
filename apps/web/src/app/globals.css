@@ -1,0 +1,120 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@keyframes shiny-sweep {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes zenShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Tailwind v4 theme extensions ── */
+@theme {
+  /* Colors — mapped to CSS custom properties */
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-primary: var(--color-primary);
+  --color-danger: var(--color-danger);
+  --color-success: var(--color-success);
+  --color-error: var(--color-error);
+  --color-warning: var(--color-warning);
+
+  /* Zen palette aliases */
+  --color-theme-bg: var(--theme-bg);
+  --color-theme-surface-1: var(--surface-1);
+  --color-theme-surface-2: var(--surface-2);
+  --color-theme-surface-3: var(--surface-3);
+  --color-theme-surface-elevated: var(--surface-elevated);
+  --color-theme-border: var(--theme-border);
+  --color-theme-border-strong: var(--theme-border-strong);
+  --color-theme-text: var(--text-primary);
+  --color-theme-text-secondary: var(--text-secondary);
+  --color-theme-text-muted: var(--text-muted);
+  --color-theme-text-disabled: var(--text-disabled);
+  --color-theme-accent-primary: var(--accent-primary);
+  --color-theme-accent-secondary: var(--accent-secondary);
+  --color-theme-accent-success: var(--accent-success);
+  --color-theme-accent-warning: var(--accent-warning);
+  --color-theme-accent-danger: var(--accent-danger);
+  --color-theme-accent-info: var(--accent-info);
+
+  --color-brutal-coral: var(--zen-accent-rust);
+  --color-brutal-turquoise: var(--zen-accent-moss);
+  --color-brutal-yellow: var(--zen-accent-amber);
+  --color-brutal-cream: var(--color-background);
+  --color-brutal-black: var(--color-ink);
+  --color-brutal-ink: var(--color-ink);
+  --color-brutal-white: var(--color-white);
+
+  /* Font families — next/font injects --font-display and --font-mono at runtime */
+  --font-family-display: var(--font-display), sans-serif;
+  --font-family-body: var(--font-display), sans-serif;
+  --font-family-mono: var(--font-mono), monospace;
+
+  /* Box shadows */
+  --shadow-brutal-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-brutal: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-brutal-md: 0 4px 16px rgba(0, 0, 0, 0.18);
+  --shadow-brutal-lg: 0 8px 32px rgba(0, 0, 0, 0.22);
+  --shadow-glow: 0 0 24px rgba(199, 91, 58, 0.15);
+
+  /* Border radii */
+  --radius-zen-sm: 6px;
+  --radius-zen: 10px;
+  --radius-zen-lg: 14px;
+  --radius-zen-xl: 20px;
+  --radius-zen-full: 9999px;
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.3s ease-out;
+  --animate-shimmer: zenShimmer 2s ease-in-out infinite;
+}
+
+/* ── Atmospheric noise overlay ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  mix-blend-mode: overlay;
+}
+
+/* ── Base layer ── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: var(--font-display), sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono), monospace;
+    font-feature-settings: 'liga' 1, 'calt' 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}

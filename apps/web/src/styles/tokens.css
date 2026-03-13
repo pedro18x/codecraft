@@ -1,0 +1,329 @@
+/* ═══════════════════════════════════════════════
+   CodeCraft — Japanese Zen (Wabi-sabi) Tokens
+   Dark-first, organic, soft depth
+   ═══════════════════════════════════════════════ */
+
+:root {
+  /* ── Zen Stone Palette (dark = primary) ── */
+  --zen-bg: #171614;
+  --zen-surface-1: #211F1C;
+  --zen-surface-2: #2B2926;
+  --zen-surface-3: #353230;
+  --zen-surface-elevated: #353230;
+
+  --zen-border: #3A3735;
+  --zen-border-strong: #4A4743;
+
+  --zen-text-primary: #E8E4DF;
+  --zen-text-secondary: #9E9890;
+  --zen-text-tertiary: #6B665F;
+  --zen-text-disabled: #4A4743;
+
+  --zen-accent-rust: #C75B3A;
+  --zen-accent-rust-hover: #D4683F;
+  --zen-accent-jade: #3E7A55;
+  --zen-accent-jade-hover: #4D9168;
+  --zen-accent-moss: #7B8F6A;
+  --zen-accent-amber: #C9A84C;
+  --zen-accent-slate: #6B8DA6;
+
+  /* ── Semantic color mappings ── */
+  --color-coral: var(--zen-accent-rust);
+  --color-turquoise: var(--zen-accent-moss);
+  --color-yellow: var(--zen-accent-amber);
+  --color-cream: var(--zen-bg);
+  --color-ink: var(--zen-text-primary);
+  --color-white: #E8E4DF;
+  --color-primary: var(--zen-accent-jade);
+  --color-primary-hover: var(--zen-accent-jade-hover);
+  --color-secondary: var(--zen-accent-moss);
+  --color-secondary-hover: #8CA078;
+  --color-danger: var(--zen-accent-rust);
+  --color-danger-hover: var(--zen-accent-rust-hover);
+  --color-focus-ring: var(--zen-accent-jade);
+
+  --color-background: var(--zen-bg);
+  --color-surface: var(--zen-surface-1);
+  --color-surface-raised: var(--zen-surface-2);
+  --color-surface-hover: var(--zen-surface-3);
+  --color-surface-elevated: var(--zen-surface-elevated);
+  --surface-auth-illustration: var(--zen-surface-2);
+  --color-border: var(--zen-border);
+  --color-border-subtle: #2B2926;
+  --color-border-strong: var(--zen-border-strong);
+  --color-shadow-strong: rgba(0, 0, 0, 0.25);
+  --color-accent-ink: var(--zen-bg);
+
+  --color-text-primary: var(--zen-text-primary);
+  --color-text-secondary: var(--zen-text-secondary);
+  --color-text-tertiary: var(--zen-text-tertiary);
+
+  --color-success: var(--zen-accent-moss);
+  --color-warning: var(--zen-accent-amber);
+  --color-error: var(--zen-accent-rust);
+  --color-info: var(--zen-accent-slate);
+  --color-on-danger: var(--zen-text-primary);
+  --color-on-info: var(--zen-text-primary);
+  --color-success-bg: rgba(123, 143, 106, 0.15);
+  --color-warning-bg: rgba(201, 168, 76, 0.15);
+  --color-error-bg: rgba(199, 91, 58, 0.15);
+  --color-info-bg: rgba(107, 141, 166, 0.15);
+  --heat-level-1: rgba(123, 143, 106, 0.2);
+  --heat-level-2: rgba(123, 143, 106, 0.4);
+  --heat-level-3: var(--zen-accent-moss);
+
+  /* ── Shorthand aliases ── */
+  --bg: var(--color-background);
+  --surface-1: var(--color-surface);
+  --surface-2: var(--color-surface-raised);
+  --surface-3: var(--color-surface-hover);
+  --surface-elevated: var(--color-surface-elevated);
+  --border: var(--color-border);
+  --border-strong: var(--color-border-strong);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-tertiary);
+  --text-disabled: var(--zen-text-disabled);
+  --accent-primary: var(--color-primary);
+  --accent-success: var(--color-success);
+  --accent-warning: var(--color-warning);
+  --accent-danger: var(--color-danger);
+  --accent-info: var(--color-info);
+  --focus-ring: var(--color-focus-ring);
+  --shadow-sm: var(--shadow-brutal-sm);
+  --shadow-md: var(--shadow-brutal);
+  --shadow-lg: var(--shadow-brutal-lg);
+
+  --theme-bg: var(--bg);
+  --theme-border: var(--border);
+  --theme-border-strong: var(--border-strong);
+  --accent-secondary: var(--accent-success);
+
+  /* ── Button tokens ── */
+  --button-border: var(--color-border-strong);
+  --button-shadow: rgba(0, 0, 0, 0.2);
+  --button-primary-bg: var(--color-primary);
+  --button-primary-hover: var(--color-primary-hover);
+  --button-primary-text: #E8E4DF;
+  --button-secondary-bg: var(--zen-surface-elevated);
+  --button-secondary-hover: var(--zen-surface-3);
+  --button-secondary-text: var(--zen-text-primary);
+  --button-ghost-bg: var(--zen-surface-2);
+  --button-ghost-hover: var(--zen-surface-elevated);
+  --button-ghost-text: var(--zen-text-primary);
+  --button-danger-bg: var(--color-danger);
+  --button-danger-hover: var(--color-danger-hover);
+  --button-danger-text: #E8E4DF;
+
+  /* ── Typography — next/font injects --font-display and --font-mono ── */
+  --font-body: var(--font-display);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --line-height-tight: 1.15;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.65;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* ── Spacing ── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  --app-shell-gutter: clamp(0.9rem, 2vw, 2rem);
+  --app-shell-pad-y: clamp(0.75rem, 1.25vw, 1.25rem);
+  --app-layout-gap: clamp(0.7rem, 1.15vw, 1rem);
+  --app-sidebar-width: clamp(15rem, 21vw, 19rem);
+  --app-panel-width: clamp(16rem, 24vw, 23rem);
+  --max-width-content: 72rem;
+  --max-width-prose: 48rem;
+
+  /* ── Borders — all thin ── */
+  --border-thin: 1px;
+  --border-width: 1px;
+  --border-thick: 1px;
+
+  /* ── Border radius — organic ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* ── Shadows — soft blur, no hard offset ── */
+  --shadow-brutal-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-brutal: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-brutal-md: 0 4px 16px rgba(0, 0, 0, 0.18);
+  --shadow-brutal-lg: 0 8px 32px rgba(0, 0, 0, 0.22);
+  --shadow-glow: 0 0 24px rgba(62, 122, 85, 0.2);
+
+  /* ── Glassmorphism ─────────────────────────────── */
+  --glass-bg:              rgba(255, 255, 255, 0.03);
+  --glass-bg-hover:        rgba(255, 255, 255, 0.06);
+  --glass-border:          rgba(255, 255, 255, 0.08);
+  --glass-border-hover:    rgba(255, 255, 255, 0.14);
+  --glass-glow-jade:       rgba(62, 122, 85, 0.18);
+  --glass-glow-rust:       rgba(199, 91, 58, 0.18);
+  --glass-glow-amber:      rgba(201, 168, 76, 0.14);
+  --shadow-glass:          0 8px 32px rgba(0, 0, 0, 0.5),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-glass-lg:       0 16px 48px rgba(0, 0, 0, 0.6),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* ── Focus ring ── */
+  --focus-ring-shadow: 0 0 0 3px rgba(199, 91, 58, 0.35);
+
+  /* ── Editor background ── */
+  --color-editor-bg: #171614;
+
+  /* ── Timing — deliberate but alive ── */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 450ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ── Landing page accent washes ── */
+  --dark-lp-accent-wash-1: color-mix(in srgb, var(--zen-accent-jade) 22%, var(--zen-surface-2));
+  --dark-lp-accent-wash-2: color-mix(in srgb, var(--zen-accent-amber) 20%, var(--zen-surface-2));
+  --dark-lp-accent-wash-3: color-mix(in srgb, var(--zen-accent-moss) 18%, var(--zen-surface-2));
+}
+
+/* ── Light theme ── */
+:root[data-theme='light'] {
+  --color-background: #F5F0EA;
+  --color-surface: #FAF7F2;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-hover: #F0EBE4;
+  --color-surface-elevated: #FFFFFF;
+  --surface-auth-illustration: #F5F0EA;
+  --color-border: #DDD6CC;
+  --color-border-subtle: #E8E2DA;
+  --color-border-strong: #C5BEB4;
+  --color-shadow-strong: rgba(0, 0, 0, 0.1);
+  --color-accent-ink: #2A2725;
+
+  --color-text-primary: #2A2725;
+  --color-text-secondary: #6B665F;
+  --color-text-tertiary: #9E9890;
+
+  --color-ink: #2A2725;
+  --color-white: #FFFFFF;
+  --color-cream: #F5F0EA;
+  --color-primary: #2D6B44;
+  --color-primary-hover: #3E7A55;
+  --color-secondary: #7B8F6A;
+  --color-secondary-hover: #8CA078;
+  --color-danger: #B84F30;
+  --color-danger-hover: #A84D31;
+  --color-focus-ring: #2D6B44;
+
+  --color-coral: #B84F30;
+  --color-turquoise: #7B8F6A;
+  --color-yellow: #C9A84C;
+
+  --color-success: #7B8F6A;
+  --color-warning: #C9A84C;
+  --color-error: #B84F30;
+  --color-info: #6B8DA6;
+  --color-on-danger: #FFFFFF;
+  --color-on-info: #FFFFFF;
+  --color-success-bg: rgba(123, 143, 106, 0.12);
+  --color-warning-bg: rgba(201, 168, 76, 0.12);
+  --color-error-bg: rgba(184, 79, 48, 0.12);
+  --color-info-bg: rgba(107, 141, 166, 0.12);
+  --heat-level-1: rgba(123, 143, 106, 0.15);
+  --heat-level-2: rgba(123, 143, 106, 0.3);
+  --heat-level-3: #7B8F6A;
+
+  --bg: var(--color-background);
+  --surface-1: var(--color-surface);
+  --surface-2: var(--color-surface-raised);
+  --surface-3: var(--color-surface-hover);
+  --surface-elevated: var(--color-surface-elevated);
+  --border: var(--color-border);
+  --border-strong: var(--color-border-strong);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-tertiary);
+  --text-disabled: #B5AFA8;
+  --accent-primary: var(--color-primary);
+  --accent-success: var(--color-success);
+  --accent-warning: var(--color-warning);
+  --accent-danger: var(--color-danger);
+  --accent-info: var(--color-info);
+  --focus-ring: var(--color-focus-ring);
+
+  --shadow-brutal-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-brutal: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-brutal-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-brutal-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 24px rgba(45, 107, 68, 0.15);
+  --shadow-sm: var(--shadow-brutal-sm);
+  --shadow-md: var(--shadow-brutal);
+  --shadow-lg: var(--shadow-brutal-lg);
+
+  --theme-bg: var(--bg);
+  --theme-border: var(--border);
+  --theme-border-strong: var(--border-strong);
+  --accent-secondary: var(--accent-success);
+
+  --button-border: var(--color-border-strong);
+  --button-shadow: rgba(0, 0, 0, 0.08);
+  --button-primary-bg: var(--color-primary);
+  --button-primary-hover: var(--color-primary-hover);
+  --button-primary-text: #FFFFFF;
+  --button-secondary-bg: #FFFFFF;
+  --button-secondary-hover: #F0EBE4;
+  --button-secondary-text: #2A2725;
+  --button-ghost-bg: #FAF7F2;
+  --button-ghost-hover: #F0EBE4;
+  --button-ghost-text: #2A2725;
+  --button-danger-bg: #B84F30;
+  --button-danger-hover: #A84D31;
+  --button-danger-text: #FFFFFF;
+
+  /* ── Glassmorphism — inverted for light backgrounds ── */
+  --glass-bg:              rgba(255, 255, 255, 0.55);
+  --glass-bg-hover:        rgba(255, 255, 255, 0.7);
+  --glass-border:          rgba(0, 0, 0, 0.08);
+  --glass-border-hover:    rgba(0, 0, 0, 0.14);
+  --glass-glow-jade:       rgba(45, 107, 68, 0.12);
+  --glass-glow-rust:       rgba(184, 79, 48, 0.12);
+  --glass-glow-amber:      rgba(201, 168, 76, 0.10);
+  --shadow-glass:          0 8px 32px rgba(0, 0, 0, 0.08),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --shadow-glass-lg:       0 16px 48px rgba(0, 0, 0, 0.12),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  /* ── Focus ring ── */
+  --focus-ring-shadow: 0 0 0 3px rgba(184, 79, 48, 0.25);
+
+  /* ── Editor background ── */
+  --color-editor-bg: #FFFFFF;
+
+  --dark-lp-accent-wash-1: color-mix(in srgb, #2D6B44 12%, #FAF7F2);
+  --dark-lp-accent-wash-2: color-mix(in srgb, #C9A84C 10%, #FAF7F2);
+  --dark-lp-accent-wash-3: color-mix(in srgb, #7B8F6A 8%, #FAF7F2);
+}
