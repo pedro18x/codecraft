@@ -53,7 +53,7 @@ export default function PracticePage() {
     markAttempted(problem.id)
     try {
       const res = await api.post<{ testResults: TestResult[]; success: boolean }>(
-        '/execute',
+        '/submissions',
         { problemId: problem.id, language, code },
       )
       setTestResults(res.testResults)
