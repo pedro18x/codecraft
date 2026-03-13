@@ -19,8 +19,6 @@ export class ApiRequestError extends Error {
   }
 }
 
-class TokenRefreshedError extends Error {}
-
 function getCookieValue(name: string): string | null {
   if (typeof document === 'undefined') return null
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

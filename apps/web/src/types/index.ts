@@ -29,12 +29,18 @@ export const TestCaseSchema = z.object({
 })
 export type TestCase = z.infer<typeof TestCaseSchema>
 
-export const ProblemSchema = z.object({
+const ProblemBaseSchema = z.object({
   id: z.number(),
   slug: z.string().nullish(),
   title: z.string(),
   difficulty: DifficultySchema,
   categories: z.array(z.string()),
+})
+
+export const ProblemSummarySchema = ProblemBaseSchema
+export type ProblemSummary = z.infer<typeof ProblemSummarySchema>
+
+export const ProblemDetailSchema = ProblemBaseSchema.extend({
   description: z.string(),
   examples: z.array(
     z.object({
@@ -44,9 +50,21 @@ export const ProblemSchema = z.object({
     }),
   ),
   constraints: z.array(z.string()),
-  testCases: z.array(TestCaseSchema).nullish(),
   starterCode: z.record(z.string(), z.string().nullish()),
   hints: z.array(z.string()).nullish(),
+})
+export type ProblemDetail = z.infer<typeof ProblemDetailSchema>
+
+export const PracticeProblemSchema = ProblemDetailSchema.extend({
+  navigation: z.object({
+    prevSlug: z.string().nullable(),
+    nextSlug: z.string().nullable(),
+  }),
+})
+export type PracticeProblem = z.infer<typeof PracticeProblemSchema>
+
+export const ProblemSchema = ProblemDetailSchema.extend({
+  testCases: z.array(TestCaseSchema).nullish(),
 })
 export type Problem = z.infer<typeof ProblemSchema>
 

@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useProblem, useProblems } from '@/hooks/use-problems'
+import { useProblem } from '@/hooks/use-problems'
 import { useCodeStorage } from '@/hooks/use-code-storage'
 import { useProgress } from '@/hooks/use-progress'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
@@ -12,7 +12,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
-import { getProblemSlug } from '@/lib/problem-utils'
 import { api } from '@/lib/api-client'
 import { cn } from '@/lib/cn'
 import type { Language, TestResult } from '@/types'
@@ -23,7 +22,6 @@ export default function PracticePage() {
   const { slug } = useParams<{ slug: string }>()
   const router = useRouter()
   const { data: problem, isLoading } = useProblem(slug)
-  const { data: allProblems } = useProblems()
   const { markAttempted, markCompleted } = useProgress()
   const toast = useToast()
 
@@ -43,9 +41,8 @@ export default function PracticePage() {
     starterCode,
   })
 
-  const currentIdx = allProblems?.findIndex((p) => getProblemSlug(p) === slug) ?? -1
-  const prevSlug = currentIdx > 0 ? getProblemSlug(allProblems![currentIdx - 1]) : null
-  const nextSlug = allProblems && currentIdx < allProblems.length - 1 ? getProblemSlug(allProblems[currentIdx + 1]) : null
+  const prevSlug = problem?.navigation.prevSlug ?? null
+  const nextSlug = problem?.navigation.nextSlug ?? null
 
   const runTests = useCallback(async () => {
     if (!problem || isRunning) return

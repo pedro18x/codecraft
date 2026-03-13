@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
 
 /**
  * Admin login page is accessible by anyone — authentication and admin-role
@@ -11,7 +10,7 @@ import type { NextRequest } from 'next/server'
  * by servers, stored in browser history, and shared in Referer headers —
  * making it weaker than having no guard at all.
  */
-export function middleware(_request: NextRequest) {
+export function middleware() {
   return NextResponse.next()
 }
 

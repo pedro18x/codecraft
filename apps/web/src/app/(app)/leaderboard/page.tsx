@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/use-auth'
 import { api } from '@/lib/api-client'
+import { queryKeys } from '@/lib/query-keys'
 import { Tabs } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -24,10 +25,10 @@ export default function LeaderboardPage() {
   const [showOnlyMe, setShowOnlyMe] = useState(false)
 
   const { data: entries = [], isLoading, isError } = useQuery<LeaderboardEntry[]>({
-    queryKey: ['leaderboard', tab],
+    queryKey: queryKeys.leaderboard(tab),
     queryFn: async () => {
-      const data = await api.get<unknown[]>(`/leaderboard?type=${tab}`)
-      return z.array(LeaderboardEntrySchema).parse(data)
+      const data = await api.get<unknown>(`/leaderboard?type=${tab}`)
+      return z.object({ leaderboard: z.array(LeaderboardEntrySchema) }).parse(data).leaderboard
     },
     staleTime: 60_000,
   })
@@ -39,7 +40,6 @@ export default function LeaderboardPage() {
   })
 
   const top3 = filtered.slice(0, 3)
-  const rest = filtered.slice(3)
 
   return (
     <div className="py-6 grid gap-6">

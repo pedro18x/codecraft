@@ -1,7 +1,8 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api-client'
+import { queryKeys } from '@/lib/query-keys'
 import { useAuth } from './use-auth'
 import { useCallback } from 'react'
 
@@ -29,9 +30,10 @@ function saveLocal(map: ProgressMap) {
 export function useProgress() {
   const { isAuthenticated } = useAuth()
   const qc = useQueryClient()
+  const scope = isAuthenticated ? 'user' : 'guest'
 
   const { data: progress = {} } = useQuery<ProgressMap>({
-    queryKey: ['progress'],
+    queryKey: queryKeys.progress.map(scope),
     queryFn: async () => {
       if (isAuthenticated) {
         const entries = await api.get<Array<{ problemId: number; status: 'attempted' | 'completed' }>>('/progress')
@@ -44,7 +46,7 @@ export function useProgress() {
 
   const markAttempted = useCallback(
     (problemId: number) => {
-      qc.setQueryData<ProgressMap>(['progress'], (old = {}) => {
+      qc.setQueryData<ProgressMap>(queryKeys.progress.map(scope), (old = {}) => {
         if (old[problemId]) return old
         const next = { ...old, [problemId]: 'attempted' as const }
         if (!isAuthenticated) saveLocal(next)
@@ -52,23 +54,27 @@ export function useProgress() {
       })
       if (isAuthenticated) {
         api.post('/progress', { problemId, status: 'attempted' }).catch(() => {})
+        qc.invalidateQueries({ queryKey: queryKeys.progress.stats(scope) })
+        qc.invalidateQueries({ queryKey: queryKeys.progress.entries(scope) })
       }
     },
-    [isAuthenticated, qc],
+    [isAuthenticated, qc, scope],
   )
 
   const markCompleted = useCallback(
     (problemId: number) => {
-      qc.setQueryData<ProgressMap>(['progress'], (old = {}) => {
+      qc.setQueryData<ProgressMap>(queryKeys.progress.map(scope), (old = {}) => {
         const next = { ...old, [problemId]: 'completed' as const }
         if (!isAuthenticated) saveLocal(next)
         return next
       })
       if (isAuthenticated) {
         api.post('/progress', { problemId, status: 'completed' }).catch(() => {})
+        qc.invalidateQueries({ queryKey: queryKeys.progress.stats(scope) })
+        qc.invalidateQueries({ queryKey: queryKeys.progress.entries(scope) })
       }
     },
-    [isAuthenticated, qc],
+    [isAuthenticated, qc, scope],
   )
 
   const isCompleted = useCallback((id: number) => progress[id] === 'completed', [progress])

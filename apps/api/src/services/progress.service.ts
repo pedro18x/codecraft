@@ -1,5 +1,10 @@
 import { prisma } from '../config/database.js'
 
+interface DifficultyCountRow {
+  difficulty: string
+  count: bigint
+}
+
 export async function getUserProgress(userId: number) {
   return prisma.progress.findMany({
     where: { userId },
@@ -13,28 +18,45 @@ export async function getUserProgress(userId: number) {
 }
 
 export async function getUserProgressStats(userId: number) {
-  const [totalProblems, progress] = await Promise.all([
+  const [totalProblems, statusCounts, completedByDifficulty] = await Promise.all([
     prisma.problem.count(),
-    prisma.progress.findMany({
+    prisma.progress.groupBy({
+      by: ['status'],
       where: { userId },
-      include: {
-        problem: { select: { difficulty: true } },
-      },
+      _count: { status: true },
     }),
+    prisma.$queryRaw<DifficultyCountRow[]>`
+      SELECT
+        p.difficulty AS difficulty,
+        COUNT(*)::bigint AS count
+      FROM progress pr
+      JOIN problems p ON p.id = pr.problem_id
+      WHERE pr.user_id = ${userId}
+        AND pr.status = 'completed'
+      GROUP BY p.difficulty
+    `,
   ])
 
-  const completed = progress.filter((item) => item.status === 'completed')
-  const attempted = progress.filter((item) => item.status === 'attempted')
+  const completedCount =
+    statusCounts.find((entry) => entry.status === 'completed')?._count.status ?? 0
+  const attemptedCount =
+    statusCounts.find((entry) => entry.status === 'attempted')?._count.status ?? 0
+
+  const byDifficulty = completedByDifficulty.reduce<Record<'Easy' | 'Medium' | 'Hard', number>>(
+    (acc, row) => {
+      if (row.difficulty === 'Easy' || row.difficulty === 'Medium' || row.difficulty === 'Hard') {
+        acc[row.difficulty] = Number(row.count)
+      }
+      return acc
+    },
+    { Easy: 0, Medium: 0, Hard: 0 },
+  )
 
   return {
     totalProblems,
-    completedCount: completed.length,
-    attemptedCount: attempted.length,
-    byDifficulty: {
-      Easy: completed.filter((item) => item.problem.difficulty === 'Easy').length,
-      Medium: completed.filter((item) => item.problem.difficulty === 'Medium').length,
-      Hard: completed.filter((item) => item.problem.difficulty === 'Hard').length,
-    },
+    completedCount,
+    attemptedCount,
+    byDifficulty,
   }
 }
 

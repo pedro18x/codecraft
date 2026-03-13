@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useCallback, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { api, ApiRequestError } from '@/lib/api-client'
 
 interface User {
@@ -24,15 +24,11 @@ export interface AuthContextValue {
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
-const authChannel =
-  typeof window !== 'undefined' && 'BroadcastChannel' in window
-    ? new BroadcastChannel('codecraft-auth')
-    : null
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const authChannelRef = useRef<BroadcastChannel | null>(null)
 
   const fetchMe = useCallback(async () => {
     try {
@@ -51,12 +47,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Cross-tab sync
   useEffect(() => {
-    if (!authChannel) return
-    authChannel.onmessage = async (e: MessageEvent<{ type: 'login' | 'logout' }>) => {
+    if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return
+
+    const channel = new BroadcastChannel('codecraft-auth')
+    authChannelRef.current = channel
+
+    channel.onmessage = async (e: MessageEvent<{ type: 'login' | 'logout' }>) => {
       if (e.data?.type === 'logout') { setUser(null); return }
       if (e.data?.type === 'login') { await fetchMe() }
     }
-    return () => { if (authChannel) authChannel.onmessage = null }
+
+    return () => {
+      channel.onmessage = null
+      channel.close()
+      if (authChannelRef.current === channel) authChannelRef.current = null
+    }
   }, [fetchMe])
 
   const login = useCallback(async (email: string, password: string) => {
@@ -65,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const data = await api.post<{ user: User }>('/auth/login', { email, password })
       setUser(data.user)
-      authChannel?.postMessage({ type: 'login' })
+      authChannelRef.current?.postMessage({ type: 'login' })
     } catch (err) {
       setError(err instanceof ApiRequestError ? err.message : 'Login failed')
       throw err
@@ -80,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const data = await api.post<{ user: User }>('/auth/register', { email, username, password })
       setUser(data.user)
-      authChannel?.postMessage({ type: 'login' })
+      authChannelRef.current?.postMessage({ type: 'login' })
     } catch (err) {
       setError(err instanceof ApiRequestError ? err.message : 'Registration failed')
       throw err
@@ -96,14 +101,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // still clear local state
     } finally {
       setUser(null)
-      authChannel?.postMessage({ type: 'logout' })
+      authChannelRef.current?.postMessage({ type: 'logout' })
     }
   }, [])
 
+  const value = useMemo<AuthContextValue>(() => ({
+    user,
+    isAuthenticated: !!user,
+    isAdmin: user?.role === 'admin',
+    isLoading,
+    error,
+    login,
+    register,
+    logout,
+    fetchMe,
+  }), [error, fetchMe, isLoading, login, logout, register, user])
+
   return (
-    <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, isAdmin: user?.role === 'admin', isLoading, error, login, register, logout, fetchMe }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )

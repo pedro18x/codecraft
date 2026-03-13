@@ -18,35 +18,41 @@ export async function saveSubmissionAndProgress({
   code,
   execution,
 }: SaveSubmissionInput) {
-  const submission = await prisma.submission.create({
-    data: {
-      userId,
-      problemId,
-      language,
-      code,
-      success: execution.success,
-      testResults: execution.testResults as unknown as Prisma.InputJsonValue,
-      executionTimeMs: execution.executionTimeMs,
-    },
-  })
+  const now = new Date()
 
-  await prisma.progress.upsert({
-    where: {
-      userId_problemId: { userId, problemId },
-    },
-    update: {
-      attempts: { increment: 1 },
-      lastAttempt: new Date(),
-      ...(execution.success ? { status: 'completed', completedAt: new Date() } : {}),
-    },
-    create: {
-      userId,
-      problemId,
-      status: execution.success ? 'completed' : 'attempted',
-      attempts: 1,
-      lastAttempt: new Date(),
-      ...(execution.success ? { completedAt: new Date() } : {}),
-    },
+  const submission = await prisma.$transaction(async (tx) => {
+    const createdSubmission = await tx.submission.create({
+      data: {
+        userId,
+        problemId,
+        language,
+        code,
+        success: execution.success,
+        testResults: execution.testResults as unknown as Prisma.InputJsonValue,
+        executionTimeMs: execution.executionTimeMs,
+      },
+    })
+
+    await tx.progress.upsert({
+      where: {
+        userId_problemId: { userId, problemId },
+      },
+      update: {
+        attempts: { increment: 1 },
+        lastAttempt: now,
+        ...(execution.success ? { status: 'completed', completedAt: now } : {}),
+      },
+      create: {
+        userId,
+        problemId,
+        status: execution.success ? 'completed' : 'attempted',
+        attempts: 1,
+        lastAttempt: now,
+        ...(execution.success ? { completedAt: now } : {}),
+      },
+    })
+
+    return createdSubmission
   })
 
   if (execution.success) {

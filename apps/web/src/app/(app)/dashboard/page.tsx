@@ -11,7 +11,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Dropdown } from '@/components/ui/dropdown'
 import { Input } from '@/components/ui/input'
 import { getProblemSlug } from '@/lib/problem-utils'
-import type { Problem } from '@/types'
+import type { ProblemSummary } from '@/types'
 import { cn } from '@/lib/cn'
 
 type DifficultyFilter = 'All' | 'Easy' | 'Medium' | 'Hard'
@@ -183,7 +183,7 @@ function ProblemRow({
   problem,
   status,
 }: {
-  problem: Problem & { slug: string }
+  problem: ProblemSummary & { slug: string }
   status: string
 }) {
   const statusIcon = status === 'solved' ? '✓' : status === 'attempted' ? '·' : ''

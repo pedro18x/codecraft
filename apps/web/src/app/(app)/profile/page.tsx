@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/use-auth'
-import { useProgress } from '@/hooks/use-progress'
 import { api } from '@/lib/api-client'
+import { queryKeys } from '@/lib/query-keys'
 import { Tabs } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -21,11 +21,11 @@ const TABS = [
 
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth()
-  const { completedCount, progress } = useProgress()
   const [tab, setTab] = useState('overview')
+  const scope = isAuthenticated ? 'user' : 'guest'
 
   const { data: stats, isLoading: statsLoading } = useQuery<ProgressStats>({
-    queryKey: ['progress-stats'],
+    queryKey: queryKeys.progress.stats(scope),
     queryFn: async () => {
       const data = await api.get<unknown>('/progress/stats')
       return ProgressStatsSchema.parse(data)
@@ -34,7 +34,7 @@ export default function ProfilePage() {
   })
 
   const { data: entries = [] } = useQuery<ProgressEntry[]>({
-    queryKey: ['progress-entries'],
+    queryKey: queryKeys.progress.entries(scope),
     queryFn: async () => {
       const data = await api.get<unknown[]>('/progress')
       return z.array(
@@ -77,6 +77,7 @@ export default function ProfilePage() {
   }
 
   const solvedEntries = entries.filter((e) => e.status === 'completed')
+  const completedCount = stats?.completedCount ?? solvedEntries.length
 
   return (
     <div className="py-6 grid gap-6 max-w-3xl">

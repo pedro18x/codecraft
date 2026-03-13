@@ -8,6 +8,23 @@ import { ListProblemsQuerySchema, type ListProblemsQuery } from './schemas/probl
 
 const router = Router()
 
+const problemSummarySelect = {
+  id: true,
+  title: true,
+  slug: true,
+  difficulty: true,
+  categories: true,
+} satisfies Prisma.ProblemSelect
+
+const problemDetailSelect = {
+  ...problemSummarySelect,
+  description: true,
+  examples: true,
+  constraints: true,
+  starterCode: true,
+  hints: true,
+} satisfies Prisma.ProblemSelect
+
 function buildProblemWhereInput({
   difficulty,
   category,
@@ -42,19 +59,7 @@ router.get(
 
     const problems = await prisma.problem.findMany({
       where,
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        difficulty: true,
-        categories: true,
-        description: true,
-        examples: true,
-        constraints: true,
-        starterCode: true,
-        hints: true,
-        // Exclude testCases from list view for security
-      },
+      select: problemSummarySelect,
       orderBy: { id: 'asc' },
     })
 
@@ -68,26 +73,33 @@ router.get(
   asyncHandler(async (req, res) => {
     const problem = await prisma.problem.findUnique({
       where: { slug: req.params.slug as string },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        difficulty: true,
-        categories: true,
-        description: true,
-        examples: true,
-        constraints: true,
-        starterCode: true,
-        hints: true,
-        // testCases intentionally excluded — only used server-side during submission
-      },
+      select: problemDetailSelect,
     })
 
     if (!problem) {
       throw new ApiError('NOT_FOUND', 'Problem not found', 404)
     }
 
-    res.json(successResponse(problem))
+    const [prevProblem, nextProblem] = await Promise.all([
+      prisma.problem.findFirst({
+        where: { id: { lt: problem.id } },
+        select: { slug: true },
+        orderBy: { id: 'desc' },
+      }),
+      prisma.problem.findFirst({
+        where: { id: { gt: problem.id } },
+        select: { slug: true },
+        orderBy: { id: 'asc' },
+      }),
+    ])
+
+    res.json(successResponse({
+      ...problem,
+      navigation: {
+        prevSlug: prevProblem?.slug ?? null,
+        nextSlug: nextProblem?.slug ?? null,
+      },
+    }))
   })
 )
 
