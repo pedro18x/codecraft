@@ -158,7 +158,10 @@ function configureTypeScript(monaco: Monaco) {
     noUnusedParameters: false,
   })
   monaco.typescript.typescriptDefaults.setDiagnosticsOptions({
-    diagnosticCodesToIgnore: [2366],
+    // 2355 = function must return a value (fires on empty starter bodies)
+    // 2366 = function lacks ending return statement
+    // 2534 = not all code paths return a value
+    diagnosticCodesToIgnore: [2355, 2366, 2534],
   })
   monaco.typescript.typescriptDefaults.addExtraLib(
     PRACTICE_TYPES,
@@ -200,7 +203,7 @@ export function MonacoEditor({ language, value, onChange }: MonacoEditorProps) {
       m.typescript.typescriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: false,
         noSyntaxValidation: false,
-        diagnosticCodesToIgnore: [2366],
+        diagnosticCodesToIgnore: [2355, 2366, 2534],
       })
       m.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: false,
