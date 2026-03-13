@@ -1,22 +1,6 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 
-/* ── PerspectiveGrid Background Animation ── */
-@keyframes gridScroll {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 0 56px;
-  }
-}
-
-@keyframes gradientBorder {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
 @keyframes shiny-sweep {
   0%   { background-position: 200% center; }
   100% { background-position: -200% center; }
