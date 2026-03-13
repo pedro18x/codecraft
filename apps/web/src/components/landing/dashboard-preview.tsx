@@ -8,8 +8,19 @@ const kw  = 'var(--zen-accent-slate)'   // keywords: function, const, for, of, i
 const ty  = 'var(--zen-accent-amber)'   // type annotations
 const fn  = 'var(--zen-accent-jade)'    // function / built-in names
 const id  = 'var(--zen-text-primary)'   // identifiers
-const num = 'var(--zen-accent-rust)'    // numeric literals
+const num = 'var(--zen-accent-rust)'    // numeric literals / language constants
 const cm  = 'var(--zen-text-tertiary)'  // comments
+
+const EDITOR_ACTIVE_LINE = 6
+const EDITOR_LINE_HIGHLIGHT = '#211F1C'
+const EDITOR_LINE_HIGHLIGHT_BORDER = '#2B2926'
+const EDITOR_BORDER = '#3A3735'
+const EDITOR_SELECTION = '#3E7A5540'
+const EDITOR_SELECTION_SOFT = '#3E7A5522'
+const EDITOR_GUTTER_TEXT = '#4A4743'
+const EDITOR_GUTTER_TEXT_ACTIVE = '#9E9890'
+const EDITOR_TAB_BG = '#211F1C'
+const EDITOR_TAB_ACTIVE_BG = '#2B2926'
 
 // ── TypeScript code for "Merge Intervals" ─────────────────────────────────────
 // Each tuple: [text, colour | null (inherit)]
@@ -156,12 +167,12 @@ export function DashboardPreview() {
                 {/* Language tabs */}
                 <div
                   className="flex items-center gap-0.5 px-2 py-1.5 shrink-0"
-                  style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}
+                  style={{ background: EDITOR_TAB_BG, borderBottom: `1px solid ${EDITOR_BORDER}` }}
                 >
                   {/* Active tab */}
                   <button
                     className="px-2.5 py-1 rounded text-[10px] font-medium pointer-events-none"
-                    style={{ background: 'var(--color-surface-raised)', color: 'var(--color-text-primary)' }}
+                    style={{ background: EDITOR_TAB_ACTIVE_BG, color: 'var(--color-text-primary)', boxShadow: `inset 0 1px 0 ${EDITOR_SELECTION_SOFT}` }}
                     tabIndex={-1}
                     aria-hidden="true"
                   >
@@ -202,25 +213,58 @@ export function DashboardPreview() {
                   {/* Line numbers */}
                   <div
                     className="shrink-0 pt-3 pb-3 pl-3 pr-2 text-right select-none text-[10px]"
-                    style={{ color: 'var(--zen-text-tertiary)', minWidth: '28px', background: 'var(--color-editor-bg)' }}
+                    style={{
+                      minWidth: '28px',
+                      background: 'var(--color-editor-bg)',
+                      borderRight: `1px solid ${EDITOR_LINE_HIGHLIGHT_BORDER}`,
+                    }}
                     aria-hidden="true"
                   >
                     {CODE_LINES.map((_, i) => (
-                      <div key={i}>{i + 1}</div>
+                      <div
+                        key={i}
+                        style={{
+                          color: i === EDITOR_ACTIVE_LINE ? EDITOR_GUTTER_TEXT_ACTIVE : EDITOR_GUTTER_TEXT,
+                          background: i === EDITOR_ACTIVE_LINE ? EDITOR_LINE_HIGHLIGHT : 'transparent',
+                          borderRight: i === EDITOR_ACTIVE_LINE ? `1px solid ${EDITOR_LINE_HIGHLIGHT_BORDER}` : '1px solid transparent',
+                          marginRight: '-0.5rem',
+                          paddingRight: '0.5rem',
+                        }}
+                      >
+                        {i + 1}
+                      </div>
                     ))}
                   </div>
 
                   {/* Code */}
-                  <div className="pt-3 pb-3 pr-4 overflow-hidden text-[10px]" style={{ color: id }}>
+                  <div className="pt-3 pb-3 pr-4 overflow-hidden text-[10px] flex-1" style={{ color: id }}>
                     {CODE_LINES.map((segs, i) => (
-                      <div key={i}>
+                      <div
+                        key={i}
+                        style={{
+                          background: i === EDITOR_ACTIVE_LINE ? EDITOR_LINE_HIGHLIGHT : 'transparent',
+                          boxShadow: i === EDITOR_ACTIVE_LINE ? `inset 0 1px 0 ${EDITOR_LINE_HIGHLIGHT_BORDER}, inset 0 -1px 0 ${EDITOR_LINE_HIGHLIGHT_BORDER}` : 'none',
+                          position: 'relative',
+                        }}
+                      >
+                        {i === EDITOR_ACTIVE_LINE && (
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              position: 'absolute',
+                              inset: 0,
+                              background: `linear-gradient(90deg, ${EDITOR_SELECTION_SOFT} 0%, transparent 34%)`,
+                              pointerEvents: 'none',
+                            }}
+                          />
+                        )}
                         {segs.map(([text, colour], j) => (
                           colour
-                            ? <span key={j} style={{ color: colour }}>{text}</span>
-                            : <span key={j}>{text}</span>
+                            ? <span key={j} style={{ color: colour, position: 'relative' }}>{text}</span>
+                            : <span key={j} style={{ position: 'relative' }}>{text}</span>
                         ))}
                         {/* keep line height even for blank lines */}
-                        {segs.length === 1 && segs[0][0] === '' && <span>&nbsp;</span>}
+                        {segs.length === 1 && segs[0][0] === '' && <span style={{ position: 'relative' }}>&nbsp;</span>}
                       </div>
                     ))}
                   </div>
@@ -229,13 +273,17 @@ export function DashboardPreview() {
                 {/* Bottom bar: Run Tests + results */}
                 <div
                   className="shrink-0 px-3 py-2 flex flex-col gap-1.5"
-                  style={{ background: 'var(--color-surface)', borderTop: '1px solid var(--color-border)' }}
+                  style={{ background: EDITOR_TAB_BG, borderTop: `1px solid ${EDITOR_BORDER}` }}
                 >
                   {/* Button row */}
                   <div className="flex items-center gap-2">
                     <button
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-semibold pointer-events-none"
-                      style={{ background: 'var(--color-primary)', color: 'var(--button-primary-text)' }}
+                      style={{
+                        background: 'var(--color-primary)',
+                        color: 'var(--button-primary-text)',
+                        boxShadow: `inset 0 1px 0 ${EDITOR_SELECTION}, 0 0 0 1px rgba(62, 122, 85, 0.18)`,
+                      }}
                       aria-hidden="true"
                       tabIndex={-1}
                     >
