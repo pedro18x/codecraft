@@ -1,86 +1,78 @@
 # CodeCraft
 
-**CodeCraft** is a neo-brutalist coding interview preparation platform with 50 curated problems for focused practice.
+CodeCraft is a full-stack coding interview practice platform built as a monorepo with a Next.js frontend and an Express API. It combines a polished landing page, authenticated practice flows, persistent progress tracking, and isolated code execution in a structure that is small enough for a portfolio project but still engineered like a real product.
+
+## Highlights
+
+- 62 seeded interview-style problems across multiple difficulty levels and topics
+- Practice interface with Monaco editor, test execution, hints, focus mode, and saved code
+- Cookie-based authentication with refresh-token rotation and CSRF protection
+- User dashboard, profile progress, leaderboard, and admin management screens
+- Split deployment model that fits Vercel for the web app and Render for backend services
 
 ## Tech Stack
 
-- **Frontend:** Next.js 16 (App Router), React 19, TailwindCSS v4, TypeScript
-- **API:** Express 4, Prisma 6, PostgreSQL, Zod v3, JWT auth, Vitest
-- **Database:** PostgreSQL 16 (Docker)
-- **Auth:** httpOnly cookie sessions (access + refresh), refresh-token rotation
-- **Security:** CORS allowlist, Helmet, CSRF double-submit token, rate limiting
-- **Executor:** Isolated code execution service (Docker-based)
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS v4
+- API: Express 4, Prisma 6, PostgreSQL, Zod, Vitest
+- Editor and UI: Monaco Editor, Framer Motion, React Query
+- Security: Helmet, CORS allowlist, CSRF double-submit, rate limiting, httpOnly cookies
+- Execution: dedicated executor service with Docker-based isolation support
 
-## Project Structure
+## Repository Layout
 
-```
+```text
+.
 ├── apps/
-│   ├── web/              # Next.js 16 frontend
-│   │   ├── src/app/      # App Router pages
-│   │   ├── src/components/
-│   │   ├── src/hooks/
-│   │   └── src/lib/
-│   └── api/              # Express API
-│       ├── src/
-│       │   ├── routes/   # API endpoints
-│       │   ├── services/ # Business logic
-│       │   ├── middleware/
-│       │   └── utils/
-│       └── prisma/       # Database schema & migrations
-├── docs/
-│   ├── memory/           # Implementation history
-│   ├── plans/            # Implementation plans
-│   └── adr/              # Architecture decisions
-└── init.sh               # Development setup script
+│   ├── api/              # Express API, Prisma schema, executor service
+│   └── web/              # Next.js application
+├── docs/                 # ADRs, plans, memory notes, ops docs
+├── dev.sh                # Unified local dev script
+├── init.sh               # First-time environment bootstrap
+└── package.json          # Workspace entrypoint
 ```
 
-## Quick Start
+## Core Product Areas
 
-### Automated Setup (Recommended)
+- Landing page with custom visuals and product overview
+- Auth flows for register, login, logout, refresh, and admin login
+- Problem dashboard with search, filters, status tracking, and difficulty views
+- Practice page with editor persistence, result output, and progress updates
+- Profile and leaderboard views
+- Admin panel for problems, users, and submissions
 
-Run the initialization script to set up everything automatically:
+## Local Setup
 
-```bash
-./init.sh
-```
+### Prerequisites
 
-This will:
-1. ✓ Check prerequisites (Node.js >= 20, npm, Docker)
-2. ✓ Install all dependencies
-3. ✓ Create environment files
-4. ✓ Start PostgreSQL database
-5. ✓ Run migrations and seed 50 problems
-6. ✓ Build both applications
+- Node.js 20+
+- npm
+- Docker Desktop or another way to run PostgreSQL locally
 
-### Manual Setup
-
-#### 1. Prerequisites
-
-- **Node.js >= 20** ([download](https://nodejs.org))
-- **npm** (comes with Node.js)
-- **Docker Desktop** ([download](https://www.docker.com/products/docker-desktop))
-
-#### 2. Install Dependencies
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-#### 3. Set Up Environment Files
+### 2. Configure environment files
 
-**API (.env):**
+Copy the API example file and create the web env file:
+
 ```bash
 cp apps/api/.env.example apps/api/.env
-```
-
-**Web (.env.local):**
-```bash
-cat > apps/web/.env.local <<EOF
+cat > apps/web/.env.local <<'EOF'
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 EOF
 ```
 
-#### 4. Start PostgreSQL Database
+Recommended local API changes in `apps/api/.env`:
+
+```env
+PORT=3001
+CORS_ORIGIN=http://localhost:3000
+```
+
+### 3. Start PostgreSQL
 
 ```bash
 cd apps/api
@@ -88,7 +80,7 @@ docker compose up -d
 cd ../..
 ```
 
-#### 5. Run Database Migrations & Seed Data
+### 4. Generate Prisma client, apply schema, and seed data
 
 ```bash
 npm run db:generate -w @codecraft/api
@@ -96,231 +88,103 @@ npm run db:push -w @codecraft/api
 npm run db:seed -w @codecraft/api
 ```
 
-#### 6. Build Applications
+### 5. Start the application
 
-```bash
-npm run build
-npm run build -w @codecraft/api
-```
+Recommended:
 
-## Development
-
-### Start Development Servers
-
-**Option 1: Full startup with health checks (Recommended)**
-```bash
-./start.sh
-```
-This script will:
-- ✓ Check prerequisites and database
-- ✓ Detect port conflicts
-- ✓ Start API and Web servers in parallel
-- ✓ Wait for services to be ready
-- ✓ Display color-coded logs
-- ✓ Handle graceful shutdown with Ctrl+C
-
-**Option 2: Quick start (minimal)**
 ```bash
 ./dev.sh
 ```
-Simple parallel startup without health checks or status monitoring.
 
-**Option 3: Manual (separate terminals)**
+Manual alternative:
+
 ```bash
-# Terminal 1: API server (http://localhost:3001)
 npm run dev:api
-
-# Terminal 2: Web app (http://localhost:3000)
 npm run dev
 ```
 
-### Stop Development Servers
+Default local URLs:
+
+- Web: `http://localhost:3000`
+- API: `http://localhost:3001`
+- API health: `http://localhost:3001/health`
+- API readiness: `http://localhost:3001/ready`
+
+## Development Commands
+
+### Root commands
 
 ```bash
-./stop.sh  # Stops all services and frees ports
-```
-Or press `Ctrl+C` in the terminal running `start.sh` or `dev.sh`.
-
-### Access Points
-
-- **Landing Page:** [http://localhost:3000](http://localhost:3000)
-- **Dashboard:** [http://localhost:3000/dashboard](http://localhost:3000/dashboard) (requires auth)
-- **Practice:** [http://localhost:3000/practice/two-sum](http://localhost:3000/practice/two-sum)
-- **API Health:** [http://localhost:3001/api/health](http://localhost:3001/api/health)
-
-## Available Commands
-
-### Quick Scripts
-
-```bash
-./init.sh             # Complete environment setup (first-time only)
-./start.sh            # Start all services with health checks
-./dev.sh              # Quick start (no health checks)
-./stop.sh             # Stop all services and free ports
-```
-
-### Root Commands
-
-```bash
-npm run dev           # Start Next.js web app
-npm run dev:api       # Start Express API server
-npm run build         # Build Next.js production bundle
-npm run type-check    # Run TypeScript type checking
-npm run lint          # Run ESLint
-npm run test:e2e      # Run Playwright E2E tests
-npm run test:api      # Run Vitest API tests
-```
-
-### Workspace-Specific Commands
-
-```bash
-# Run command in specific workspace
-npm run <script> -w @codecraft/web
-npm run <script> -w @codecraft/api
-
-# Install dependency to workspace
-npm install <package> -w @codecraft/web
-npm install <package> -w @codecraft/api
-```
-
-### Database Commands
-
-```bash
-npm run db:generate -w @codecraft/api  # Generate Prisma Client
-npm run db:migrate -w @codecraft/api   # Create new migration
-npm run db:push -w @codecraft/api      # Push schema to database
-npm run db:seed -w @codecraft/api      # Seed 50 coding problems
-npm run db:studio -w @codecraft/api    # Open Prisma Studio GUI
-```
-
-## Quality Gates
-
-Before committing, ensure all checks pass:
-
-```bash
-npm run type-check    # Must pass with 0 errors
-npm run lint          # Must pass with 0 errors
-npm run test:api      # All Vitest tests green
-npm run test:e2e      # Playwright E2E tests
-npm run build         # Production build succeeds
-```
-
-## Features
-
-### 50 Coding Problems
-
-Problems range from Easy to Hard across categories:
-- Arrays, Hash Tables, Strings
-- Two Pointers, Sliding Window
-- Dynamic Programming, Greedy
-- Binary Search, Sorting
-- Math, Bit Manipulation
-
-**Example problems:**
-- Two Sum, Valid Palindrome, FizzBuzz (Easy)
-- Longest Substring Without Repeating Characters, Maximum Subarray (Medium)
-- Container With Most Water, 3Sum, Search in Rotated Sorted Array (Medium)
-
-### Authentication & Security
-
-- JWT-based auth with refresh token rotation
-- httpOnly cookies (no localStorage)
-- CSRF protection on mutating routes
-- Rate limiting on auth endpoints
-- Helmet security headers
-- CORS allowlist
-
-### Code Execution
-
-- Isolated Docker-based executor service
-- Memory limits: 128MB
-- Timeout: 5 seconds
-- Supported languages: JavaScript, TypeScript
-
-### AI-Powered Hints
-
-- Progressive hint system (3 levels)
-- Error diagnosis with AI suggestions
-- Streaming Server-Sent Events (SSE)
-
-## Architecture
-
-### Monorepo Strategy
-
-- **npm workspaces** for dependency management
-- **Workspace-scoped scripts** (`-w` flag) from root
-- **Shared types** via TypeScript path aliases
-- **Independent deployments** (web + API)
-
-### Authentication Flow
-
-1. User registers/logs in → API returns access token (15m) + refresh token (7d)
-2. Tokens stored in httpOnly cookies
-3. Refresh token rotation on every refresh (invalidates old family)
-4. CSRF token in separate cookie for mutation protection
-
-### Database Schema
-
-- **Users** - email, username, password (bcrypt)
-- **Problems** - title, slug, difficulty, categories, test cases, hints
-- **Progress** - user attempts, completion status
-- **SavedCode** - user's code per problem/language
-- **Submissions** - execution history with results
-- **RefreshTokens** - token rotation tracking
-
-## Deployment
-
-### Environment Variables (Production)
-
-**API:**
-```bash
-NODE_ENV=production
-PORT=3001
-DATABASE_URL=postgresql://...
-JWT_ACCESS_SECRET=<strong-random-secret>
-JWT_REFRESH_SECRET=<strong-random-secret>
-COOKIE_SECURE=true
-CORS_ORIGIN=https://yourapp.com
-EXECUTOR_URL=https://executor.yourapp.com
-```
-
-**Web:**
-```bash
-NEXT_PUBLIC_API_URL=https://api.yourapp.com/api
-```
-
-### Build & Deploy
-
-```bash
-# Build for production
+npm run dev
+npm run dev:api
 npm run build
-npm run build -w @codecraft/api
-
-# Start production servers
-npm start -w @codecraft/api  # API on port 3001
-npm start -w @codecraft/web  # Web on port 3000
+npm run build:api
+npm run type-check
+npm run lint
+npm run test:api
+npm run test:e2e
 ```
 
-## Documentation
+### Helper scripts
 
-- **Project Rules:** [CLAUDE.md](CLAUDE.md)
-- **Web App Rules:** [apps/web/CLAUDE.md](apps/web/CLAUDE.md)
-- **API Rules:** [apps/api/CLAUDE.md](apps/api/CLAUDE.md)
-- **Implementation History:** [docs/memory/](docs/memory/)
-- **Architecture Decisions:** [docs/adr/](docs/adr/)
+```bash
+./init.sh
+./dev.sh
+./dev.sh stop
+./dev.sh restart
+```
 
-## Contributing
+### API workspace commands
 
-1. Read [CLAUDE.md](CLAUDE.md) for workspace commands and conventions
-2. Create feature branch from `dev`
-3. Run quality gates before committing
-4. Create memory entry in `docs/memory/YYYY-MM-DD-feature-name.md`
-5. Submit PR to `dev` branch
+```bash
+npm run dev:executor -w @codecraft/api
+npm run db:generate -w @codecraft/api
+npm run db:migrate -w @codecraft/api
+npm run db:push -w @codecraft/api
+npm run db:seed -w @codecraft/api
+npm run db:studio -w @codecraft/api
+npm run cleanup:refresh-tokens -w @codecraft/api
+```
 
-## License
+## Deployment Notes
 
-MIT
+CodeCraft is structured to deploy cleanly as separate services:
 
-## Support
+- Web app: Vercel
+- API: Render
+- Database: managed PostgreSQL
+- Executor: separate service endpoint
 
-For issues or questions, see [GitHub Issues](https://github.com/yourusername/codecraft/issues)
+Important production note:
+
+- In development, the API can fall back to local execution paths.
+- In production, code execution should be provided through `EXECUTOR_URL`; the dev-only VM fallback is intentionally disabled.
+
+## Quality Checks
+
+Before opening a PR or shipping a change:
+
+```bash
+npm run type-check
+npm run lint
+npm run build:api
+npm run test:api
+```
+
+Optional, but useful when you are touching user flows:
+
+```bash
+npm run test:e2e
+npm run build
+```
+
+## Architecture Notes
+
+- `apps/web` is responsible for the landing page, authenticated app shell, admin UI, and client-side state orchestration.
+- `apps/api` owns auth, problems, progress, leaderboard, submissions, saved code, admin routes, and telemetry.
+- Prisma is the source of truth for persistence.
+- The execution layer is intentionally separated from the main API so the heavy path stays explicit.
+
+## Status
+
+CodeCraft is built as a polished portfolio project rather than a large-scale SaaS product. The codebase still keeps strong fundamentals: typed boundaries, separated services, protected auth flows, and a deployment model that maps cleanly to Vercel plus Render.
