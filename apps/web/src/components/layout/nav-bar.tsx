@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/use-auth'
-import { useTheme } from '@/hooks/use-theme'
 import { cn } from '@/lib/cn'
+import { Button } from '@/components/ui/button'
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -17,8 +17,7 @@ const navItems = [
 
 export function NavBar() {
   const pathname = usePathname()
-  const { isAuthenticated, isAdmin, user, logout } = useAuth()
-  const { theme, toggle } = useTheme()
+  const { isAuthenticated, isAdmin, user, logout, isLoading } = useAuth()
   // Track which pathname the menu was opened at — derived isMenuOpen avoids
   // calling setState synchronously inside an effect (lint rule react-hooks/set-state-in-effect).
   // When pathname changes, isMenuOpen becomes false automatically.
@@ -115,46 +114,36 @@ export function NavBar() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          {/* User info — desktop */}
-          {isAuthenticated && user && (
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center select-none">
-                {user.username.slice(0, 2).toUpperCase()}
-              </span>
-              <span className="hidden sm:block text-sm text-[var(--color-text-secondary)] font-medium">
-                {user.username}
-              </span>
-            </div>
-          )}
-
-          {/* Theme toggle */}
-          <button
-            type="button"
-            onClick={toggle}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-            className="w-9 h-9 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-raised)] transition-colors duration-[var(--duration-fast)]"
-          >
-            {theme === 'dark' ? (
-              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
-              </svg>
+          {/* Auth actions — desktop */}
+          {!isLoading && (
+            isAuthenticated && user ? (
+              <>
+                <div className="hidden sm:flex items-center gap-2">
+                  <span className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center select-none">
+                    {user.username.slice(0, 2).toUpperCase()}
+                  </span>
+                  <span className="hidden sm:block text-sm text-[var(--color-text-secondary)] font-medium">
+                    {user.username}
+                  </span>
+                </div>
+                <Button variant="ghost" size="sm" onClick={logout} className="hidden sm:inline-flex">
+                  Sign out
+                </Button>
+              </>
             ) : (
-              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-              </svg>
-            )}
-          </button>
-
-          {/* Sign out — desktop */}
-          {isAuthenticated && (
-            <button
-              type="button"
-              onClick={logout}
-              className="hidden sm:block px-3 py-1.5 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] rounded-[var(--radius-sm)] hover:bg-[var(--color-surface-raised)] transition-colors duration-[var(--duration-fast)]"
-            >
-              Sign out
-            </button>
+              <>
+                <Link href="/login" className="hidden sm:inline-flex">
+                  <Button variant="ghost" size="sm">Sign in</Button>
+                </Link>
+                <Link href="/register" className="hidden sm:inline-flex">
+                  <Button variant="primary" size="sm">Get started</Button>
+                </Link>
+              </>
+            )
           )}
+
+          {/* Visual separator */}
+          <span className="hidden md:block w-px h-5 bg-[var(--color-border)]" aria-hidden />
 
           {/* Hamburger — mobile only */}
           <button
@@ -248,27 +237,32 @@ export function NavBar() {
               {/* Divider */}
               <div className="my-2 border-t border-[var(--color-border)]" />
 
-              {/* User info — mobile */}
-              {isAuthenticated && user && (
-                <div className="flex items-center gap-3 px-3 py-2">
-                  <span className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center select-none shrink-0">
-                    {user.username.slice(0, 2).toUpperCase()}
-                  </span>
-                  <span className="text-sm text-[var(--color-text-secondary)] font-medium truncate">
-                    {user.username}
-                  </span>
-                </div>
-              )}
-
-              {/* Sign out — mobile */}
-              {isAuthenticated && (
-                <button
-                  type="button"
-                  onClick={logout}
-                  className="mt-auto px-3 py-2 text-sm font-medium text-left text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] rounded-[var(--radius-sm)] hover:bg-[var(--color-background)] transition-colors duration-[var(--duration-fast)]"
-                >
-                  Sign out
-                </button>
+              {/* Auth actions — mobile */}
+              {!isLoading && (
+                isAuthenticated && user ? (
+                  <>
+                    <div className="flex items-center gap-3 px-3 py-2">
+                      <span className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center select-none shrink-0">
+                        {user.username.slice(0, 2).toUpperCase()}
+                      </span>
+                      <span className="text-sm text-[var(--color-text-secondary)] font-medium truncate">
+                        {user.username}
+                      </span>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={logout} block className="mt-auto">
+                      Sign out
+                    </Button>
+                  </>
+                ) : (
+                  <div className="mt-auto flex flex-col gap-2">
+                    <Link href="/login" onClick={closeMenu}>
+                      <Button variant="ghost" size="sm" block>Sign in</Button>
+                    </Link>
+                    <Link href="/register" onClick={closeMenu}>
+                      <Button variant="primary" size="sm" block>Get started</Button>
+                    </Link>
+                  </div>
+                )
               )}
             </motion.div>
           </>
