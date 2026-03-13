@@ -118,15 +118,24 @@ export function NavBar() {
           {!isLoading && (
             isAuthenticated && user ? (
               <>
-                <div className="hidden sm:flex items-center gap-2">
+                <Link
+                  href="/profile"
+                  className="hidden sm:inline-flex items-center gap-2 rounded-[var(--radius-sm)] px-2.5 py-1.5 text-[var(--color-text-secondary)] no-underline transition-colors duration-[var(--duration-fast)] hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring-shadow)]"
+                  aria-label="Go to profile"
+                >
                   <span className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center select-none">
                     {user.username.slice(0, 2).toUpperCase()}
                   </span>
-                  <span className="hidden sm:block text-sm text-[var(--color-text-secondary)] font-medium">
+                  <span className="hidden sm:block text-sm font-medium">
                     {user.username}
                   </span>
-                </div>
-                <Button variant="ghost" size="sm" onClick={logout} className="hidden sm:inline-flex">
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={logout}
+                  className="hidden sm:inline-flex px-3 text-xs"
+                >
                   Sign out
                 </Button>
               </>
@@ -241,14 +250,19 @@ export function NavBar() {
               {!isLoading && (
                 isAuthenticated && user ? (
                   <>
-                    <div className="flex items-center gap-3 px-3 py-2">
+                    <Link
+                      href="/profile"
+                      onClick={closeMenu}
+                      className="flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-[var(--color-text-secondary)] no-underline transition-colors duration-[var(--duration-fast)] hover:bg-[var(--color-background)] hover:text-[var(--color-text-primary)]"
+                      aria-label="Go to profile"
+                    >
                       <span className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center select-none shrink-0">
                         {user.username.slice(0, 2).toUpperCase()}
                       </span>
-                      <span className="text-sm text-[var(--color-text-secondary)] font-medium truncate">
+                      <span className="text-sm font-medium truncate">
                         {user.username}
                       </span>
-                    </div>
+                    </Link>
                     <Button variant="ghost" size="sm" onClick={logout} block className="mt-auto">
                       Sign out
                     </Button>
