@@ -15,7 +15,6 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { getProblemSlug } from '@/lib/problem-utils'
 import { api } from '@/lib/api-client'
 import { cn } from '@/lib/cn'
-import { HintPanel } from '@/components/practice/HintPanel'
 import type { Language, TestResult } from '@/types'
 
 const LANGUAGES: Language[] = ['typescript', 'javascript', 'python']
@@ -278,13 +277,6 @@ export default function PracticePage() {
             )}
           </div>
 
-          {/* AI Assistant */}
-          <HintPanel
-            problemId={problem.id}
-            code={code}
-            language={language}
-            testResults={testResults}
-          />
         </div>
       </div>
     </div>
