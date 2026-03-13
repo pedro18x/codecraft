@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { prisma } from '../config/database.js'
 import { ApiError } from '../utils/apiResponse.js'
 
@@ -172,10 +173,10 @@ export async function createProblem(data: {
   difficulty: string
   categories: string[]
   description: string
-  examples: unknown
+  examples: Prisma.InputJsonValue
   constraints: string[]
-  testCases: unknown
-  starterCode: unknown
+  testCases: Prisma.InputJsonValue
+  starterCode: Prisma.InputJsonValue
   hints: string[]
 }) {
   const existing = await prisma.problem.findUnique({ where: { id: data.id } })
@@ -184,11 +185,37 @@ export async function createProblem(data: {
   return prisma.problem.create({ data })
 }
 
-export async function updateProblem(id: number, data: Record<string, unknown>) {
+interface UpdateProblemInput {
+  title?: string
+  slug?: string
+  difficulty?: string
+  categories?: string[]
+  description?: string
+  examples?: Prisma.InputJsonValue
+  constraints?: string[]
+  testCases?: Prisma.InputJsonValue
+  starterCode?: Prisma.InputJsonValue
+  hints?: string[]
+}
+
+export async function updateProblem(id: number, data: UpdateProblemInput) {
   const existing = await prisma.problem.findUnique({ where: { id } })
   if (!existing) throw new ApiError('NOT_FOUND', 'Problem not found', 404)
 
-  return prisma.problem.update({ where: { id }, data })
+  // Explicitly pick only allowed fields to prevent mass-assignment
+  const safeUpdate: UpdateProblemInput = {}
+  if (data.title !== undefined) safeUpdate.title = data.title
+  if (data.slug !== undefined) safeUpdate.slug = data.slug
+  if (data.difficulty !== undefined) safeUpdate.difficulty = data.difficulty
+  if (data.categories !== undefined) safeUpdate.categories = data.categories
+  if (data.description !== undefined) safeUpdate.description = data.description
+  if (data.examples !== undefined) safeUpdate.examples = data.examples
+  if (data.constraints !== undefined) safeUpdate.constraints = data.constraints
+  if (data.testCases !== undefined) safeUpdate.testCases = data.testCases
+  if (data.starterCode !== undefined) safeUpdate.starterCode = data.starterCode
+  if (data.hints !== undefined) safeUpdate.hints = data.hints
+
+  return prisma.problem.update({ where: { id }, data: safeUpdate })
 }
 
 export async function deleteProblem(id: number) {
