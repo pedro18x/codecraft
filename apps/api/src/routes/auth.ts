@@ -14,6 +14,7 @@ import {
 } from '../utils/cookies.js'
 import { env } from '../config/env.js'
 import * as authService from '../services/auth.service.js'
+import { prisma } from '../config/database.js'
 import { logger } from '../utils/logger.js'
 
 const router = Router()
@@ -119,7 +120,11 @@ router.get(
   '/me',
   authenticate,
   asyncHandler(async (req, res) => {
-    res.json(successResponse(req.user))
+    const dbUser = await prisma.user.findUnique({
+      where: { id: req.user!.id },
+      select: { id: true, email: true, username: true, role: true, createdAt: true },
+    })
+    res.json(successResponse(dbUser ?? req.user))
   })
 )
 

@@ -12,4 +12,14 @@ export const queryKeys = {
     entries: (scope: 'guest' | 'user') => ['progress', 'entries', scope] as const,
   },
   leaderboard: (type: string) => ['leaderboard', type] as const,
+  profile: {
+    detail: () => ['profile', 'detail'] as const,
+  },
+  activity: {
+    heatmap: (year: number) => ['activity', 'heatmap', year] as const,
+    streak: () => ['activity', 'streak'] as const,
+  },
+  analytics: {
+    submissions: () => ['analytics', 'submissions'] as const,
+  },
 } as const

@@ -8,6 +8,7 @@ interface User {
   email: string
   username: string
   role: string
+  createdAt?: string
 }
 
 export interface AuthContextValue {

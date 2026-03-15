@@ -50,7 +50,41 @@ export const LeaderboardEntrySchema = z.object({
   hard: z.number(),
 })
 
+export const ProfileSchema = z.object({
+  id: z.number(),
+  username: z.string(),
+  email: z.string(),
+  bio: z.string().nullable(),
+  avatarColor: z.string().nullable(),
+  githubUrl: z.string().nullable(),
+  linkedinUrl: z.string().nullable(),
+  websiteUrl: z.string().nullable(),
+  createdAt: z.string(),
+})
+
+export const ActivityHeatmapSchema = z.object({
+  days: z.array(z.object({ date: z.string(), count: z.number() })),
+})
+
+export const StreakSchema = z.object({
+  currentStreak: z.number(),
+  longestStreak: z.number(),
+  totalActiveDays: z.number(),
+})
+
+export const SubmissionAnalyticsSchema = z.object({
+  totalSubmissions: z.number(),
+  passRate: z.number(),
+  avgExecutionTime: z.number().nullable(),
+  languageBreakdown: z.array(z.object({ language: z.string(), count: z.number() })),
+  recentTrend: z.array(z.object({ week: z.string(), passed: z.number(), failed: z.number() })),
+})
+
 export type ExecuteResponse = z.infer<typeof ExecuteResponseSchema>
 export type ProgressEntry = z.infer<typeof ProgressEntrySchema>
 export type ProgressStats = z.infer<typeof ProgressStatsSchema>
 export type LeaderboardEntry = z.infer<typeof LeaderboardEntrySchema>
+export type Profile = z.infer<typeof ProfileSchema>
+export type ActivityHeatmap = z.infer<typeof ActivityHeatmapSchema>
+export type Streak = z.infer<typeof StreakSchema>
+export type SubmissionAnalytics = z.infer<typeof SubmissionAnalyticsSchema>
