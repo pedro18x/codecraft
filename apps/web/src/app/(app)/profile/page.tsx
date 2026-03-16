@@ -50,7 +50,7 @@ export default function ProfilePage() {
   // Data hooks
   const { data: profile, isLoading: profileLoading } = useProfile()
   const { data: streak } = useStreak()
-  const { data: heatmap } = useActivityHeatmap(currentYear)
+  const { data: heatmap } = useActivityHeatmap()
   const { data: analytics } = useSubmissionAnalytics()
 
   const { data: stats, isLoading: statsLoading } = useQuery<ProgressStats>({
@@ -243,9 +243,9 @@ export default function ProfilePage() {
         <motion.div {...fadeUp(0.35)}>
           <GlassCard className="p-5">
             <h3 className="font-[family-name:var(--font-display)] font-semibold text-sm text-[var(--color-text-secondary)] mb-4">
-              {currentYear} Activity
+              Activity
             </h3>
-            <ActivityHeatmap data={heatmap} year={currentYear} />
+            <ActivityHeatmap data={heatmap} />
           </GlassCard>
         </motion.div>
       )}

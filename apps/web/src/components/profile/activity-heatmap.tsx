@@ -1,17 +1,14 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
 import type { ActivityHeatmap as HeatmapData } from '@/types/api'
 
 interface ActivityHeatmapProps {
   data: HeatmapData
-  year: number
 }
 
-const DAY_SIZE = 12
+const DAY_SIZE = 11
 const GAP = 3
-const DAYS_IN_WEEK = 7
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', '']
 
@@ -29,153 +26,179 @@ const INTENSITY_COLORS = [
   'var(--zen-accent-jade, #3E7A55)',
 ]
 
-export function ActivityHeatmap({ data, year }: ActivityHeatmapProps) {
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; date: string; count: number } | null>(null)
+function toDateStr(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
 
-  const { grid, monthPositions } = useMemo(() => {
+function formatTooltipDate(d: Date): string {
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(d)
+}
+
+export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
+  const [tooltip, setTooltip] = useState<{
+    x: number
+    y: number
+    date: Date
+    count: number
+  } | null>(null)
+
+  const { grid, monthPositions, totalCount } = useMemo(() => {
     const countMap = new Map(data.days.map((d) => [d.date, d.count]))
 
-    // Build grid: find the first day of the year and its weekday
-    const startDate = new Date(`${year}-01-01`)
-    const startDay = startDate.getDay() // 0=Sun, 1=Mon, ...
+    // Rolling 52-week window ending today, weeks start on Sunday (GitHub convention)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
-    const endDate = new Date(`${year}-12-31`)
-    const totalDays = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    // Go back to the Sunday of the current week, then 51 more weeks
+    const startDate = new Date(today)
+    startDate.setDate(today.getDate() - today.getDay() - 51 * 7)
 
-    const cells: Array<{ date: string; count: number; col: number; row: number }> = []
+    const cells: Array<{
+      date: Date
+      dateStr: string
+      count: number
+      col: number
+      row: number
+    }> = []
     const months: Array<{ label: string; col: number }> = []
     let lastMonth = -1
+    let total = 0
 
-    for (let i = 0; i < totalDays; i++) {
-      const d = new Date(startDate)
-      d.setDate(d.getDate() + i)
-      const dateStr = d.toISOString().split('T')[0]
-      const dayOfWeek = d.getDay()
-      const col = Math.floor((i + startDay) / 7)
-      const row = dayOfWeek
+    for (let col = 0; col < 52; col++) {
+      for (let row = 0; row < 7; row++) {
+        const d = new Date(startDate)
+        d.setDate(startDate.getDate() + col * 7 + row)
+        if (d > today) break
 
-      const month = d.getMonth()
-      if (month !== lastMonth) {
-        months.push({ label: MONTH_LABELS[month], col })
-        lastMonth = month
+        const dateStr = toDateStr(d)
+        const count = countMap.get(dateStr) ?? 0
+        total += count
+
+        // Place month label at the first cell of a new month in this column
+        const month = d.getMonth()
+        if (month !== lastMonth && row === 0) {
+          months.push({ label: MONTH_LABELS[month], col })
+          lastMonth = month
+        }
+
+        cells.push({ date: d, dateStr, count, col, row })
       }
-
-      cells.push({
-        date: dateStr,
-        count: countMap.get(dateStr) ?? 0,
-        col,
-        row,
-      })
     }
 
-    return { grid: cells, monthPositions: months }
-  }, [data, year])
+    return { grid: cells, monthPositions: months, totalCount: total }
+  }, [data])
 
-  const totalCols = Math.max(...grid.map((c) => c.col)) + 1
-  const LEFT_PADDING = 32
-  const TOP_PADDING = 20
-  const svgWidth = LEFT_PADDING + totalCols * (DAY_SIZE + GAP) + GAP
-  const svgHeight = TOP_PADDING + DAYS_IN_WEEK * (DAY_SIZE + GAP) + GAP
+  const LEFT_PADDING = 28
+  const TOP_PADDING = 22
+  const svgWidth = LEFT_PADDING + 52 * (DAY_SIZE + GAP)
+  const svgHeight = TOP_PADDING + 7 * (DAY_SIZE + GAP)
 
   return (
-    <div className="relative overflow-x-auto">
-      <svg
-        width={svgWidth}
-        height={svgHeight}
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        className="block"
-        onMouseLeave={() => setTooltip(null)}
-      >
-        {/* Month labels */}
-        {monthPositions.map((m) => (
-          <text
-            key={`${m.label}-${m.col}`}
-            x={LEFT_PADDING + m.col * (DAY_SIZE + GAP)}
-            y={TOP_PADDING - 6}
-            fill="var(--zen-text-secondary, #9E9890)"
-            fontSize={10}
-            fontFamily="var(--font-display)"
-          >
-            {m.label}
-          </text>
-        ))}
+    <div>
+      <p className="text-xs text-[var(--color-text-tertiary)] mb-3">
+        <span className="font-semibold text-[var(--color-text-primary)]">{totalCount}</span>
+        {' '}submission{totalCount !== 1 ? 's' : ''} in the last year
+      </p>
 
-        {/* Day labels */}
-        {DAY_LABELS.map((label, i) =>
-          label ? (
+      <div className="relative overflow-x-auto">
+        <svg
+          width={svgWidth}
+          height={svgHeight}
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+          className="block"
+          onMouseLeave={() => setTooltip(null)}
+        >
+          {/* Month labels */}
+          {monthPositions.map((m) => (
             <text
-              key={label}
-              x={LEFT_PADDING - 6}
-              y={TOP_PADDING + i * (DAY_SIZE + GAP) + DAY_SIZE - 2}
-              fill="var(--zen-text-tertiary, #6B665F)"
-              fontSize={9}
+              key={`${m.label}-${m.col}`}
+              x={LEFT_PADDING + m.col * (DAY_SIZE + GAP)}
+              y={TOP_PADDING - 6}
+              fill="var(--zen-text-secondary, #9E9890)"
+              fontSize={10}
               fontFamily="var(--font-display)"
-              textAnchor="end"
             >
-              {label}
+              {m.label}
             </text>
-          ) : null
+          ))}
+
+          {/* Day-of-week labels */}
+          {DAY_LABELS.map((label, i) =>
+            label ? (
+              <text
+                key={label}
+                x={LEFT_PADDING - 4}
+                y={TOP_PADDING + i * (DAY_SIZE + GAP) + DAY_SIZE - 2}
+                fill="var(--zen-text-tertiary, #6B665F)"
+                fontSize={9}
+                fontFamily="var(--font-display)"
+                textAnchor="end"
+              >
+                {label}
+              </text>
+            ) : null
+          )}
+
+          {/* Day cells */}
+          {grid.map((cell) => (
+            <rect
+              key={cell.dateStr}
+              x={LEFT_PADDING + cell.col * (DAY_SIZE + GAP)}
+              y={TOP_PADDING + cell.row * (DAY_SIZE + GAP)}
+              width={DAY_SIZE}
+              height={DAY_SIZE}
+              rx={2}
+              fill={INTENSITY_COLORS[getIntensity(cell.count)]}
+              style={{ cursor: 'default' }}
+              onMouseEnter={(e) => {
+                const svg = (e.target as SVGElement).ownerSVGElement
+                if (!svg) return
+                const svgRect = svg.getBoundingClientRect()
+                setTooltip({
+                  x: (e as unknown as React.MouseEvent).clientX - svgRect.left,
+                  y: (e as unknown as React.MouseEvent).clientY - svgRect.top - 44,
+                  date: cell.date,
+                  count: cell.count,
+                })
+              }}
+              onMouseLeave={() => setTooltip(null)}
+            />
+          ))}
+        </svg>
+
+        {/* Tooltip */}
+        {tooltip && (
+          <div
+            className="absolute pointer-events-none z-10 px-2.5 py-1.5 rounded text-xs whitespace-nowrap"
+            style={{
+              left: tooltip.x,
+              top: tooltip.y,
+              background: 'var(--zen-surface-3, #353230)',
+              color: 'var(--zen-text-primary, #E8E4DF)',
+              border: '1px solid var(--glass-border)',
+              transform: 'translateX(-50%)',
+            }}
+          >
+            <span className="font-semibold">
+              {tooltip.count} submission{tooltip.count !== 1 ? 's' : ''}
+            </span>
+            <span className="ml-1.5 opacity-60">on {formatTooltipDate(tooltip.date)}</span>
+          </div>
         )}
 
-        {/* Cells */}
-        {grid.map((cell, i) => (
-          <motion.rect
-            key={cell.date}
-            x={LEFT_PADDING + cell.col * (DAY_SIZE + GAP)}
-            y={TOP_PADDING + cell.row * (DAY_SIZE + GAP)}
-            width={DAY_SIZE}
-            height={DAY_SIZE}
-            rx={3}
-            fill={INTENSITY_COLORS[getIntensity(cell.count)]}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: i * 0.0008, duration: 0.3 }}
-            onMouseEnter={(e) => {
-              const svg = (e.target as SVGElement).ownerSVGElement
-              if (!svg) return
-              const rect = svg.getBoundingClientRect()
-              setTooltip({
-                x: (e as unknown as React.MouseEvent).clientX - rect.left,
-                y: (e as unknown as React.MouseEvent).clientY - rect.top - 40,
-                date: cell.date,
-                count: cell.count,
-              })
-            }}
-            onMouseLeave={() => setTooltip(null)}
-            style={{ cursor: 'pointer' }}
-          />
-        ))}
-      </svg>
-
-      {/* Tooltip */}
-      {tooltip && (
-        <div
-          className="absolute pointer-events-none z-10 px-2.5 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium"
-          style={{
-            left: tooltip.x,
-            top: tooltip.y,
-            background: 'var(--zen-surface-3, #353230)',
-            color: 'var(--zen-text-primary, #E8E4DF)',
-            border: '1px solid var(--glass-border)',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          <span className="font-semibold">{tooltip.count} submission{tooltip.count !== 1 ? 's' : ''}</span>
-          <span className="ml-1.5 opacity-70">{tooltip.date}</span>
+        {/* Legend */}
+        <div className="flex items-center gap-1.5 mt-2 justify-end text-[10px] text-[var(--color-text-tertiary)]">
+          <span>Less</span>
+          {INTENSITY_COLORS.map((color, i) => (
+            <div key={i} className="w-3 h-3 rounded-[2px]" style={{ background: color }} />
+          ))}
+          <span>More</span>
         </div>
-      )}
-
-      {/* Legend */}
-      <div className="flex items-center gap-1.5 mt-2 justify-end text-[10px] text-[var(--color-text-tertiary)]">
-        <span>Less</span>
-        {INTENSITY_COLORS.map((color, i) => (
-          <div
-            key={i}
-            className="w-3 h-3 rounded-[2px]"
-            style={{ background: color }}
-          />
-        ))}
-        <span>More</span>
       </div>
     </div>
   )

@@ -9,9 +9,9 @@ interface StreakDisplayProps {
 }
 
 const STATS = [
-  { key: 'currentStreak' as const, label: 'Current Streak', icon: '🔥', suffix: 'd' },
-  { key: 'longestStreak' as const, label: 'Longest Streak', icon: '🏆', suffix: 'd' },
-  { key: 'totalActiveDays' as const, label: 'Active Days', icon: '📅', suffix: '' },
+  { key: 'currentStreak' as const, label: 'Current Streak', suffix: 'd' },
+  { key: 'longestStreak' as const, label: 'Longest Streak', suffix: 'd' },
+  { key: 'totalActiveDays' as const, label: 'Active Days', suffix: '' },
 ]
 
 export function StreakDisplay({ data }: StreakDisplayProps) {
@@ -19,7 +19,6 @@ export function StreakDisplay({ data }: StreakDisplayProps) {
     <div className="grid grid-cols-3 gap-3">
       {STATS.map((stat) => (
         <GlassCard key={stat.key} className="px-4 py-3 flex items-center gap-3">
-          <span className="text-lg">{stat.icon}</span>
           <div>
             <div className="flex items-baseline gap-1">
               <CountUp

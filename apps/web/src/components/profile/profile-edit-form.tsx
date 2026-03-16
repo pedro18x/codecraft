@@ -74,21 +74,32 @@ export function ProfileEditForm({ profile, onClose }: ProfileEditFormProps) {
         <label className="text-sm font-medium text-[var(--color-text-secondary)]">
           Avatar Color
         </label>
-        <div className="flex gap-2 flex-wrap">
-          {AVATAR_COLORS.map((c) => (
-            <button
-              key={c.hex}
-              type="button"
-              title={c.name}
-              onClick={() => setAvatarColor(c.hex)}
-              className="w-8 h-8 rounded-full border-2 transition-all duration-150 cursor-pointer"
-              style={{
-                background: c.hex,
-                borderColor: avatarColor === c.hex ? 'var(--zen-text-primary, #E8E4DF)' : 'transparent',
-                transform: avatarColor === c.hex ? 'scale(1.15)' : 'scale(1)',
-              }}
-            />
-          ))}
+        <div className="flex items-center gap-4">
+          <div className="flex gap-2 flex-wrap">
+            {AVATAR_COLORS.map((c) => (
+              <button
+                key={c.hex}
+                type="button"
+                title={c.name}
+                onClick={() => setAvatarColor(c.hex)}
+                className="w-8 h-8 rounded-full border-2 transition-all duration-150 cursor-pointer"
+                style={{
+                  background: c.hex,
+                  borderColor: avatarColor === c.hex ? 'var(--zen-text-primary, #E8E4DF)' : 'transparent',
+                  transform: avatarColor === c.hex ? 'scale(1.15)' : 'scale(1)',
+                }}
+              />
+            ))}
+          </div>
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 font-[family-name:var(--font-display)] font-bold text-white text-lg transition-all duration-150"
+            style={{
+              background: avatarColor,
+              boxShadow: `0 0 24px ${avatarColor}44`,
+            }}
+          >
+            {profile.username[0].toUpperCase()}
+          </div>
         </div>
       </div>
 

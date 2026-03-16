@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api-client'
 import { queryKeys } from '@/lib/query-keys'
 import {
@@ -38,14 +38,29 @@ export function useUpdateProfile() {
   })
 }
 
-export function useActivityHeatmap(year: number) {
-  return useQuery<ActivityHeatmap>({
-    queryKey: queryKeys.activity.heatmap(year),
-    queryFn: async () => {
-      const data = await api.get<unknown>(`/activity/heatmap?year=${year}`)
-      return ActivityHeatmapSchema.parse(data)
-    },
+export function useActivityHeatmap() {
+  // The rolling 52-week window may span two calendar years, so fetch both and merge
+  const currentYear = new Date().getFullYear()
+  const years = [currentYear - 1, currentYear]
+
+  const results = useQueries({
+    queries: years.map((year) => ({
+      queryKey: queryKeys.activity.heatmap(year),
+      queryFn: async () => {
+        const data = await api.get<unknown>(`/activity/heatmap?year=${year}`)
+        return ActivityHeatmapSchema.parse(data)
+      },
+    })),
   })
+
+  const allLoaded = results.every((r) => r.data !== undefined)
+  const isLoading = results.some((r) => r.isLoading)
+
+  const data: ActivityHeatmap | undefined = allLoaded
+    ? { days: results.flatMap((r) => r.data!.days) }
+    : results[1]?.data
+
+  return { data, isLoading }
 }
 
 export function useStreak() {
