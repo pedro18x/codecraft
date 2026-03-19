@@ -8,6 +8,9 @@ import leaderboardRoutes from './leaderboard.js'
 import executeRoutes from './execute.js'
 import telemetryRoutes from './telemetry.js'
 import adminRoutes from './admin.js'
+import profileRoutes from './profile.js'
+import activityRoutes from './activity.js'
+import analyticsRoutes from './analytics.js'
 
 const router = Router()
 
@@ -20,5 +23,8 @@ router.use('/submissions', submissionsRoutes)
 router.use('/leaderboard', leaderboardRoutes)
 router.use('/execute', executeRoutes)
 router.use('/telemetry', telemetryRoutes)
+router.use('/profile', profileRoutes)
+router.use('/activity', activityRoutes)
+router.use('/analytics', analyticsRoutes)
 
 export default router
